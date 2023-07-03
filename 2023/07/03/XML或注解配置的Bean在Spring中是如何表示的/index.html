@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    XML或注解配置的Bean在Spring中是如何表示的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BABean%E7%9A%84%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">Spring是如何表示Bean的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8Bean%E7%9A%84%E8%A1%A8%E7%A4%BA%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8A%EF%BC%8CSpring%E4%BD%BF%E7%94%A8%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="toc-number">5.</span> <span class="toc-text">在Bean的表示的设计上，Spring使用了哪些设计模式？</span></a></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">XML或注解配置的Bean在Spring中是如何表示的？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/SpringFramework">SpringFramework</a><span>，</span>
+		
+	  	<span>发布时间：</span> 2023-07-03 15:26:00
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>为什么要搞明白Bean在Spring中是如何表示的，主要有下面两个方面的原因：</p>
+<ol>
+<li>对于使用者来说，在使用XML或注解配置Bean的时候，我们需要知道有哪些可配置的信息；</li>
+<li>对于开发者来说，在IOC容器处理Bean的流程中，会依赖Bean在Spring中的表示信息，是阅读源码的前置知识。</li>
+</ol>
+<h2 id="如果让你设计，你会如何设计？"><a href="#如果让你设计，你会如何设计？" class="headerlink" title="如果让你设计，你会如何设计？"></a>如果让你设计，你会如何设计？</h2><p>我们使用Spring是为了让Spring帮我们管理依赖，Bean也就是依赖的别称，Bean是如何表示也就相当于依赖是如何创建的。创建一个依赖需要哪些信息呢，不难想到以下这些信息：</p>
+<ul>
+<li>类的名称</li>
+<li>属性的值，如果有的话</li>
+<li>构造器参数的值，如果有的话</li>
+</ul>
+<p>如果说我们还需要Spring帮我们做一些额外动作，如Bean创建或销毁时分别执行一个方法，我们可以添加以下信息：</p>
+<ul>
+<li>初始化方法</li>
+<li>销毁方法</li>
+</ul>
+<p>如果说我们并不仅仅限于使用构造器或属性的方式创建一个依赖，而是通过工厂的方式创建依赖，我们可以添加以下信息：</p>
+<ul>
+<li>factory-bean，用于指定工厂</li>
+<li>factory-method，用于指定工厂中创建依赖的方法</li>
+<li>…</li>
+</ul>
+<p>不难发现，对于开发者来说，当我们需要越多的功能，对Bean的表示也就越复杂。对于使用者来说，也就有了更多可配置的地方。</p>
+<h2 id="Spring是如何表示Bean的？"><a href="#Spring是如何表示Bean的？" class="headerlink" title="Spring是如何表示Bean的？"></a>Spring是如何表示Bean的？</h2><p>同上面我们的设计类似，Spring也维护了以上这些信息，并将其抽象为接口<code>BeanDefinition</code>的形式，以便不同的子类实现。</p>
+<p>从继承关系上看，<code>BeanDefinition</code>继承了<code>AttributeAccessor</code>接口和<code>BeanMetadataElement</code>接口，前者主要是用来设置<code>attribute</code>也就是用于记录一些内部的属性供容器处理过程中使用，后者代表Bean元数据的来源也就是这个Bean的表示最初在哪里设置的，如XML或配置类。</p>
+<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="186px" preserveAspectRatio="none" style="width:506px;height:186px;background:#FFFFFF;" version="1.1" viewBox="0 0 506 186" width="506px" zoomAndPan="magnify"><defs/><g><!--class BeanDefinition--><g id="elem_BeanDefinition"><rect codeLine="1" fill="#F1F1F1" height="48" id="BeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="138" x="167.5" y="131"/><ellipse cx="182.5" cy="147" fill="#B4A7E5" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M183.4531,143.7813 L185.1719,143.7813 C185.5625,143.7813 185.75,143.75 185.875,143.6719 C186.1406,143.5156 186.2813,143.2344 186.2813,142.9375 C186.2813,142.6719 186.1719,142.4063 185.9375,142.2344 C185.7656,142.125 185.625,142.0938 185.1719,142.0938 L180.0313,142.0938 C179.5938,142.0938 179.4688,142.1094 179.3125,142.2031 C179.0625,142.3594 178.9063,142.6563 178.9063,142.9375 C178.9063,143.2188 179.0469,143.4688 179.2656,143.6406 C179.4219,143.75 179.6094,143.7813 180.0313,143.7813 L181.75,143.7813 L181.75,150.2969 L180.0313,150.2969 C179.5938,150.2969 179.4688,150.3125 179.3125,150.4219 C179.0625,150.5781 178.9063,150.8594 178.9063,151.1563 C178.9063,151.4063 179.0469,151.6719 179.2656,151.8281 C179.4219,151.9531 179.625,152 180.0313,152 L185.1719,152 C185.9219,152 186.2813,151.7188 186.2813,151.1563 C186.2813,150.875 186.1719,150.625 185.9375,150.4531 C185.7656,150.3281 185.625,150.2969 185.1719,150.2969 L183.4531,150.2969 L183.4531,143.7813 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="106" x="196.5" y="151.8467">BeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="168.5" x2="304.5" y1="163" y2="163"/><line style="stroke:#181818;stroke-width:0.5;" x1="168.5" x2="304.5" y1="171" y2="171"/></g><!--class AttributeAccessor--><g id="elem_AttributeAccessor"><rect codeLine="2" fill="#F1F1F1" height="64.2969" id="AttributeAccessor" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="262" x="237.5" y="7"/><ellipse cx="301.25" cy="23" fill="#B4A7E5" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M302.2031,19.7813 L303.9219,19.7813 C304.3125,19.7813 304.5,19.75 304.625,19.6719 C304.8906,19.5156 305.0313,19.2344 305.0313,18.9375 C305.0313,18.6719 304.9219,18.4063 304.6875,18.2344 C304.5156,18.125 304.375,18.0938 303.9219,18.0938 L298.7813,18.0938 C298.3438,18.0938 298.2188,18.1094 298.0625,18.2031 C297.8125,18.3594 297.6563,18.6563 297.6563,18.9375 C297.6563,19.2188 297.7969,19.4688 298.0156,19.6406 C298.1719,19.75 298.3594,19.7813 298.7813,19.7813 L300.5,19.7813 L300.5,26.2969 L298.7813,26.2969 C298.3438,26.2969 298.2188,26.3125 298.0625,26.4219 C297.8125,26.5781 297.6563,26.8594 297.6563,27.1563 C297.6563,27.4063 297.7969,27.6719 298.0156,27.8281 C298.1719,27.9531 298.375,28 298.7813,28 L303.9219,28 C304.6719,28 305.0313,27.7188 305.0313,27.1563 C305.0313,26.875 304.9219,26.625 304.6875,26.4531 C304.5156,26.3281 304.375,26.2969 303.9219,26.2969 L302.2031,26.2969 L302.2031,19.7813 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="126" x="321.75" y="27.8467">AttributeAccessor</text><line style="stroke:#181818;stroke-width:0.5;" x1="238.5" x2="498.5" y1="39" y2="39"/><line style="stroke:#181818;stroke-width:0.5;" x1="238.5" x2="498.5" y1="47" y2="47"/><ellipse cx="248.5" cy="60.6484" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="236" x="257.5" y="63.9951">setAttribute(String, Object) void</text></g><!--class BeanMetadataElement--><g id="elem_BeanMetadataElement"><rect codeLine="5" fill="#F1F1F1" height="64.2969" id="BeanMetadataElement" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="195" x="7" y="7"/><ellipse cx="22" cy="23" fill="#B4A7E5" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M22.9531,19.7813 L24.6719,19.7813 C25.0625,19.7813 25.25,19.75 25.375,19.6719 C25.6406,19.5156 25.7813,19.2344 25.7813,18.9375 C25.7813,18.6719 25.6719,18.4063 25.4375,18.2344 C25.2656,18.125 25.125,18.0938 24.6719,18.0938 L19.5313,18.0938 C19.0938,18.0938 18.9688,18.1094 18.8125,18.2031 C18.5625,18.3594 18.4063,18.6563 18.4063,18.9375 C18.4063,19.2188 18.5469,19.4688 18.7656,19.6406 C18.9219,19.75 19.1094,19.7813 19.5313,19.7813 L21.25,19.7813 L21.25,26.2969 L19.5313,26.2969 C19.0938,26.2969 18.9688,26.3125 18.8125,26.4219 C18.5625,26.5781 18.4063,26.8594 18.4063,27.1563 C18.4063,27.4063 18.5469,27.6719 18.7656,27.8281 C18.9219,27.9531 19.125,28 19.5313,28 L24.6719,28 C25.4219,28 25.7813,27.7188 25.7813,27.1563 C25.7813,26.875 25.6719,26.625 25.4375,26.4531 C25.2656,26.3281 25.125,26.2969 24.6719,26.2969 L22.9531,26.2969 L22.9531,19.7813 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="163" x="36" y="27.8467">BeanMetadataElement</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="201" y1="39" y2="39"/><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="201" y1="47" y2="47"/><ellipse cx="18" cy="60.6484" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="137" x="27" y="63.9951">getSource() Object</text></g><!--reverse link AttributeAccessor to BeanDefinition--><g id="link_AttributeAccessor_BeanDefinition"><path codeLine="9" d="M317.167,84.3332 C298.779,100.2138 278.791,117.4761 263.312,130.8446 " fill="none" id="AttributeAccessor-backto-BeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="312.719,78.926,332.43,71.151,321.869,89.5212,312.719,78.926" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link BeanMetadataElement to BeanDefinition--><g id="link_BeanMetadataElement_BeanDefinition"><path codeLine="10" d="M155.833,84.3332 C174.221,100.2138 194.209,117.4761 209.688,130.8446 " fill="none" id="BeanMetadataElement-backto-BeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="151.131,89.5212,140.57,71.151,160.281,78.926,151.131,89.5212" style="stroke:#181818;stroke-width:1.0;"/></g><!--SRC=[TOx12i9044FFxbVCiKNx2q95Z-AXNp3TfcL4PsLtrelwxrQKegYtG9ANY1fYpnwq0kiQlQYO17Ko6RLPb3ORQk-HKeXqSRCv9TZa5CqeT5ZGhjt3Mqdd89sxlK4Uz2sCEpRU7724sXCpm9gGeqTHljfZptsUeIgVgklo-ycVt8-nEm00]--></g></svg>
+
+<p>从实现上来看，<code>BeanDefinition</code>有以下子类，如：</p>
+<ul>
+<li>通用抽象实现的子类<code>AbstractBeanDefinition</code></li>
+<li>通过XML加载的<code>GenericBeanDefinition</code></li>
+<li>通过<code>@Component</code>等注解标注的<code>ScannedGenericBeanDefinition</code></li>
+<li>通过<code>@Configuration</code>注解标注的<code>ConfigurationClassBeanDefinition</code></li>
+<li>通过<code>@Bean</code>标注标注的<code>AnnotatedGenericBeanDefinition</code></li>
+<li>容器处理流程中的<code>RootBeanDefinition</code></li>
+</ul>
+<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="386px" preserveAspectRatio="none" style="width:888px;height:386px;background:#FFFFFF;" version="1.1" viewBox="0 0 888 386" width="888px" zoomAndPan="magnify"><defs/><g><!--class BeanDefinition--><g id="elem_BeanDefinition"><rect codeLine="1" fill="#F1F1F1" height="48" id="BeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="138" x="452" y="7"/><ellipse cx="467" cy="23" fill="#B4A7E5" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M467.9531,19.7813 L469.6719,19.7813 C470.0625,19.7813 470.25,19.75 470.375,19.6719 C470.6406,19.5156 470.7813,19.2344 470.7813,18.9375 C470.7813,18.6719 470.6719,18.4063 470.4375,18.2344 C470.2656,18.125 470.125,18.0938 469.6719,18.0938 L464.5313,18.0938 C464.0938,18.0938 463.9688,18.1094 463.8125,18.2031 C463.5625,18.3594 463.4063,18.6563 463.4063,18.9375 C463.4063,19.2188 463.5469,19.4688 463.7656,19.6406 C463.9219,19.75 464.1094,19.7813 464.5313,19.7813 L466.25,19.7813 L466.25,26.2969 L464.5313,26.2969 C464.0938,26.2969 463.9688,26.3125 463.8125,26.4219 C463.5625,26.5781 463.4063,26.8594 463.4063,27.1563 C463.4063,27.4063 463.5469,27.6719 463.7656,27.8281 C463.9219,27.9531 464.125,28 464.5313,28 L469.6719,28 C470.4219,28 470.7813,27.7188 470.7813,27.1563 C470.7813,26.875 470.6719,26.625 470.4375,26.4531 C470.2656,26.3281 470.125,26.2969 469.6719,26.2969 L467.9531,26.2969 L467.9531,19.7813 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="106" x="481" y="27.8467">BeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="453" x2="589" y1="39" y2="39"/><line style="stroke:#181818;stroke-width:0.5;" x1="453" x2="589" y1="47" y2="47"/></g><!--class AbstractBeanDefinition--><g id="elem_AbstractBeanDefinition"><rect codeLine="2" fill="#F1F1F1" height="48" id="AbstractBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="197" x="346.5" y="115"/><ellipse cx="361.5" cy="131" fill="#A9DCDF" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M363.5781,132.8125 L363.9688,133.7969 L363.5781,133.7969 C363.125,133.7969 363.0156,133.8125 362.8594,133.9219 C362.6094,134.0781 362.4531,134.3594 362.4531,134.6563 C362.4531,134.9219 362.5938,135.1719 362.8125,135.3281 C362.9531,135.4531 363.1563,135.5 363.5781,135.5 L365.9375,135.5 C366.2969,135.5 366.5156,135.4688 366.6563,135.375 C366.9063,135.2344 367.0625,134.9375 367.0625,134.6563 C367.0625,134.375 366.9219,134.125 366.7031,133.9688 C366.5313,133.8281 366.375,133.7969 365.9063,133.7969 L362.5156,125.5938 L358.8438,125.5938 C358.3906,125.5938 358.2656,125.6094 358.1094,125.7031 C357.8594,125.875 357.7031,126.1563 357.7031,126.4375 C357.7031,126.7188 357.8438,126.9688 358.0625,127.1406 C358.2344,127.25 358.4063,127.2813 358.8438,127.2813 L359.9219,127.2813 L357.2813,133.7969 C356.8594,133.7969 356.7031,133.8125 356.5469,133.9219 C356.2969,134.0781 356.1406,134.3594 356.1406,134.6563 C356.1406,135.2188 356.5156,135.5 357.2656,135.5 L359.5313,135.5 C359.8906,135.5 360.1094,135.4688 360.2344,135.375 C360.5,135.2344 360.6406,134.9375 360.6406,134.6563 C360.6406,134.375 360.5156,134.125 360.2969,133.9531 C360.125,133.8281 359.9844,133.7969 359.5313,133.7969 L359.1406,133.7969 L359.5313,132.8125 L363.5781,132.8125 Z M362.875,131.1094 L360.2031,131.1094 L361.5469,127.8438 L362.875,131.1094 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="165" x="375.5" y="135.8467">AbstractBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="347.5" x2="542.5" y1="147" y2="147"/><line style="stroke:#181818;stroke-width:0.5;" x1="347.5" x2="542.5" y1="155" y2="155"/></g><!--class RootBeanDefinition--><g id="elem_RootBeanDefinition"><rect codeLine="3" fill="#F1F1F1" height="48" id="RootBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="175" x="96.5" y="223"/><ellipse cx="111.5" cy="239" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M113.8438,234.6719 C112.9063,234.2344 112.3125,234.0938 111.4375,234.0938 C108.8125,234.0938 106.8125,236.1719 106.8125,238.8906 L106.8125,240.0156 C106.8125,242.5938 108.9219,244.4844 111.8125,244.4844 C113.0313,244.4844 114.1875,244.1875 114.9375,243.6406 C115.5156,243.2344 115.8438,242.7813 115.8438,242.3906 C115.8438,241.9375 115.4531,241.5469 114.9844,241.5469 C114.7656,241.5469 114.5625,241.625 114.375,241.8125 C113.9219,242.2969 113.9219,242.2969 113.7344,242.3906 C113.3125,242.6563 112.625,242.7813 111.8594,242.7813 C109.8125,242.7813 108.5156,241.6875 108.5156,239.9844 L108.5156,238.8906 C108.5156,237.1094 109.7656,235.7969 111.5,235.7969 C112.0781,235.7969 112.6875,235.9531 113.1563,236.2031 C113.6406,236.4844 113.8125,236.7031 113.9063,237.1094 C113.9688,237.5156 114,237.6406 114.1406,237.7656 C114.2813,237.9063 114.5156,238.0156 114.7344,238.0156 C115,238.0156 115.2656,237.875 115.4375,237.6563 C115.5469,237.5 115.5781,237.3125 115.5781,236.8906 L115.5781,235.4688 C115.5781,235.0313 115.5625,234.9063 115.4688,234.75 C115.3125,234.4844 115.0313,234.3438 114.7344,234.3438 C114.4375,234.3438 114.2344,234.4375 114.0156,234.75 L113.8438,234.6719 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="143" x="125.5" y="243.8467">RootBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="97.5" x2="270.5" y1="255" y2="255"/><line style="stroke:#181818;stroke-width:0.5;" x1="97.5" x2="270.5" y1="263" y2="263"/></g><!--class GenericBeanDefinition--><g id="elem_GenericBeanDefinition"><rect codeLine="4" fill="#F1F1F1" height="48" id="GenericBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="196" x="347" y="223"/><ellipse cx="362" cy="239" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M364.3438,234.6719 C363.4063,234.2344 362.8125,234.0938 361.9375,234.0938 C359.3125,234.0938 357.3125,236.1719 357.3125,238.8906 L357.3125,240.0156 C357.3125,242.5938 359.4219,244.4844 362.3125,244.4844 C363.5313,244.4844 364.6875,244.1875 365.4375,243.6406 C366.0156,243.2344 366.3438,242.7813 366.3438,242.3906 C366.3438,241.9375 365.9531,241.5469 365.4844,241.5469 C365.2656,241.5469 365.0625,241.625 364.875,241.8125 C364.4219,242.2969 364.4219,242.2969 364.2344,242.3906 C363.8125,242.6563 363.125,242.7813 362.3594,242.7813 C360.3125,242.7813 359.0156,241.6875 359.0156,239.9844 L359.0156,238.8906 C359.0156,237.1094 360.2656,235.7969 362,235.7969 C362.5781,235.7969 363.1875,235.9531 363.6563,236.2031 C364.1406,236.4844 364.3125,236.7031 364.4063,237.1094 C364.4688,237.5156 364.5,237.6406 364.6406,237.7656 C364.7813,237.9063 365.0156,238.0156 365.2344,238.0156 C365.5,238.0156 365.7656,237.875 365.9375,237.6563 C366.0469,237.5 366.0781,237.3125 366.0781,236.8906 L366.0781,235.4688 C366.0781,235.0313 366.0625,234.9063 365.9688,234.75 C365.8125,234.4844 365.5313,234.3438 365.2344,234.3438 C364.9375,234.3438 364.7344,234.4375 364.5156,234.75 L364.3438,234.6719 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="164" x="376" y="243.8467">GenericBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="348" x2="542" y1="255" y2="255"/><line style="stroke:#181818;stroke-width:0.5;" x1="348" x2="542" y1="263" y2="263"/></g><!--class ScannedGenericBeanDefinition--><g id="elem_ScannedGenericBeanDefinition"><rect codeLine="5" fill="#F1F1F1" height="48" id="ScannedGenericBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="257" x="316.5" y="331"/><ellipse cx="331.5" cy="347" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M333.8438,342.6719 C332.9063,342.2344 332.3125,342.0938 331.4375,342.0938 C328.8125,342.0938 326.8125,344.1719 326.8125,346.8906 L326.8125,348.0156 C326.8125,350.5938 328.9219,352.4844 331.8125,352.4844 C333.0313,352.4844 334.1875,352.1875 334.9375,351.6406 C335.5156,351.2344 335.8438,350.7813 335.8438,350.3906 C335.8438,349.9375 335.4531,349.5469 334.9844,349.5469 C334.7656,349.5469 334.5625,349.625 334.375,349.8125 C333.9219,350.2969 333.9219,350.2969 333.7344,350.3906 C333.3125,350.6563 332.625,350.7813 331.8594,350.7813 C329.8125,350.7813 328.5156,349.6875 328.5156,347.9844 L328.5156,346.8906 C328.5156,345.1094 329.7656,343.7969 331.5,343.7969 C332.0781,343.7969 332.6875,343.9531 333.1563,344.2031 C333.6406,344.4844 333.8125,344.7031 333.9063,345.1094 C333.9688,345.5156 334,345.6406 334.1406,345.7656 C334.2813,345.9063 334.5156,346.0156 334.7344,346.0156 C335,346.0156 335.2656,345.875 335.4375,345.6563 C335.5469,345.5 335.5781,345.3125 335.5781,344.8906 L335.5781,343.4688 C335.5781,343.0313 335.5625,342.9063 335.4688,342.75 C335.3125,342.4844 335.0313,342.3438 334.7344,342.3438 C334.4375,342.3438 334.2344,342.4375 334.0156,342.75 L333.8438,342.6719 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="225" x="345.5" y="351.8467">ScannedGenericBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="317.5" x2="572.5" y1="363" y2="363"/><line style="stroke:#181818;stroke-width:0.5;" x1="317.5" x2="572.5" y1="371" y2="371"/></g><!--class AnnotatedBeanDefinition--><g id="elem_AnnotatedBeanDefinition"><rect codeLine="6" fill="#F1F1F1" height="48" id="AnnotatedBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="212" x="578" y="223"/><ellipse cx="593" cy="239" fill="#B4A7E5" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M593.9531,235.7813 L595.6719,235.7813 C596.0625,235.7813 596.25,235.75 596.375,235.6719 C596.6406,235.5156 596.7813,235.2344 596.7813,234.9375 C596.7813,234.6719 596.6719,234.4063 596.4375,234.2344 C596.2656,234.125 596.125,234.0938 595.6719,234.0938 L590.5313,234.0938 C590.0938,234.0938 589.9688,234.1094 589.8125,234.2031 C589.5625,234.3594 589.4063,234.6563 589.4063,234.9375 C589.4063,235.2188 589.5469,235.4688 589.7656,235.6406 C589.9219,235.75 590.1094,235.7813 590.5313,235.7813 L592.25,235.7813 L592.25,242.2969 L590.5313,242.2969 C590.0938,242.2969 589.9688,242.3125 589.8125,242.4219 C589.5625,242.5781 589.4063,242.8594 589.4063,243.1563 C589.4063,243.4063 589.5469,243.6719 589.7656,243.8281 C589.9219,243.9531 590.125,244 590.5313,244 L595.6719,244 C596.4219,244 596.7813,243.7188 596.7813,243.1563 C596.7813,242.875 596.6719,242.625 596.4375,242.4531 C596.2656,242.3281 596.125,242.2969 595.6719,242.2969 L593.9531,242.2969 L593.9531,235.7813 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="180" x="607" y="243.8467">AnnotatedBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="579" x2="789" y1="255" y2="255"/><line style="stroke:#181818;stroke-width:0.5;" x1="579" x2="789" y1="263" y2="263"/></g><!--class AnnotatedGenericBeanDefinition--><g id="elem_AnnotatedGenericBeanDefinition"><rect codeLine="7" fill="#F1F1F1" height="48" id="AnnotatedGenericBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="273" x="608.5" y="331"/><ellipse cx="623.5" cy="347" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M625.8438,342.6719 C624.9063,342.2344 624.3125,342.0938 623.4375,342.0938 C620.8125,342.0938 618.8125,344.1719 618.8125,346.8906 L618.8125,348.0156 C618.8125,350.5938 620.9219,352.4844 623.8125,352.4844 C625.0313,352.4844 626.1875,352.1875 626.9375,351.6406 C627.5156,351.2344 627.8438,350.7813 627.8438,350.3906 C627.8438,349.9375 627.4531,349.5469 626.9844,349.5469 C626.7656,349.5469 626.5625,349.625 626.375,349.8125 C625.9219,350.2969 625.9219,350.2969 625.7344,350.3906 C625.3125,350.6563 624.625,350.7813 623.8594,350.7813 C621.8125,350.7813 620.5156,349.6875 620.5156,347.9844 L620.5156,346.8906 C620.5156,345.1094 621.7656,343.7969 623.5,343.7969 C624.0781,343.7969 624.6875,343.9531 625.1563,344.2031 C625.6406,344.4844 625.8125,344.7031 625.9063,345.1094 C625.9688,345.5156 626,345.6406 626.1406,345.7656 C626.2813,345.9063 626.5156,346.0156 626.7344,346.0156 C627,346.0156 627.2656,345.875 627.4375,345.6563 C627.5469,345.5 627.5781,345.3125 627.5781,344.8906 L627.5781,343.4688 C627.5781,343.0313 627.5625,342.9063 627.4688,342.75 C627.3125,342.4844 627.0313,342.3438 626.7344,342.3438 C626.4375,342.3438 626.2344,342.4375 626.0156,342.75 L625.8438,342.6719 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="241" x="637.5" y="351.8467">AnnotatedGenericBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="609.5" x2="880.5" y1="363" y2="363"/><line style="stroke:#181818;stroke-width:0.5;" x1="609.5" x2="880.5" y1="371" y2="371"/></g><!--class ConfigurationClassBeanDefinition--><g id="elem_ConfigurationClassBeanDefinition"><rect fill="#F1F1F1" height="48" id="ConfigurationClassBeanDefinition" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="274" x="7" y="331"/><ellipse cx="22" cy="347" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M24.3438,342.6719 C23.4063,342.2344 22.8125,342.0938 21.9375,342.0938 C19.3125,342.0938 17.3125,344.1719 17.3125,346.8906 L17.3125,348.0156 C17.3125,350.5938 19.4219,352.4844 22.3125,352.4844 C23.5313,352.4844 24.6875,352.1875 25.4375,351.6406 C26.0156,351.2344 26.3438,350.7813 26.3438,350.3906 C26.3438,349.9375 25.9531,349.5469 25.4844,349.5469 C25.2656,349.5469 25.0625,349.625 24.875,349.8125 C24.4219,350.2969 24.4219,350.2969 24.2344,350.3906 C23.8125,350.6563 23.125,350.7813 22.3594,350.7813 C20.3125,350.7813 19.0156,349.6875 19.0156,347.9844 L19.0156,346.8906 C19.0156,345.1094 20.2656,343.7969 22,343.7969 C22.5781,343.7969 23.1875,343.9531 23.6563,344.2031 C24.1406,344.4844 24.3125,344.7031 24.4063,345.1094 C24.4688,345.5156 24.5,345.6406 24.6406,345.7656 C24.7813,345.9063 25.0156,346.0156 25.2344,346.0156 C25.5,346.0156 25.7656,345.875 25.9375,345.6563 C26.0469,345.5 26.0781,345.3125 26.0781,344.8906 L26.0781,343.4688 C26.0781,343.0313 26.0625,342.9063 25.9688,342.75 C25.8125,342.4844 25.5313,342.3438 25.2344,342.3438 C24.9375,342.3438 24.7344,342.4375 24.5156,342.75 L24.3438,342.6719 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="242" x="36" y="351.8467">ConfigurationClassBeanDefinition</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="280" y1="363" y2="363"/><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="280" y1="371" y2="371"/></g><!--reverse link BeanDefinition to AbstractBeanDefinition--><g id="link_BeanDefinition_AbstractBeanDefinition"><path codeLine="9" d="M492.568,71.656 C482.176,86.15 470.763,102.068 461.721,114.678 " fill="none" id="BeanDefinition-backto-AbstractBeanDefinition" style="stroke:#181818;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="none" points="487.166,67.176,504.509,55,498.544,75.333,487.166,67.176" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link AbstractBeanDefinition to RootBeanDefinition--><g id="link_AbstractBeanDefinition_RootBeanDefinition"><path codeLine="10" d="M369.635,170.608 C328.623,187.264 278.71,207.536 240.973,222.862 " fill="none" id="AbstractBeanDefinition-backto-RootBeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="367.203,164.041,388.367,163,372.471,177.012,367.203,164.041" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link AbstractBeanDefinition to GenericBeanDefinition--><g id="link_AbstractBeanDefinition_GenericBeanDefinition"><path codeLine="11" d="M445,183.024 C445,196.579 445,211.038 445,222.678 " fill="none" id="AbstractBeanDefinition-backto-GenericBeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="438,183,445,163,452,183,438,183" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link BeanDefinition to AnnotatedBeanDefinition--><g id="link_BeanDefinition_AnnotatedBeanDefinition"><path codeLine="12" d="M551.048,71.45 C584.841,115.816 638.601,186.397 666.268,222.72 " fill="none" id="BeanDefinition-backto-AnnotatedBeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="545.304,75.461,538.754,55.309,556.441,66.978,545.304,75.461" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link AnnotatedBeanDefinition to AnnotatedGenericBeanDefinition--><g id="link_AnnotatedBeanDefinition_AnnotatedGenericBeanDefinition"><path codeLine="13" d="M707.372,288.6133 C715.563,302.8479 724.482,318.3452 731.579,330.6784 " fill="none" id="AnnotatedBeanDefinition-backto-AnnotatedGenericBeanDefinition" style="stroke:#181818;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="none" points="701.145,291.8265,697.236,271,713.279,284.8436,701.145,291.8265" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link GenericBeanDefinition to AnnotatedGenericBeanDefinition--><g id="link_GenericBeanDefinition_AnnotatedGenericBeanDefinition"><path codeLine="14" d="M529.111,277.719 C576.806,294.5714 635.593,315.3429 679.773,330.9531 " fill="none" id="GenericBeanDefinition-backto-AnnotatedGenericBeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="526.621,284.2636,510.096,271,531.285,271.063,526.621,284.2636" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link AnnotatedBeanDefinition to ScannedGenericBeanDefinition--><g id="link_AnnotatedBeanDefinition_ScannedGenericBeanDefinition"><path codeLine="15" d="M613.71,279.1746 C576.4,295.7221 531.336,315.7089 497.17,330.8617 " fill="none" id="AnnotatedBeanDefinition-backto-ScannedGenericBeanDefinition" style="stroke:#181818;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="none" points="611.02,272.71,632.141,271,616.696,285.5079,611.02,272.71" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link GenericBeanDefinition to ScannedGenericBeanDefinition--><g id="link_GenericBeanDefinition_ScannedGenericBeanDefinition"><path codeLine="16" d="M445,291.0236 C445,304.5792 445,319.0381 445,330.6784 " fill="none" id="GenericBeanDefinition-backto-ScannedGenericBeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="438,291.0005,445,271,452,291.0004,438,291.0005" style="stroke:#181818;stroke-width:1.0;"/></g><!--reverse link RootBeanDefinition to ConfigurationClassBeanDefinition--><g id="link_RootBeanDefinition_ConfigurationClassBeanDefinition"><path codeLine="17" d="M168.129,290.0569 C162.91,303.8891 157.298,318.7609 152.801,330.6784 " fill="none" id="RootBeanDefinition-backto-ConfigurationClassBeanDefinition" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="none" points="161.71,287.241,175.321,271,174.809,292.1839,161.71,287.241" style="stroke:#181818;stroke-width:1.0;"/></g><!--SRC=[XL513i8m3Bll5Vt0zWIaCIJky8BGfIWIIgSslV5uc2WxR6bxZ6p7SKmi61nOD6S4lg0Z9Y7F7JoY1B1Yx0jYD6CUTwmVUFDU1wx86CYgsDq2CyuwXRQpHcOl83YhIpPKNzFfPviXBSFxj8zyZ67wjFHVOY6zQjhG5FByLIMsRfLpb7xKK6TB_NMrUbg-LMtLTVBiw9a2hDEqLgohZrLz0000]--></g></svg>
+
+<p>为什么要拆分为这么多的<code>BeanDefinition</code>？</p>
+<p>起初Spring只有XML配置的Bean，使用的是<code>RootBeanDefinition</code>的继承体系；为了支持注解的方式，在Spring2.5引入了<code>GenericBeanDefinition</code>的继承体系。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><h2 id="在Bean的表示的设计上，Spring使用了哪些设计模式？"><a href="#在Bean的表示的设计上，Spring使用了哪些设计模式？" class="headerlink" title="在Bean的表示的设计上，Spring使用了哪些设计模式？"></a>在Bean的表示的设计上，Spring使用了哪些设计模式？</h2>
+</div>
+</main>
+    <footer>
+  <div class="footer-info">© 2023 徐梦旗 | Powerd by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a> | Theme <a
+      target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Insnow</a></div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+
+</html>

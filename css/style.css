@@ -2,15 +2,15 @@
   --bgColor: #181818;
   --fontColor: #c0c0c0;
   --bgColor2: #2b2b2b;
-  --spColor: #f59aa9;
+  --spColor: #fff;
   --tbborder: #7a7a7a;
   --codebgColor: rgba(255,255,255,0.06);
 }
 .light {
   --bgColor: #fff;
   --fontColor: #000;
-  --bgColor2: #fafafa;
-  --spColor: #3999ff;
+  --bgColor2: #f3f4f4;
+  --spColor: #000;
   --tbborder: #ebebeb;
   --codebgColor: rgba(0,0,0,0.02);
 }
