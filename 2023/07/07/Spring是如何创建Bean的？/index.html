@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Spring是如何创建Bean的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2. 如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bean%E7%9A%84%E7%BC%93%E5%AD%98%EF%BC%8CBeanDefinition%E7%9A%84%E5%90%88%E5%B9%B6%EF%BC%8CBean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%9A%84%E7%94%9F%E6%95%88"><span class="toc-text">3.1. Bean的缓存，BeanDefinition的合并，Bean的作用域的生效</span></a></li></ol></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">Spring是如何创建Bean的？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/SpringFramework">SpringFramework</a><span>，</span>
+		
+	  	<span>发布时间：</span> 2023-07-07 23:35:00
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <h2 id="背景">1. 背景</h2><p>我们使用Spring是为了让Spring帮我们管理Bean（也就是依赖）；如果只是简单地创建Bean，便无需了解Spring内部发生了什么，我们只需要关注于Bean的使用即可；但如果我们想要对要创建的Bean进行扩展，比如执行初始化或销毁方法，依赖注入等，便需要我们去了解Spring是如何创建Bean的。</p>
+<h2 id="如果让你设计，你会如何设计？">2. 如果让你设计，你会如何设计？</h2><p>创建Bean无非就是根据Bean定义创建一个实例。下面让我们看看创建一个Bean需要哪些步骤。</p>
+<ol>
+<li>根据Bean定义获取到该Bean的<code>class</code>类型，然后通过反射的方式创建一个Bean；</li>
+<li>根据Bean定义获取到该Bean的属性值，然后通过反射的方式为该Bean设置属性；</li>
+<li>根据Bean定义获取到该Bean的初始化方法，然后通过反射的方式执行初始化方法。</li>
+</ol>
+<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentstyletype="text/css" height="194px" preserveaspectratio="none" style="width:298px;height:194px;background:#FFFFFF;" version="1.1" viewbox="0 0 298 194" width="298px" zoomandpan="magnify"><defs/><g><ellipse cx="16" cy="23.99" fill="#222222" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="204" x="46" y="7"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="184" x="56" y="28.1387">&#21019;&#24314;&#19968;&#20010;Bean&#65288;Bean&#30340;&#23454;&#20363;&#21270;&#65289;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="240" x="28" y="80.97"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="220" x="38" y="102.1087">&#20026;&#35813;Bean&#35774;&#32622;&#23646;&#24615;&#65288;Bean&#30340;&#23646;&#24615;&#27880;&#20837;&#65289;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="208" x="44" y="154.94"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="188" x="54" y="176.0787">&#25191;&#34892;&#21021;&#22987;&#21270;&#26041;&#27861;&#65288;Bean&#30340;&#21021;&#22987;&#21270;&#65289;</text><ellipse cx="282" cy="171.93" fill="none" rx="10" ry="10" style="stroke:#222222;stroke-width:1.0;"/><ellipse cx="282.5" cy="172.43" fill="#222222" rx="6" ry="6" style="stroke:none;stroke-width:1.0;"/><!--link start to ????Bean?Bean?????--><g id="link_start_&#21019;&#24314;&#19968;&#20010;Bean&#65288;Bean&#30340;&#23454;&#20363;&#21270;&#65289;"><path d="M26.31,23.99 C30.88,23.99 35.45,23.99 40.02,23.99 " fill="none" id="start-to-&#21019;&#24314;&#19968;&#20010;Bean&#65288;Bean&#30340;&#23454;&#20363;&#21270;&#65289;" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="44.8,23.99,35.8,19.99,39.8,23.99,35.8,27.99,44.8,23.99" style="stroke:#181818;stroke-width:1.0;"/></g><!--link ????Bean?Bean????? to ??Bean?????Bean??????--><g id="link_&#21019;&#24314;&#19968;&#20010;Bean&#65288;Bean&#30340;&#23454;&#20363;&#21270;&#65289;_&#20026;&#35813;Bean&#35774;&#32622;&#23646;&#24615;&#65288;Bean&#30340;&#23646;&#24615;&#27880;&#20837;&#65289;"><path d="M148,41.32 C148,51.26 148,64.08 148,74.91 " fill="none" id="&#21019;&#24314;&#19968;&#20010;Bean&#65288;Bean&#30340;&#23454;&#20363;&#21270;&#65289;-to-&#20026;&#35813;Bean&#35774;&#32622;&#23646;&#24615;&#65288;Bean&#30340;&#23646;&#24615;&#27880;&#20837;&#65289;" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="148,79.69,152,70.69,148,74.69,144,70.69,148,79.69" style="stroke:#181818;stroke-width:1.0;"/></g><!--link ??Bean?????Bean?????? to ????????Bean?????--><g id="link_&#20026;&#35813;Bean&#35774;&#32622;&#23646;&#24615;&#65288;Bean&#30340;&#23646;&#24615;&#27880;&#20837;&#65289;_&#25191;&#34892;&#21021;&#22987;&#21270;&#26041;&#27861;&#65288;Bean&#30340;&#21021;&#22987;&#21270;&#65289;"><path d="M148,115.29 C148,125.23 148,138.05 148,148.88 " fill="none" id="&#20026;&#35813;Bean&#35774;&#32622;&#23646;&#24615;&#65288;Bean&#30340;&#23646;&#24615;&#27880;&#20837;&#65289;-to-&#25191;&#34892;&#21021;&#22987;&#21270;&#26041;&#27861;&#65288;Bean&#30340;&#21021;&#22987;&#21270;&#65289;" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="148,153.66,152,144.66,148,148.66,144,144.66,148,153.66" style="stroke:#181818;stroke-width:1.0;"/></g><!--link ????????Bean????? to end--><g id="link_&#25191;&#34892;&#21021;&#22987;&#21270;&#26041;&#27861;&#65288;Bean&#30340;&#21021;&#22987;&#21270;&#65289;_end"><path d="M252.43,171.93 C256.97,171.93 261.52,171.93 266.07,171.93 " fill="none" id="&#25191;&#34892;&#21021;&#22987;&#21270;&#26041;&#27861;&#65288;Bean&#30340;&#21021;&#22987;&#21270;&#65289;-to-end" style="stroke:#181818;stroke-width:1.0;"/><polygon fill="#181818" points="270.83,171.93,261.83,167.93,265.83,171.93,261.83,175.93,270.83,171.93" style="stroke:#181818;stroke-width:1.0;"/></g><!--SRC=[qz3ILD0joapFAD6rKr1wsZ7xwUvTJtOqFDcnoYarCU_zdWuGzNnMozDryvxiwtxQC-tzdaubBbsGuYSxThrOlnGa_sBTlkTxrptTEEzPmt8aBM3-iyqhdhOkHUXwrhdynSAUfnrpdou76VTisivdcwSYQO99G7J0NAQXfGa0]--></g></svg>
+
+<h2 id="Spring是如何设计的？">3. Spring是如何设计的？</h2><p>同我们上面的设计类似，不过Spring提供了更多的扩展点。在执行<code>BeanFactory#getBean(java.lang.String)</code>方法的时候会触发Bean的创建，具体流程在代码中是<code>AbstractBeanFactory#doGetBean</code>方法。</p>
+<h3 id="Bean的缓存，BeanDefinition的合并，Bean的作用域的生效">3.1. Bean的缓存，BeanDefinition的合并，Bean的作用域的生效</h3><?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentstyletype="text/css" height="559px" preserveaspectratio="none" style="width:686px;height:559px;background:#FFFFFF;" version="1.1" viewbox="0 0 686 559" width="686px" zoomandpan="magnify"><defs/><g><ellipse cx="257.5" cy="20" fill="#222222" rx="10" ry="10" style="stroke:#222222;stroke-width:1.0;"/><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="116" x="199.5" y="50"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="92" x="213.5" y="71.1387">&#36716;&#25442;Bean&#30340;&#21517;&#31216;</text><polygon fill="#F1F1F1" points="160.5,103.9688,354.5,103.9688,366.5,115.9688,354.5,127.9688,160.5,127.9688,148.5,115.9688,160.5,103.9688" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthadjust="spacing" textlength="194" x="160.5" y="119.7769">&#20174;&#32531;&#23384;&#20013;&#33719;&#21462;Bean&#65292;&#24182;&#21028;&#26029;&#26159;&#21542;&#23384;&#22312;&#65311;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="152" x="11" y="137.9688"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="128" x="25" y="159.1074">&#20174;Bean&#23454;&#20363;&#20013;&#33719;&#21462;&#23545;&#35937;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="120" x="27" y="206.9375"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="96" x="41" y="228.0762">&#36866;&#37197;&#35201;&#36820;&#22238;&#30340;&#23545;&#35937;</text><polygon fill="#F1F1F1" points="309,137.9688,547,137.9688,559,149.9688,547,161.9688,309,161.9688,297,149.9688,309,137.9688" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthadjust="spacing" textlength="238" x="309" y="153.7769">&#26159;&#21542;&#23384;&#22312;&#29238;&#24037;&#21378;&#65292;&#24182;&#19988;&#24403;&#21069;&#24037;&#21378;&#19981;&#21253;&#21547;&#35813;Bean&#65311;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="188" x="193" y="171.9688"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="164" x="207" y="193.1074">&#20174;&#29238;&#24037;&#21378;&#20013;&#33719;&#21462;Bean&#65292;&#24182;&#36820;&#22238;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="139" x="499.5" y="171.9688"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="115" x="513.5" y="193.1074">&#21512;&#24182;BeanDefinition</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="72" x="533" y="240.9375"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="48" x="547" y="262.0762">&#26816;&#26597;&#20381;&#36182;</text><polygon fill="#F1F1F1" points="525,294.9063,613,294.9063,625,306.9063,613,318.9063,525,318.9063,513,306.9063,525,294.9063" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthadjust="spacing" textlength="88" x="525" y="310.7144">&#26159;&#21542;&#26159;&#21333;&#20363;&#23545;&#35937;&#65311;</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="116" x="445" y="328.9063"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="92" x="459" y="350.0449">&#32531;&#23384;&#24182;&#21019;&#24314;Bean</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="80" x="595" y="328.9063"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="56" x="609" y="350.0449">&#21019;&#24314;Bean</text><polygon fill="#F1F1F1" points="569,368.875,581,380.875,569,392.875,557,380.875,569,368.875" style="stroke:#181818;stroke-width:0.5;"/><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="120" x="509" y="412.875"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthadjust="spacing" textlength="96" x="523" y="434.0137">&#36866;&#37197;&#35201;&#36820;&#22238;&#30340;&#23545;&#35937;</text><polygon fill="#F1F1F1" points="428,452.8438,440,464.8438,428,476.8438,416,464.8438,428,452.8438" style="stroke:#181818;stroke-width:0.5;"/><polygon fill="#F1F1F1" points="257.5,482.8438,269.5,494.8438,257.5,506.8438,245.5,494.8438,257.5,482.8438" style="stroke:#181818;stroke-width:0.5;"/><ellipse cx="257.5" cy="537.8438" fill="none" rx="11" ry="11" style="stroke:#222222;stroke-width:1.0;"/><ellipse cx="257.5" cy="537.8438" fill="#222222" rx="6" ry="6" style="stroke:#111111;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="257.5" x2="257.5" y1="30" y2="50"/><polygon fill="#181818" points="253.5,40,257.5,50,261.5,40,257.5,44" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="87" x2="87" y1="171.9375" y2="206.9375"/><polygon fill="#181818" points="83,196.9375,87,206.9375,91,196.9375,87,200.9375" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="569" x2="569" y1="205.9375" y2="240.9375"/><polygon fill="#181818" points="565,230.9375,569,240.9375,573,230.9375,569,234.9375" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="513" x2="503" y1="306.9063" y2="306.9063"/><line style="stroke:#181818;stroke-width:1.0;" x1="503" x2="503" y1="306.9063" y2="328.9063"/><polygon fill="#181818" points="499,318.9063,503,328.9063,507,318.9063,503,322.9063" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="625" x2="635" y1="306.9063" y2="306.9063"/><line style="stroke:#181818;stroke-width:1.0;" x1="635" x2="635" y1="306.9063" y2="328.9063"/><polygon fill="#181818" points="631,318.9063,635,328.9063,639,318.9063,635,322.9063" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="503" x2="503" y1="362.875" y2="380.875"/><line style="stroke:#181818;stroke-width:1.0;" x1="503" x2="557" y1="380.875" y2="380.875"/><polygon fill="#181818" points="547,376.875,557,380.875,547,384.875,551,380.875" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="635" x2="635" y1="362.875" y2="380.875"/><line style="stroke:#181818;stroke-width:1.0;" x1="635" x2="581" y1="380.875" y2="380.875"/><polygon fill="#181818" points="591,376.875,581,380.875,591,384.875,587,380.875" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="569" x2="569" y1="274.9063" y2="294.9063"/><polygon fill="#181818" points="565,284.9063,569,294.9063,573,284.9063,569,288.9063" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="569" x2="569" y1="392.875" y2="412.875"/><polygon fill="#181818" points="565,402.875,569,412.875,573,402.875,569,406.875" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="297" x2="287" y1="149.9688" y2="149.9688"/><line style="stroke:#181818;stroke-width:1.0;" x1="287" x2="287" y1="149.9688" y2="171.9688"/><polygon fill="#181818" points="283,161.9688,287,171.9688,291,161.9688,287,165.9688" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="559" x2="569" y1="149.9688" y2="149.9688"/><line style="stroke:#181818;stroke-width:1.0;" x1="569" x2="569" y1="149.9688" y2="171.9688"/><polygon fill="#181818" points="565,161.9688,569,171.9688,573,161.9688,569,165.9688" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="287" x2="287" y1="205.9375" y2="464.8438"/><line style="stroke:#181818;stroke-width:1.0;" x1="287" x2="416" y1="464.8438" y2="464.8438"/><polygon fill="#181818" points="406,460.8438,416,464.8438,406,468.8438,410,464.8438" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="569" x2="569" y1="446.8438" y2="464.8438"/><line style="stroke:#181818;stroke-width:1.0;" x1="569" x2="440" y1="464.8438" y2="464.8438"/><polygon fill="#181818" points="450,460.8438,440,464.8438,450,468.8438,446,464.8438" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="148.5" x2="87" y1="115.9688" y2="115.9688"/><line style="stroke:#181818;stroke-width:1.0;" x1="87" x2="87" y1="115.9688" y2="137.9688"/><polygon fill="#181818" points="83,127.9688,87,137.9688,91,127.9688,87,131.9688" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="366.5" x2="428" y1="115.9688" y2="115.9688"/><line style="stroke:#181818;stroke-width:1.0;" x1="428" x2="428" y1="115.9688" y2="137.9688"/><polygon fill="#181818" points="424,127.9688,428,137.9688,432,127.9688,428,131.9688" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="87" x2="87" y1="240.9063" y2="494.8438"/><line style="stroke:#181818;stroke-width:1.0;" x1="87" x2="245.5" y1="494.8438" y2="494.8438"/><polygon fill="#181818" points="235.5,490.8438,245.5,494.8438,235.5,498.8438,239.5,494.8438" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="428" x2="428" y1="476.8438" y2="494.8438"/><line style="stroke:#181818;stroke-width:1.0;" x1="428" x2="269.5" y1="494.8438" y2="494.8438"/><polygon fill="#181818" points="279.5,490.8438,269.5,494.8438,279.5,498.8438,275.5,494.8438" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="257.5" x2="257.5" y1="83.9688" y2="103.9688"/><polygon fill="#181818" points="253.5,93.9688,257.5,103.9688,261.5,93.9688,257.5,97.9688" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="257.5" x2="257.5" y1="506.8438" y2="526.8438"/><polygon fill="#181818" points="253.5,516.8438,257.5,526.8438,261.5,516.8438,257.5,520.8438" style="stroke:#181818;stroke-width:1.0;"/><!--SRC=[TL3BJi9055stNz6b_eBT6N-4n6biOWPZ-m589AcHgKt0XeX2V1HDj5ONGf62FpEt7LRyWdCx5OtHpLtSSyuzvrp7hHsw-fOXvayvkzacDLfS74F0YliNKxSjOuFF_2BhGDpZQIpy2Po5I5fbRPYEmRlBmpZl9H2C90Ck7rRPSDDmzmYL9wKIgV0yu8lJjHgIgNYzDYM-R3INBIP6H-AZ2_q1-bOOsNU8hg7xpzk5DuP917vJcVEq2_CEd32rv2c3TWk2Hv54Ak5N4aqhiwpbVnHH2KnTKyvI084dzyZO8PPDRTUkKxD4yjj6FepuuagyXRZvZecJdSkogWScg098cNfY-RG-pDxnCghHq52CNm3TjQtIyFy_LIGr7RT-y0a0]--></g></svg>
+
+</div>
+</main>
+    <footer>
+  <div class="footer-info">© 2023 徐梦旗 | Powerd by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a> | Theme <a
+      target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Insnow</a></div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+
+</html>

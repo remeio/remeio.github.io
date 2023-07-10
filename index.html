@@ -106,10 +106,36 @@
 	  
 		<a href="/categories/SpringFramework">【SpringFramework】</a>
 	  
-      <a href="/2023/07/05/XML配置的Bean是如何被加载到Spring容器中的？/">XML配置的Bean是如何被加载到Spring容器中的？</a>
+      <a href="/2023/07/07/Spring是如何创建Bean的？/">Spring是如何创建Bean的？</a>
     </div>
     <span class="post-list-date">
-      2023-07-05 10:47
+      2023-07-07 23:35
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+	  
+		<a href="/categories/SpringFramework">【SpringFramework】</a>
+	  
+      <a href="/2023/07/05/XML配置的Bean是如何被加载到Spring中的？/">XML配置的Bean是如何被加载到Spring中的？</a>
+    </div>
+    <span class="post-list-date">
+      2023-07-05 23:38
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+	  
+		<a href="/categories/编程之内">【编程之内】</a>
+	  
+      <a href="/2023/07/05/浅谈lambda表达式与函数式编程/">浅谈lambda表达式与函数式编程</a>
+    </div>
+    <span class="post-list-date">
+      2023-07-05 16:46
     </span>
   </li>
   
@@ -130,6 +156,32 @@
     <div class="post-list-left">
       <div class="post-list-symbol">✦</div>
 	  
+		<a href="/categories/SpringFramework">【SpringFramework】</a>
+	  
+      <a href="/2023/07/03/@PostConstructor，@PreDestroy注解是如何生效的？/">@PostConstructor，@PreDestroy注解是如何生效的？</a>
+    </div>
+    <span class="post-list-date">
+      2023-07-03 15:20
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+	  
+		<a href="/categories/SpringFramework">【SpringFramework】</a>
+	  
+      <a href="/2023/07/03/@Autowired，@Value，@Resource注解是如何生效的？/">@Autowired，@Value，@Resource注解是如何生效的？</a>
+    </div>
+    <span class="post-list-date">
+      2023-07-03 15:19
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+	  
 		<a href="/categories/开发工具">【开发工具】</a>
 	  
       <a href="/2023/07/03/如何使用Hexo搭建一个个人博客/">如何使用Hexo搭建一个个人博客</a>
@@ -141,6 +193,31 @@
   
 </ul>
 </main>
+<script>
+function getHitokoto() {
+	// 获取一言
+	let hitokoto =
+	  "The best time to plant a tree is 20 years ago. The second-best time is now.";
+	var xhr = new XMLHttpRequest();
+	xhr.open("get", "https://v1.hitokoto.cn?c=i", false);
+	xhr.onreadystatechange = function () {
+	  try {
+		if (xhr.readyState === 4) {
+		  var data = JSON.parse(xhr.responseText);
+		  hitokoto =
+			data.hitokoto +
+			(data.from_who == "null" || data.from_who == null ? "" : "——" + data.from_who);
+		  console.log(hitokoto);
+		  document.getElementsByClassName('blog-info')[0].textContent = hitokoto
+		}
+	  } catch (e) {
+		console.log(e);
+	  }
+	};
+	xhr.send();
+}
+getHitokoto();
+</script>
     <footer>
   <div class="footer-info">© 2023 徐梦旗 | Powerd by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a> | Theme <a
       target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Insnow</a></div>

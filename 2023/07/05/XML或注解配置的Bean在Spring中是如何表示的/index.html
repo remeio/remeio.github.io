@@ -328,7 +328,7 @@ public class TestConfiguration &#123;
         return new TestBean();
     &#125;
 &#125;</code></pre>
-<p>运行结果如下图，不难看出当使用不同的方式注册<code>BeanDefinition</code>时，其最终使用的<code>BeanDefinition</code>的实现类也不同。</p>
+<p>运行结果如下，不难看出当使用不同的方式注册<code>BeanDefinition</code>时，其最终使用的<code>BeanDefinition</code>的实现类也不同。</p>
 <pre class="line-numbers language-none"><code class="language-none">Loaded from: XML, bean definition type: class org.springframework.beans.factory.support.GenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestBean]; scope&#x3D;; abstract&#x3D;false; lazyInit&#x3D;false; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;null; destroyMethodName&#x3D;null; defined in class path resource [com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;beans.xml], bean: TestBean(name&#x3D;foo, age&#x3D;1)
 Loaded from: Programming, bean definition type: class org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestComponent]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;null; destroyMethodName&#x3D;null, bean: com.remeio.upsnippet.spring.beandefinition.TestComponent@78b729e6
 Loaded from: Scan, bean definition type: class org.springframework.context.annotation.ScannedGenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestComponent]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;null; destroyMethodName&#x3D;null; defined in file [D:\project\remeio\upsnippet\upsnippet-spring\target\classes\com\remeio\upsnippet\spring\beandefinition\TestComponent.class], bean: com.remeio.upsnippet.spring.beandefinition.TestComponent@5b8dfcc1
@@ -371,7 +371,7 @@ public class BeanDefinitionBuilderTest &#123;
     &#125;
 &#125;
 </code></pre>
-<p>运行结果如下图，其实通过<code>BeanDefinitionBuilder</code>编程式创建一个<code>BeanDefinition</code>并注册在日常开发中并不常用，<code>BeanDefinition</code>的创建和注册工作通常由Spring帮我们完成，我们只需要关注Bean是如何配置的即可，如XML或注解是如何配置的。</p>
+<p>运行结果如下，其实通过<code>BeanDefinitionBuilder</code>编程式创建一个<code>BeanDefinition</code>并注册在日常开发中并不常用，<code>BeanDefinition</code>的创建和注册工作通常由Spring帮我们完成，我们只需要关注Bean是如何配置的即可，如XML或注解是如何配置的。</p>
 <pre class="line-numbers language-none"><code class="language-none">TestBean(name&#x3D;foo, age&#x3D;1) had initialized
 Loaded from: BeanDefinitionBuilder, bean definition type: class org.springframework.beans.factory.support.GenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestBean]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;initialize; destroyMethodName&#x3D;null, bean: TestBean(name&#x3D;foo, age&#x3D;1)</code></pre>
 </div>
