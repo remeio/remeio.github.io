@@ -5,7 +5,7 @@
   
   <title>
     
-    标签
+    @Configuration及其周边注解是如何生效的？
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -95,10 +95,53 @@
   </script>
 </header>
     <main class="main-body">
-  <h2 class="page-title">标签</h2>
-  <div class="tag-cloud-container">
-    <a href="/tags/%E6%BA%90%E7%A0%81/" style="font-size: 10px;" class="tag-0">源码</a>
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    
   </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">@Configuration及其周边注解是如何生效的？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/SpringFramework">SpringFramework</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-07-03 15:20，
+		<span class="post-count">字数：17，预计阅读：1分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><p>1@</p>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
 </main>
     <footer>
   <div class="footer-info">© 2023 徐梦旗 | Powerd by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a> | Theme <a
