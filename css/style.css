@@ -62,7 +62,6 @@ body {
 }
 .toc-container {
   width: 100%;
-  position: sticky;
   top: 0;
   z-index: 999;
   pointer-events: none;
@@ -164,6 +163,9 @@ footer {
   color: var(--fontColor);
   transition: color 0.5s;
   padding: 0.5rem 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 .footer-info a {
   text-decoration: none;
@@ -298,8 +300,8 @@ code {
   line-height: 2.5rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  padding: 0.2rem 0.3rem;
-  border-radius: 0.25rem;
+  padding: 0.2rem 0.2rem;
+  border-radius: 0.4rem;
 }
 h1,
 h2,
@@ -352,13 +354,17 @@ ol p {
 }
 blockquote {
   background-color: var(--bgColor2);
-  padding-inline-start: 2rem;
+  padding-inline-start: 1.8rem;
+  padding-inline-end: 2rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   border-left: 2px solid var(--fontColor);
-  margin: 1.5rem 0;
+  margin: 0.5rem 0;
   transition-property: background-color, color, border-color;
   transition-duration: 0.5s;
+}
+blockquote p {
+  margin: 1rem 0rem;
 }
 .article-table {
   max-width: 100%;
@@ -440,7 +446,7 @@ hr {
   display: flex;
   height: 2.16rem;
   flex-shrink: 1;
-  width: calc(100% - 11rem);
+  width: calc(100% - 16rem);
 }
 .post-list-symbol {
   width: 3rem;

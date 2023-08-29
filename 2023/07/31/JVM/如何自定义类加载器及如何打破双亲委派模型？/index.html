@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    如何自定义类加载器及如何打破双亲委派模型？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-text">1. 类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="toc-text">1.1. 什么是类加载机制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%97%B6%E6%9C%BA%EF%BC%9F"><span class="toc-text">1.2. 类加载的时机？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E6%AD%A5%E9%AA%A4%EF%BC%9F"><span class="toc-text">1.3. 类加载有哪些步骤？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">2. 类加载器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">2.1. 有哪些类加载器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">2.2. 如何自定义类加载器？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="toc-text">3. 双亲委派模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.1. 什么是双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E7%A0%B4%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.2. 如何打破双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SPI%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="toc-text">3.3. SPI机制详解</span></a></li></ol></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">如何自定义类加载器及如何打破双亲委派模型？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/JVM">JVM</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-07-31 19:35，
+		<span class="post-count">字数：1.4k，预计阅读：6分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>我们使用Java编写的代码会编译器被编译为<code>class</code>字节码文件，然后通过虚拟机的类加载（Class Loading）机制将<code>class</code>字节码文件加载到内存中，并在内存中生成类的数据结构。</p>
+<h3 id="类加载的时机？">1.2. 类加载的时机？</h3><p>类的加载发生在类的初始化之前。《Java虚拟机规范》规定了当对一个类型进行主动引用时会触发类的初始化，有以下几种情况：</p>
+<ol>
+<li>当执行Java程序的<code>main</code>方法时；</li>
+<li>当执行<code>new</code>，<code>getstatic</code>，<code>putstatic</code>，<code>invokestatic</code>字节码指令时；<ul>
+<li><code>new</code>字节码指令对应使用<code>new</code>关键字创建对象;</li>
+<li><code>getstatic</code>字节码指令对应获取类中的静态字段（<code>final</code>修饰的静态字段除外）；</li>
+<li><code>putstatic</code>字节码指令对应设置类中的静态字段；</li>
+<li><code>invokestatic</code>字节码指令对应调用类中的静态方法。</li>
+</ul>
+</li>
+<li>当使用反射的方式获取类型时；<ul>
+<li>当使用<code>Class#forName</code>加载类的时候；</li>
+<li>当使用<code>java.lang.reflect</code>包中的方法的时候。</li>
+</ul>
+</li>
+<li>父类要先于子类初始化。</li>
+</ol>
+<p>当对一个类型进行被动引用时不会触发类的初始化，有以下几种情况：</p>
+<ol>
+<li>当使用子类调用父类中的静态字段或方法时；</li>
+<li>当使用数组定义来引用类时；</li>
+<li>当获取被<code>final</code>修饰的类的静态字段时。</li>
+</ol>
+<blockquote>
+<p>虚拟机参数：可以通过<code>-verbose:class</code>来查看类加载的过程。</p>
+</blockquote>
+<h3 id="类加载有哪些步骤？">1.3. 类加载有哪些步骤？</h3><p>类加载（Class Loading）有以下几个步骤：</p>
+<ol>
+<li>加载（Loading）：通过类的全限定名获取到类的<code>class</code>二进制字节流，并在内存中生成<code>Class</code>对象；</li>
+<li>链接（Linking）<ol>
+<li>验证（Verification）：验证<code>class</code>二进制字节流是否符合《Java虚拟机规范》定义的规范；</li>
+<li>准备（Preparation）：为类的静态字段分配内存并赋零值（<code>final</code>修饰的静态字段除外）；</li>
+<li>解析（Resolution）：将符号引用转为直接引用；</li>
+</ol>
+</li>
+<li>初始化（Initializing）：执行类构造器的<code>&lt;clinit&gt;</code>方法。</li>
+</ol>
+<a href="\assert\puml\a08d5cc4aeb3de7e8b1e88dbca8b00352a46b799178b961b6d683739430a627d.svg" class="gallery-item"><img src="\assert\puml\a08d5cc4aeb3de7e8b1e88dbca8b00352a46b799178b961b6d683739430a627d.svg"></a>
+
+<h2 id="类加载器">2. 类加载器</h2><h3 id="有哪些类加载器？">2.1. 有哪些类加载器？</h3><ul>
+<li>启动类加载器（Bootstrap Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib</code>下的<code>jar</code>；</li>
+<li>扩展类加载器（Extension Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib/ext</code>下的<code>jar</code>；</li>
+<li>应用类加载器（Application Class Loader），用来加载<code>classpath</code>下的<code>jar</code>；</li>
+<li>自定义类加载器（User Class Loader），自定义加载<code>class</code>二进制字节流。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import javafx.event.Event;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class DiffClassLoaderTest &#123;
+
+    public static void main(String[] args) &#123;
+        printAllClassLoaders();
+    &#125;
+
+    private static void printAllClassLoaders() &#123;
+        &#x2F;&#x2F; Bootstrap Class Loader
+        printClassLoader(String.class);
+        &#x2F;&#x2F; Extension Class Loader
+        printClassLoader(Event.class);
+        &#x2F;&#x2F; Application Class Loader
+        printClassLoader(DiffClassLoaderTest.class);
+    &#125;
+
+    private static void printClassLoader(Class&lt;?&gt; clazz) &#123;
+        log.info(&quot;The class loader of &#39;&#123;&#125;&#39; is &#39;&#123;&#125;&#39;&quot;, clazz, clazz.getClassLoader());
+    &#125;
+
+&#125;</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;class java.lang.String&#39; is &#39;null&#39;
+The class loader of &#39;class javafx.event.Event&#39; is &#39;sun.misc.Launcher$ExtClassLoader@5010be6&#39;
+The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.DiffClassLoaderTest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;</code></pre>
+<h3 id="如何自定义类加载器？">2.2. 如何自定义类加载器？</h3><p>一般来说自定义类加载器，只需要重写<code>ClassLoader#findClass</code>方法，在此方法中去实现<code>class</code>二进制字节流的获取，并使用<code>ClassLoader#defineClass</code>从<code>class</code>二进制字节流中加载类。</p>
+<h2 id="双亲委派模型">3. 双亲委派模型</h2><h3 id="什么是双亲委派模型？">3.1. 什么是双亲委派模型？</h3><p>双亲委派模型（Parents Delegation Model）就是当使用类加载器去加载一个类时，会首先委派给其父类加载器去加载，若父类加载器加载失败，自身才会去尝试加载。</p>
+<h3 id="如何打破双亲委派模型？">3.2. 如何打破双亲委派模型？</h3><ol>
+<li>双亲委派模型的实现逻辑在<code>ClassLoader#loadClass</code>方法中，可以通过自定义类加载器重写该方法打破双亲委派模型；</li>
+<li>使用SPI（Service Provider Interface）机制，使用线程上下文中的类加载器加载类。</li>
+</ol>
+<h3 id="SPI机制详解">3.3. SPI机制详解</h3><p>SPI（Service Provider Interface）是由JDK提供接口，而服务商提供接口实现，根据双亲委派模型，JDK编写的代码加载类使用的是启动类加载器，无法加载到服务商提供的接口实现，而SPI机制在加载服务商提供接口实现类时，使用<code>Thread#getContextClassLoader</code>获取线程上下文中的类加载器加载类，如此以来就打破了双亲委派模型。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import lombok.extern.slf4j.Slf4j;
+
+import java.sql.*;
+
+@Slf4j
+public class SPITest &#123;
+
+    public static void main(String[] args) throws SQLException &#123;
+        &#x2F;&#x2F; Context class loader of current thread
+        printContextClassLoaderOfCurrentThread();
+        &#x2F;&#x2F; rt.jar&#x2F;Connection -&gt; Bootstrap Class Loader
+        printClassLoader(Connection.class);
+        &#x2F;&#x2F; classpath -&gt; App Class Loader
+        printClassLoader(SPITest.class);
+        try (Connection connection &#x3D; DriverManager.getConnection(
+                &quot;jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;upsnippet&quot;,
+                &quot;root&quot;,
+                &quot;******&quot;)) &#123;
+            &#x2F;&#x2F; SPI -&gt; Context class loader of current thread
+            printClassLoader(connection.getClass());
+            try (Statement statement &#x3D; connection.createStatement()) &#123;
+                ResultSet resultSet &#x3D; statement.executeQuery(&quot;select 1 + 2&quot;);
+                while (resultSet.next()) &#123;
+                    log.info(&quot;1 + 2 &#x3D; &#123;&#125;&quot;, resultSet.getInt(1));
+                &#125;
+            &#125;
+
+        &#125;
+    &#125;
+
+    private static void printClassLoader(Class&lt;?&gt; clazz) &#123;
+        log.info(&quot;The class loader of &#39;&#123;&#125;&#39; is &#39;&#123;&#125;&#39;&quot;, clazz, clazz.getClassLoader());
+    &#125;
+
+    private static void printContextClassLoaderOfCurrentThread() &#123;
+        log.info(&quot;The class loader of &#39;&#123;&#125;&#39; is &#39;&#123;&#125;&#39;&quot;, Thread.currentThread(), Thread.currentThread().getContextClassLoader());
+    &#125;
+
+&#125;
+</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;Thread[main,5,main]&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
+The class loader of &#39;interface java.sql.Connection&#39; is &#39;null&#39;
+The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.SPITest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
+The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
+1 + 2 &#x3D; 3</code></pre></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">ThemeInsnow</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
+  | <img src="http://www.beian.gov.cn/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  </div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+
+</html>

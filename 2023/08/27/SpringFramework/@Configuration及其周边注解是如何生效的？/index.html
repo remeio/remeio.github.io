@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    @Configuration及其周边注解是如何生效的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E4%B8%80%E4%B8%AABean%E6%B3%A8%E5%86%8C%E5%88%B0IoC%E5%AE%B9%E5%99%A8%E4%B8%AD%EF%BC%9F"><span class="toc-text">1.1. 如何将一个Bean注册到IoC容器中？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E9%85%8D%E7%BD%AE%E7%B1%BB%EF%BC%9F"><span class="toc-text">1.2. 为什么要有配置类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%8F%8F%E8%BF%B0%E4%B8%80%E4%B8%AA%E9%85%8D%E7%BD%AE%E7%B1%BB%EF%BC%9F"><span class="toc-text">1.3. 如何描述一个配置类？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%B1%BB%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">2. 配置类是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%80%99%E9%80%89%E7%9A%84%E9%85%8D%E7%BD%AE%E7%B1%BB%E5%88%97%E8%A1%A8"><span class="toc-text">2.1. 获取候选的配置类列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E6%AC%A1%E8%A7%A3%E6%9E%90%E6%AF%8F%E4%B8%AA%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-text">2.2. 依次解析每个配置类</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BC%B0%E6%9D%A1%E4%BB%B6"><span class="toc-text">2.2.1. 评估条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%86%85%E9%83%A8%E7%B1%BB"><span class="toc-text">2.2.2. 处理内部类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86-PropertySource%E6%B3%A8%E8%A7%A3"><span class="toc-text">2.2.3. 处理@PropertySource注解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86-ComponentScan%E6%B3%A8%E8%A7%A3"><span class="toc-text">2.2.4. 处理@ComponentScan注解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86-Import%E6%B3%A8%E8%A7%A3"><span class="toc-text">2.2.5. 处理@Import注解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86-ImportResource%E6%B3%A8%E8%A7%A3"><span class="toc-text">2.2.6. 处理@ImportResource注解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86-Bean%E6%B3%A8%E8%A7%A3"><span class="toc-text">2.2.7. 处理@Bean注解</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E6%AC%A1%E4%BB%8E%E6%AF%8F%E4%B8%AA%E9%85%8D%E7%BD%AE%E7%B1%BB%E4%B8%AD%E5%8A%A0%E8%BD%BDBean%E5%AE%9A%E4%B9%89"><span class="toc-text">2.3. 依次从每个配置类中加载Bean定义</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E8%A2%AB-Import%E5%AF%BC%E5%85%A5%E7%9A%84%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-text">2.3.1. 注册被@Import导入的配置类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96Bean%E6%96%B9%E6%B3%95%E5%B9%B6%E5%8A%A0%E8%BD%BDBean%E5%AE%9A%E4%B9%89"><span class="toc-text">2.3.2. 获取Bean方法并加载Bean定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%AF%BC%E5%85%A5%E8%B5%84%E6%BA%90%E5%B9%B6%E5%8A%A0%E8%BD%BDBean%E5%AE%9A%E4%B9%89"><span class="toc-text">2.3.3. 获取导入资源并加载Bean定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96ImportBeanDefinitionRegistrar%E5%B9%B6%E5%8A%A0%E8%BD%BDBean%E5%AE%9A%E4%B9%89"><span class="toc-text">2.3.4. 获取ImportBeanDefinitionRegistrar并加载Bean定义</span></a></li></ol></li></ol></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">@Configuration及其周边注解是如何生效的？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/SpringFramework">SpringFramework</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-08-27 16:12，
+		<span class="post-count">字数：1.3k，预计阅读：4分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="背景">1. 背景</h2><h3 id="如何将一个Bean注册到IoC容器中？">1.1. 如何将一个Bean注册到IoC容器中？</h3><p>如何将一个Bean注册到IoC容器中？</p>
+<ul>
+<li>在Spring2.5之前的版本，可以通过XML配置的方式，也就是通过<code>bean</code>标签来配置Bean；</li>
+<li>在Spring2.5及之后的版本，可以通过注解扫描的方式，也就是在类上标注<code>@Component</code>或其派生注解；</li>
+<li>在Spring3.0及之后的版本，可以通过配置类的方式，也就是在类上标注<code>@Configuration</code>注解。</li>
+</ul>
+<p>使用配置类注册Bean有以下几种方式：</p>
+<ol>
+<li>通过在配置类上标注<code>@ComponentScan</code>注解使用组件扫描的方式；</li>
+<li>通过在配置类上标注<code>@Import</code>注解导入配置类，导入<code>ImportSelector</code>或导入<code>ImportBeanDefinitionRegistrar</code>的方式；</li>
+<li>通过在配置类上标注<code>@ImportResource</code>注解导入资源的方式；</li>
+<li>通过在配置类的方法上标注<code>@Bean</code>注解声明Bean的方式。</li>
+</ol>
+<h3 id="为什么要有配置类？">1.2. 为什么要有配置类？</h3><p>从基于XML的配置过渡到基于Java代码的配置，提供更好的可读性和灵活性。</p>
+<h3 id="如何描述一个配置类？">1.3. 如何描述一个配置类？</h3><p>描述一个配置类也就是描述配置类携带的信息，配置类包含以下信息：</p>
+<ul>
+<li>配置类所标注的注解；</li>
+<li>配置类的Bean名称；</li>
+<li>配置类是否是被其他配置类导入的；</li>
+<li>配置类声明的Bean方法；</li>
+<li>配置类声明的导入资源；</li>
+<li>配置类声明的<code>ImportBeanDefinitionRegistrar</code>。</li>
+</ul>
+<p>Spring通过<code>ConfigurationClass</code>类来描述配置类。<code>ConfigurationClass</code>的类图如下：</p>
+<a href="\assert\puml\4abcfec58fe956ca3fafc4bbe2dc579383f1de6f219322de4188c1558bd50932.svg" class="gallery-item"><img src="\assert\puml\4abcfec58fe956ca3fafc4bbe2dc579383f1de6f219322de4188c1558bd50932.svg"></a>
+
+<h2 id="配置类是如何工作的？">2. 配置类是如何工作的？</h2><p>配置类本质上也是一个Bean，不过通过注解提供了额外的配置信息。为了实现配置类的相关功能，Spring实现了<code>ConfigurationClassPostProcessor</code>后置处理器，其是<code>BeanDefinitionRegistryPostProcessor</code>接口的实现类，在Spring应用上下文刷新时会进行回调。配置类后置处理器的处理流程如下：</p>
+<ol>
+<li>获取候选的配置类列表；</li>
+<li>依次解析每个配置类；</li>
+<li>依次从每个配置类中加载Bean定义。</li>
+</ol>
+<a href="\assert\puml\b1d1635e593465f6edb6dff84edece756ad5661e53773d1b91d3e93dc3a18f88.svg" class="gallery-item"><img src="\assert\puml\b1d1635e593465f6edb6dff84edece756ad5661e53773d1b91d3e93dc3a18f88.svg"></a>
+
+<h3 id="获取候选的配置类列表">2.1. 获取候选的配置类列表</h3><p>判断当前Bean定义是否是配置类，如果是配置类则加入候选的配置类列表。Bean定义满足以下条件之一便是配置类：</p>
+<ol>
+<li>Bean定义对应的类标注了<code>@Configuration</code>注解；</li>
+<li>Bean定义对应的类标注了<code>@Component</code>，或<code>@ComponentScan</code>，或<code>@Import</code>，或<code>@ImportResource</code>注解；</li>
+<li>Bean定义对应的类的某些方法标注了<code>@Bean</code>注解；</li>
+<li>Bean定义的<code>org.springframework.context.annotation.ConfigurationClassPostProcessor.candidate</code>属性的属性值是<code>true</code>，即显式注册的Bean。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>ConfigurationClassUtils#checkConfigurationClassCandidate</code></p>
+</blockquote>
+<h3 id="依次解析每个配置类">2.2. 依次解析每个配置类</h3><h4 id="评估条件">2.2.1. 评估条件</h4><p>根据当前配置类所标注的注解信息和条件评估器<code>ConditionEvaluator</code>来决定是否跳过该配置类的解析。</p>
+<blockquote>
+<p>对应源码所在位置：<code>ConditionEvaluator#shouldSkip</code></p>
+</blockquote>
+<h4 id="处理内部类">2.2.2. 处理内部类</h4><p>如果当前配置类中声明的内部类也是配置类，则对内部类进行配置类的解析。</p>
+<blockquote>
+<p>对应源码所在位置：<code>ConfigurationClassParser#processMemberClasses</code></p>
+</blockquote>
+<h4 id="处理-PropertySource注解">2.2.3. 处理@PropertySource注解</h4><p>如果当前配置类标注了<code>@PropertySouce</code>注解，则为Spring应用上下文中的环境添加配置源。</p>
+<blockquote>
+<p>对应源码所在位置：<code>PropertySourceRegistry#processPropertySource</code></p>
+</blockquote>
+<h4 id="处理-ComponentScan注解">2.2.4. 处理@ComponentScan注解</h4><p>如果当前配置类标注了<code>@ComponentScan</code>注解，则对指定的包名进行组件扫描。如果扫描到的组件是配置类，则进行配置类的解析。</p>
+<blockquote>
+<p>对应源码所在位置：<code>ComponentScanAnnotationParser#parse</code></p>
+</blockquote>
+<h4 id="处理-Import注解">2.2.5. 处理@Import注解</h4><p>如果当前配置类标注了<code>@Import</code>注解，有以下三种情况：</p>
+<ol>
+<li>当导入的是<code>ImportSelector</code>时，则获取要导入的类名，进行递归导入处理；</li>
+<li>当导入的是<code>ImportBeanDefinitionRegistrar</code>时，则由<code>ConfigurationClass</code>收集，供后续Bean定义的加载；</li>
+<li>当导入的是其他类时，则当作配置类进行处理，进行配置类的解析。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>ConfigurationClassParser#processImports</code></p>
+</blockquote>
+<h4 id="处理-ImportResource注解">2.2.6. 处理@ImportResource注解</h4><p>如果当前配置类标注了<code>@ImportResource</code>注解，则由<code>ConfigurationClass</code>收集，供后续Bean定义的加载。</p>
+<blockquote>
+<p>对应源码所在位置：<code>ConfigurationClass#addImportedResource</code></p>
+</blockquote>
+<h4 id="处理-Bean注解">2.2.7. 处理@Bean注解</h4><p>如果当前配置类的某些方法标注了<code>@Bean</code>注解，则由<code>ConfigurationClass</code>收集，供后续Bean定义的加载。</p>
+<blockquote>
+<p>对应源码所在位置：<code>ConfigurationClassParser#retrieveBeanMethodMetadata</code></p>
+</blockquote>
+<h3 id="依次从每个配置类中加载Bean定义">2.3. 依次从每个配置类中加载Bean定义</h3><h4 id="注册被-Import导入的配置类">2.3.1. 注册被@Import导入的配置类</h4><p>如果当前配置类是被其他配置类导入的，则进行Bean定义的注册。</p>
+<blockquote>
+<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#registerBeanDefinitionForImportedConfigurationClass</code></p>
+</blockquote>
+<h4 id="获取Bean方法并加载Bean定义">2.3.2. 获取Bean方法并加载Bean定义</h4><p>从配置类<code>ConfigurationClass</code>中获取Bean方法，并进行Bean定义的加载。</p>
+<blockquote>
+<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsForBeanMethod</code></p>
+</blockquote>
+<h4 id="获取导入资源并加载Bean定义">2.3.3. 获取导入资源并加载Bean定义</h4><p>从配置类<code>ConfigurationClass</code>中获取导入资源，并进行Bean定义的加载。</p>
+<blockquote>
+<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsFromImportedResources</code></p>
+</blockquote>
+<h4 id="获取ImportBeanDefinitionRegistrar并加载Bean定义">2.3.4. 获取ImportBeanDefinitionRegistrar并加载Bean定义</h4><p>从配置类<code>ConfigurationClass</code>中获取<code>ImportBeanDefinitionRegistrar</code>，并进行Bean定义的加载。</p>
+<blockquote>
+<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsFromRegistrars</code></p>
+</blockquote>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">ThemeInsnow</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
+  | <img src="http://www.beian.gov.cn/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  </div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+
+</html>
