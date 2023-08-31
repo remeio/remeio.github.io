@@ -106,13 +106,123 @@
         lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
         }</script>
 </div>
+  <h3>活动图</h3>
+  
+<div id="calendar_box" style="width:100%;overflow-x:auto;overflow-y:hidden;">
+<div id="calendar" style="width: 600px;height:185px;"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
+<script type="text/javascript">
+  (function(){
+    function dateFormat(date){
+      date = new Date(date)
+      return date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0')
+    }
+    let calendarChart = echarts.init(document.getElementById('calendar'));
+    let endDate = new Date().getTime()
+    let startDate = new Date(endDate - 40*7*24*3600*1000).getTime()
+    let startDay = Math.ceil(startDate/(24*3600*1000))
+    let endDay = Math.ceil(endDate/(24*3600*1000))
+
+    let commitData = {"2023-08-31":1,"2023-08-30":2,"2023-08-29":3,"2023-08-27":1,"2023-08-13":2,"2023-08-09":1,"2023-08-07":1,"2023-08-06":1,"2023-08-05":2,"2023-07-31":2,"2023-07-30":2,"2023-07-29":1,"2023-07-26":1,"2023-07-24":1,"2023-07-23":1,"2023-07-17":3,"2023-07-16":5,"2023-07-10":1,"2023-07-09":1,"2023-07-07":1,"2023-07-06":2,"2023-07-05":4,"2023-07-04":1,"2023-07-03":11}
+    let seriesData = []
+
+    for(let i = startDay;i <= endDay;i++){
+      let date = i*24*3600*1000
+      let formatDate = dateFormat(date)
+      let times = commitData[formatDate] || 0
+      seriesData.push([formatDate, times])
+    }
+    let option = {
+      title: {
+        text: "",
+        x: "center"
+      },
+      backgroundColor: "#FFFFFF",
+      tooltip: {
+        padding: 10,
+        backgroundColor: "#555",
+        borderColor: "#777",
+        borderWidth: 1,
+        formatter: function(a) {
+          var b = a.value;
+          return '<div style="font-size: 14px;">' + b[0] + "：" + b[1] + "</div>"
+        }
+      },
+      visualMap: {
+        show: !1,
+        showLabel: !0,
+        min: 0,
+        max: 4,
+        calculable: !1,
+        inRange: {
+          symbol: "rect",
+          color: ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"]
+        },
+        itemWidth: 12,
+        itemHeight: 12,
+        orient: "horizontal",
+        left: "center",
+        top: 0
+      },
+      calendar: [{
+        top: 50,
+        left: "center",
+        range: [dateFormat(startDate), dateFormat(endDate)],
+        cellSize: [13, 13],
+        splitLine: {
+          show: !1
+        },
+        name: {
+          textStyle: {
+            color: "#3C4858"
+          }
+        },
+        itemStyle: {
+          borderColor: "#fff",
+          borderWidth: 2
+        },
+        yearLabel: {
+          show: !1
+        },
+        monthLabel: {
+          nameMap: "cn",
+          fontSize: 11,
+          color: "#3C4858"
+        },
+        dayLabel: {
+          formatter: "{start} 1st",
+          nameMap: "cn",
+          fontSize: 11,
+          color: "#3C4858"
+        }
+      }],
+      series: [{
+        type: "heatmap",
+        coordinateSystem: "calendar",
+        calendarIndex: 0,
+        data: seriesData
+      }]
+    };
+
+    calendarChart.setOption(option);
+
+    let box = document.getElementById("calendar_box")
+    let child = document.getElementById("calendar")
+    window.addEventListener('load',function(){
+        box.scrollLeft = (child.clientWidth - box.clientWidth) / 2
+    })
+
+  })();
+</script>
+
 </main>
     <footer>
   <div class="footer-info">
   <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
   | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
   | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
-  | <img src="http://www.beian.gov.cn/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  | <img src="/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>

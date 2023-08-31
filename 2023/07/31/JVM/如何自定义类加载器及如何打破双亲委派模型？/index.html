@@ -99,7 +99,7 @@
     <div class="toc-toggle">
       <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
     </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-text">1. 类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="toc-text">1.1. 什么是类加载机制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E6%AD%A5%E9%AA%A4%EF%BC%9F"><span class="toc-text">1.2. 类加载有哪些步骤？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%97%B6%E6%9C%BA%EF%BC%9F"><span class="toc-text">1.3. 类加载的时机？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">2. 类加载器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">2.1. 有哪些类加载器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">2.2. 如何自定义类加载器？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="toc-text">3. 双亲委派模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.1. 什么是双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E7%A0%B4%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.2. 如何打破双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SPI%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="toc-text">3.3. SPI机制详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">4. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E9%AA%8C%E8%AF%81%E9%98%B6%E6%AE%B5%E9%AA%8C%E8%AF%81%E5%A4%B1%E8%B4%A5%E4%BC%9A%E6%8A%9B%E5%87%BA%E4%BB%80%E4%B9%88%E9%94%99%E8%AF%AF%EF%BC%9F"><span class="toc-text">4.1. 在类加载的验证阶段验证失败会抛出什么错误？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%9B%B6%E5%80%BC%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">4.2. 在类加载的准备阶段不同类型的零值分别是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E9%98%B6%E6%AE%B5%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%B1%E8%B4%A5%E4%BC%9A%E6%8A%9B%E5%87%BA%E4%BB%80%E4%B9%88%E9%94%99%E8%AF%AF%EF%BC%9F"><span class="toc-text">4.3. 在类加载的初始化阶段初始化失败会抛出什么错误？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A2%E7%A9%B6%E4%BD%95%E6%97%B6%E4%BC%9A%E8%A7%A6%E5%8F%91%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%EF%BC%9F"><span class="toc-text">4.4. 探究何时会触发类的加载？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E4%B8%8D%E5%90%8C%E7%9A%84%E7%B1%BB%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">4.5. 加载不同的类使用的是什么类型的类加载器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E4%BB%8E%E5%8E%8B%E7%BC%A9%E5%8C%85%E4%B8%AD%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">4.6. 如何自定义一个从压缩包中加载类的类加载器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A2%E7%A9%B6tomcat%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%93%E7%A0%B4%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%E7%9A%84%EF%BC%9F"><span class="toc-text">4.7. 探究tomcat是如何打破双亲委派模型的？</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-text">1. 类加载机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="toc-text">1.1. 什么是类加载机制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E6%AD%A5%E9%AA%A4%EF%BC%9F"><span class="toc-text">1.2. 类加载有哪些步骤？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%97%B6%E6%9C%BA%EF%BC%9F"><span class="toc-text">1.3. 类加载的时机？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">2. 类加载器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">2.1. 有哪些类加载器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%8A%A0%E8%BD%BD%E7%B1%BB%E7%9A%84%E8%BF%87%E7%A8%8B%EF%BC%9F"><span class="toc-text">2.2. 类加载器加载类的过程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%EF%BC%9F"><span class="toc-text">2.3. 如何自定义类加载器？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="toc-text">3. 双亲委派模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.1. 什么是双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.2. 为什么需要双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E7%A0%B4%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="toc-text">3.3. 如何打破双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SPI%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="toc-text">3.4. SPI机制详解</span></a></li></ol></li></ol>
   </div>
   
   <script>
@@ -126,7 +126,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-07-31 19:35，
-		<span class="post-count">字数：2.2k，预计阅读：10分钟</span>
+		<span class="post-count">字数：2.9k，预计阅读：13分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -137,8 +137,8 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>我们编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时会将<code>class</code>字节码文件加载到内存中，并在内存中生成类的数据结构，这就是类加载（Class Loading）机制。</p>
-<a href="\assert\puml\b10598165249cc53f919bf9b21d7b9a0ef774c2301cccf0e56753ab3d2aabef9.svg" class="gallery-item"><img src="\assert\puml\b10598165249cc53f919bf9b21d7b9a0ef774c2301cccf0e56753ab3d2aabef9.svg"></a>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>我们编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时虚拟机会将<code>class</code>字节码文件加载到内存中，并在内存中生成类对应的数据结构，这就是类加载（Class Loading）机制。</p>
+<a href="\assert\puml\91ed328260be0a043d3e64e3dbcc1166fdb707351512f2ff83de9dfcd1ca91ef.svg" class="gallery-item"><img src="\assert\puml\91ed328260be0a043d3e64e3dbcc1166fdb707351512f2ff83de9dfcd1ca91ef.svg"></a>
 
 <blockquote>
 <p>虚拟机参数：可以通过<code>-verbose:class</code>来查看类加载的过程。</p>
@@ -156,6 +156,102 @@
 </ol>
 <a href="\assert\puml\a08d5cc4aeb3de7e8b1e88dbca8b00352a46b799178b961b6d683739430a627d.svg" class="gallery-item"><img src="\assert\puml\a08d5cc4aeb3de7e8b1e88dbca8b00352a46b799178b961b6d683739430a627d.svg"></a>
 
+<p><strong>在类加载的加载阶段加载不存在的类会抛出什么异常？</strong></p>
+<p>我们编写一个类使用<code>Class#forName</code>去加载一个并不存在的类<code>java.lang.NotExistClass</code>。运行结果如下，从堆栈信息中我们可以看到虚拟机使用了<code>AppClassLoader</code>去加载该类，且在执行<code>URLClassLoader#findClass</code>方法时并未找到该类，故抛出了<code>ClassNotFoundException</code>异常。</p>
+<pre class="line-numbers language-none"><code class="language-none">Exception in thread &quot;main&quot; java.lang.ClassNotFoundException: java.lang.NotExistClass
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:387)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:355)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.remeio.upsnippet.jvm.classloader.LoadNotExistClassTest.main(LoadNotExistClassTest.java:6)</code></pre>
+
+<p><strong>在类加载的验证阶段验证失败会抛出什么错误？</strong></p>
+<p>我们编写一个类并将其编译为<code>class</code>文件，然后在<code>class</code>文件内容起始位置添加<code>ERROR_FILE_CLASS</code>字符串，最后运行程序。运行结果如下，从堆栈信息中我们可以看到虚拟机在执行原生方法<code>ClassLoader#defineClass1</code>时抛出了<code>ClassFormatError</code>错误，原因是<code>class</code>文件头部不是有效的魔数<code>0xCAFEBABE</code>。</p>
+<pre class="line-numbers language-none"><code class="language-none">~\upsnippet\upsnippet-jvm\target\classes&gt;java com.remeio.upsnippet.jvm.classloader.VerifyErrorTest
+Exception in thread &quot;main&quot; java.lang.ClassFormatError: Incompatible magic value 1163022927 in class file com&#x2F;remeio&#x2F;upsnippet&#x2F;jvm&#x2F;classloader&#x2F;VerifyErrorTest
+        at java.lang.ClassLoader.defineClass1(Native Method)
+        at java.lang.ClassLoader.defineClass(Unknown Source)
+        at java.security.SecureClassLoader.defineClass(Unknown Source)
+        at java.net.URLClassLoader.defineClass(Unknown Source)
+        at java.net.URLClassLoader.access$100(Unknown Source)
+        at java.net.URLClassLoader$1.run(Unknown Source)
+        at java.net.URLClassLoader$1.run(Unknown Source)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.net.URLClassLoader.findClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+        at java.lang.ClassLoader.loadClass(Unknown Source)
+        at sun.launcher.LauncherHelper.checkAndLoadMain(Unknown Source)</code></pre>
+
+<p><strong>在类加载的准备阶段不同类型的零值分别是什么？</strong></p>
+<p>我们编写一个类并为其定义不同类型的非<code>final</code>静态字段，然后打印各字段对应的零值。代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class ZeroValueTest &#123;
+    private static boolean booleanZeroValue;
+    private static byte byteZeroValue;
+    private static char charZeroValue;
+    private static short shortZeroValue;
+    private static int intZeroValue;
+    private static long longZeroValue;
+    private static float floatZeroValue;
+    private static double doubleZeroValue;
+    private static Object objectZeroValue;
+    private static int[] arrayZeroValue;
+	
+    static &#123;
+        printZeroValues(
+                &quot;boolean&quot;, &quot;byte&quot;, &quot;char&quot;,
+                &quot;short&quot;, &quot;int&quot;, &quot;long&quot;,
+                &quot;float&quot;, &quot;double&quot;, &quot;object&quot;,
+                &quot;array&quot;);
+    &#125;
+	
+    public static void main(String[] args) &#123;
+        &#x2F;&#x2F; Load this class
+    &#125;
+	
+    private static void printZeroValues(String... names) &#123;
+        try &#123;
+            for (String name : names) &#123;
+                System.out.println(name + &quot;: &quot; + ZeroValueTest.class.getDeclaredField(name + &quot;ZeroValue&quot;).get(ZeroValueTest.class));
+            &#125;
+        &#125; catch (Exception ignore) &#123;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<p>从打印信息中我们可以看到不同类型的静态字段的零值，运行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">boolean: false
+byte: 0
+char:  
+short: 0
+int: 0
+long: 0
+float: 0.0
+double: 0
+object: null
+array: null</code></pre>
+
+<p><strong>在类加载的初始化阶段初始化失败会抛出什么错误？</strong></p>
+<p>我们编写一个类并为其定义一个非<code>final</code>修饰的静态字段，然后为该字段赋值为<code>1 / 0</code>。代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InitializerErrorTest &#123;
+    private static int notFinalStaticField &#x3D; 1 &#x2F; 0;
+
+    static &#123;
+        notFinalStaticField &#x3D; 1 &#x2F; 0;
+    &#125;
+
+    public static void main(String[] args) &#123;
+        &#x2F;&#x2F; Load this class
+    &#125;
+&#125;</code></pre>
+<p>运行结果如下，从堆栈信息中我们可以看到虚拟机在执行<code>InitializerErrorTest#&lt;clinit&gt;</code>方法时抛出了<code>java.lang.ExceptionInInitializerError</code>错误，原因是初始化时抛出了<code>ArithmeticException</code>异常。</p>
+<pre class="line-numbers language-none"><code class="language-none">Exception in thread &quot;main&quot; java.lang.ExceptionInInitializerError
+Caused by: java.lang.ArithmeticException: &#x2F; by zero
+	at com.remeio.upsnippet.jvm.classloader.InitializerErrorTest.&lt;clinit&gt;(InitializerErrorTest.java:4)</code></pre>
+
+<p>我们并未在代码中定义<code>&lt;clinit&gt;</code>方法，为什么在运行程序时会执行该方法？其实该方法是虚拟机根据用户编写的非<code>final</code>修饰的静态字段的赋值代码和类的静态代码块自动生成的，并且在类加载的初始化阶段会执行该方法。</p>
 <h3 id="类加载的时机？">1.3. 类加载的时机？</h3><p>类的加载发生在类的初始化之前。《Java虚拟机规范》规定了当对一个类型进行主动引用时会触发类的初始化，有以下几种情况：</p>
 <ol>
 <li>当执行Java程序的<code>main</code>方法时；</li>
@@ -179,19 +275,165 @@
 <li>当使用数组定义来引用类时；</li>
 <li>当获取被<code>final</code>修饰的类的静态字段时。</li>
 </ol>
+<p><strong>探究类加载的时机？</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InitializerMomentTest &#123;
+
+    public static void main(String[] args) &#123;
+        &#x2F;&#x2F; -verbose:class
+
+        &#x2F;&#x2F; new
+        LoadWhenNew loadWhenNew &#x3D; new LoadWhenNew();
+
+        &#x2F;&#x2F; getstatic
+        int field &#x3D; LoadWhenGetStatic.field;
+
+        &#x2F;&#x2F; putstatic
+        LoadWhenPutStatic.field &#x3D; 0;
+
+        &#x2F;&#x2F; invokestatic
+        LoadWhenInvokeStatic.invoke();
+
+        &#x2F;&#x2F; Class#forName
+        try &#123;
+            Class.forName(&quot;com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenClassForName&quot;);
+        &#125; catch (ClassNotFoundException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+
+    &#125;
+
+    public static class LoadWhenNew extends LoadWhenBeforeChildLoad &#123;
+
+    &#125;
+
+    public static class LoadWhenGetStatic &#123;
+        public static int field &#x3D; 0;
+    &#125;
+
+    public static class LoadWhenPutStatic &#123;
+        public static int field &#x3D; 0;
+    &#125;
+
+    public static class LoadWhenInvokeStatic &#123;
+        public static void invoke() &#123;
+
+        &#125;
+    &#125;
+
+    public static class LoadWhenClassForName &#123;
+
+    &#125;
+
+    public static class LoadWhenBeforeChildLoad &#123;
+
+    &#125;
+
+&#125;</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenBeforeChildLoad from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenNew from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenGetStatic from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenPutStatic from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenInvokeStatic from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenClassForName from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]</code></pre>
+
+
+
+
+
+
+
+
 <h2 id="类加载器">2. 类加载器</h2><h3 id="有哪些类加载器？">2.1. 有哪些类加载器？</h3><ul>
 <li>启动类加载器（Bootstrap Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib</code>下的<code>jar</code>；</li>
 <li>扩展类加载器（Extension Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib/ext</code>下的<code>jar</code>；</li>
 <li>应用类加载器（Application Class Loader），用来加载<code>classpath</code>下的<code>jar</code>；</li>
 <li>自定义类加载器（User Class Loader），自定义加载<code>class</code>二进制字节流。</li>
 </ul>
-<h3 id="如何自定义类加载器？">2.2. 如何自定义类加载器？</h3><p>一般来说自定义类加载器，只需要重写<code>ClassLoader#findClass</code>方法，在此方法中去实现<code>class</code>二进制字节流的获取，并使用<code>ClassLoader#defineClass</code>从<code>class</code>二进制字节流中加载类。</p>
+<p><strong>加载不同的类使用的是什么类型的类加载器？</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import javafx.event.Event;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class DiffClassLoaderTest &#123;
+
+    public static void main(String[] args) &#123;
+        printAllClassLoaders();
+    &#125;
+
+    private static void printAllClassLoaders() &#123;
+        &#x2F;&#x2F; Bootstrap Class Loader
+        printClassLoader(String.class);
+        &#x2F;&#x2F; Extension Class Loader
+        printClassLoader(Event.class);
+        &#x2F;&#x2F; Application Class Loader
+        printClassLoader(DiffClassLoaderTest.class);
+    &#125;
+
+    private static void printClassLoader(Class&lt;?&gt; clazz) &#123;
+        log.info(&quot;The class loader of &#39;&#123;&#125;&#39; is &#39;&#123;&#125;&#39;&quot;, clazz, clazz.getClassLoader());
+    &#125;
+
+&#125;</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;class java.lang.String&#39; is &#39;null&#39;
+The class loader of &#39;class javafx.event.Event&#39; is &#39;sun.misc.Launcher$ExtClassLoader@5010be6&#39;
+The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.DiffClassLoaderTest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;</code></pre>
+
+<h3 id="类加载器加载类的过程？">2.2. 类加载器加载类的过程？</h3><a href="\assert\puml\6a4b0fa382a2e0ef8cc76cf79b7e227d21b1caa2cf32bf44c69bfc582846934b.svg" class="gallery-item"><img src="\assert\puml\6a4b0fa382a2e0ef8cc76cf79b7e227d21b1caa2cf32bf44c69bfc582846934b.svg"></a>
+
+<h3 id="如何自定义类加载器？">2.3. 如何自定义类加载器？</h3><p>一般来说自定义类加载器，只需要重写<code>ClassLoader#findClass</code>方法，在此方法中去实现<code>class</code>二进制字节流的获取，并使用<code>ClassLoader#defineClass</code>从<code>class</code>二进制字节流中加载类。</p>
+<p><strong>如何自定义一个类加载器从指定路径加载类？</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class CustomClassPathClassLoader extends ClassLoader &#123;
+
+    private final String classpath;
+
+    public CustomClassPathClassLoader(String classpath) &#123;
+        this.classpath &#x3D; classpath;
+    &#125;
+
+    @Override
+    protected Class&lt;?&gt; findClass(String className) throws ClassNotFoundException &#123;
+        byte[] classData;
+        try &#123;
+            classData &#x3D; getClassDataFromFile(className);
+        &#125; catch (IOException e) &#123;
+            throw new ClassNotFoundException(&quot;File read fail&quot;, e);
+        &#125;
+        return defineClass(className, classData, 0, classData.length);
+    &#125;
+
+    private byte[] getClassDataFromFile(String className) throws IOException &#123;
+        final String filePath &#x3D; String.format(&quot;%s%s%s.class&quot;, classpath, File.separatorChar, className.replace(&#39;.&#39;, File.separatorChar));
+        int len;
+        try (FileInputStream inputStream &#x3D; new FileInputStream(filePath);
+             ByteArrayOutputStream outputStream &#x3D; new ByteArrayOutputStream()) &#123;
+            while ((len &#x3D; inputStream.read()) !&#x3D; -1) &#123;
+                outputStream.write(len);
+            &#125;
+            return outputStream.toByteArray();
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+
+
 <h2 id="双亲委派模型">3. 双亲委派模型</h2><h3 id="什么是双亲委派模型？">3.1. 什么是双亲委派模型？</h3><p>双亲委派模型（Parents Delegation Model）就是当使用类加载器去加载一个类时，会首先委派给其父类加载器去加载，若父类加载器加载失败，自身才会去尝试加载。</p>
-<h3 id="如何打破双亲委派模型？">3.2. 如何打破双亲委派模型？</h3><ol>
+<h3 id="为什么需要双亲委派模型？">3.2. 为什么需要双亲委派模型？</h3><ol>
+<li>使类的加载具有层次性，避免类的重复加载；</li>
+<li>为了安全性的考虑，避免用户自定义类来覆盖JDK中的类，如自定义java.lang.Object类。</li>
+</ol>
+<h3 id="如何打破双亲委派模型？">3.3. 如何打破双亲委派模型？</h3><ol>
 <li>双亲委派模型的实现逻辑在<code>ClassLoader#loadClass</code>方法中，可以通过自定义类加载器重写该方法打破双亲委派模型；</li>
 <li>使用SPI（Service Provider Interface）机制，使用线程上下文中的类加载器加载类。</li>
 </ol>
-<h3 id="SPI机制详解">3.3. SPI机制详解</h3><p>SPI（Service Provider Interface）是由JDK提供接口，而服务商提供接口实现，根据双亲委派模型，JDK编写的代码加载类使用的是启动类加载器，无法加载到服务商提供的接口实现，而SPI机制在加载服务商提供接口实现类时，使用<code>Thread#getContextClassLoader</code>获取线程上下文中的类加载器加载类，如此以来就打破了双亲委派模型。</p>
+<h3 id="SPI机制详解">3.4. SPI机制详解</h3><p>SPI（Service Provider Interface）是由JDK提供接口，而服务商提供接口实现，根据双亲委派模型，JDK编写的代码加载类使用的是启动类加载器，无法加载到服务商提供的接口实现，而SPI机制在加载服务商提供接口实现类时，使用<code>Thread#getContextClassLoader</code>获取线程上下文中的类加载器加载类，如此以来就打破了双亲委派模型。</p>
+<p><strong>探究SPI机制是如何打破双亲委派模型的？</strong></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
 import lombok.extern.slf4j.Slf4j;
 
@@ -237,126 +479,7 @@ public class SPITest &#123;
 The class loader of &#39;interface java.sql.Connection&#39; is &#39;null&#39;
 The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.SPITest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
 The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
-1 + 2 &#x3D; 3</code></pre>
-
-<h2 id="实战">4. 实战</h2><h3 id="在类加载的验证阶段验证失败会抛出什么错误？">4.1. 在类加载的验证阶段验证失败会抛出什么错误？</h3><p>首先，我们编写一个类编译为<code>class</code>文件，并修改文件内容在文件开头添加<code>ERROR_FILE_CLASS</code>字符串。运行程序后，抛出了<code>java.lang.ClassFormatError</code>类格式错误，错误信息是<code>class</code>文件头部不是有效的魔数<code>0xCAFEBABE</code>，这是众多验证要素之一。</p>
-<pre class="line-numbers language-none"><code class="language-none">&gt; upsnippet\upsnippet-jvm\target\classes&gt;java com.remeio.upsnippet.jvm.classloader.VerifyErrorTest
-Exception in thread &quot;main&quot; java.lang.ClassFormatError: Incompatible magic value 1163022927 in class file com&#x2F;remeio&#x2F;upsnippet&#x2F;jvm&#x2F;classloader&#x2F;VerifyErrorTest
-        at java.lang.ClassLoader.defineClass1(Native Method)
-        at java.lang.ClassLoader.defineClass(Unknown Source)
-        at java.security.SecureClassLoader.defineClass(Unknown Source)
-        at java.net.URLClassLoader.defineClass(Unknown Source)
-        at java.net.URLClassLoader.access$100(Unknown Source)
-        at java.net.URLClassLoader$1.run(Unknown Source)
-        at java.net.URLClassLoader$1.run(Unknown Source)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at java.net.URLClassLoader.findClass(Unknown Source)
-        at java.lang.ClassLoader.loadClass(Unknown Source)
-        at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
-        at java.lang.ClassLoader.loadClass(Unknown Source)
-        at sun.launcher.LauncherHelper.checkAndLoadMain(Unknown Source)</code></pre>
-
-<h3 id="在类加载的准备阶段不同类型的零值分别是什么？">4.2. 在类加载的准备阶段不同类型的零值分别是什么？</h3><p>在类加载的准备阶段会为非<code>final</code>修饰的静态字段分配内存并赋零值，验证程序如下：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class ZeroValueTest &#123;
-    private static boolean booleanZeroValue;
-    private static byte byteZeroValue;
-    private static char charZeroValue;
-    private static short shortZeroValue;
-    private static int intZeroValue;
-    private static long longZeroValue;
-    private static float floatZeroValue;
-    private static long doubleZeroValue;
-    private static Object objectZeroValue;
-    private static int[] arrayZeroValue;
-
-    static &#123;
-        System.out.println(&quot;read zero value on &lt;clinit&gt; method:&quot;);
-        printZeroValues(
-                &quot;boolean&quot;, &quot;byte&quot;, &quot;char&quot;,
-                &quot;short&quot;, &quot;int&quot;, &quot;long&quot;,
-                &quot;float&quot;, &quot;double&quot;, &quot;object&quot;,
-                &quot;array&quot;);
-    &#125;
-
-    public static void main(String[] args) &#123;
-        &#x2F;&#x2F; Load this class
-    &#125;
-
-    private static void printZeroValues(String... names) &#123;
-        try &#123;
-            for (String name : names) &#123;
-                System.out.println(name + &quot;: &quot; + ZeroValueTest.class.getDeclaredField(name + &quot;ZeroValue&quot;).get(ZeroValueTest.class));
-            &#125;
-        &#125; catch (Exception ignore) &#123;
-        &#125;
-    &#125;
-&#125;</code></pre>
-<p>运行结果如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">read zero value on &lt;clinit&gt; method:
-boolean: false
-byte: 0
-char:  
-short: 0
-int: 0
-long: 0
-float: 0.0
-double: 0
-object: null
-array: null</code></pre>
-
-<h3 id="在类加载的初始化阶段初始化失败会抛出什么错误？">4.3. 在类加载的初始化阶段初始化失败会抛出什么错误？</h3><p>类加载的初始化阶段会执行类构造器的<code>&lt;clinit&gt;</code>方法，该方法是虚拟机根据用户的代码自动生成的，由以下两个部分组成：</p>
-<ol>
-<li>类的非<code>final</code>修饰的静态字段的赋值；</li>
-<li>类的静态代码块。</li>
-</ol>
-<p>首先，我们定义一个非<code>final</code>修饰的静态字段，并为其赋值为<code>1 / 0</code>，程序如下：</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InitializerErrorTest &#123;
-    private static int notFinalStaticField &#x3D; 1 &#x2F; 0;
-
-    static &#123;
-        notFinalStaticField &#x3D; 1 &#x2F; 0;
-    &#125;
-
-    public static void main(String[] args) &#123;
-        &#x2F;&#x2F; Load this class
-    &#125;
-&#125;</code></pre>
-<p>运行程序后，抛出了<code>java.lang.ExceptionInInitializerError</code>初始化异常错误，且从堆栈信息中我们可以看到抛出异常的方法是<code>&lt;clinit&gt;</code>方法，这也证明了类的非<code>final</code>修饰的静态字段的赋值发生在类加载的初始化阶段（静态代码块同理），也就是<code>&lt;clinit&gt;</code>方法。运行结果如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">Exception in thread &quot;main&quot; java.lang.ExceptionInInitializerError
-Caused by: java.lang.ArithmeticException: &#x2F; by zero
-	at com.remeio.upsnippet.jvm.classloader.InitializerErrorTest.&lt;clinit&gt;(InitializerErrorTest.java:4)</code></pre>
-
-<h3 id="探究何时会触发类的加载？">4.4. 探究何时会触发类的加载？</h3><h3 id="加载不同的类使用的是什么类型的类加载器？">4.5. 加载不同的类使用的是什么类型的类加载器？</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java">
-import javafx.event.Event;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
-public class DiffClassLoaderTest &#123;
-
-    public static void main(String[] args) &#123;
-        printAllClassLoaders();
-    &#125;
-
-    private static void printAllClassLoaders() &#123;
-        &#x2F;&#x2F; Bootstrap Class Loader
-        printClassLoader(String.class);
-        &#x2F;&#x2F; Extension Class Loader
-        printClassLoader(Event.class);
-        &#x2F;&#x2F; Application Class Loader
-        printClassLoader(DiffClassLoaderTest.class);
-    &#125;
-
-    private static void printClassLoader(Class&lt;?&gt; clazz) &#123;
-        log.info(&quot;The class loader of &#39;&#123;&#125;&#39; is &#39;&#123;&#125;&#39;&quot;, clazz, clazz.getClassLoader());
-    &#125;
-
-&#125;</code></pre>
-<pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;class java.lang.String&#39; is &#39;null&#39;
-The class loader of &#39;class javafx.event.Event&#39; is &#39;sun.misc.Launcher$ExtClassLoader@5010be6&#39;
-The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.DiffClassLoaderTest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;</code></pre>
-
-
-<h3 id="如何自定义一个从压缩包中加载类的类加载器？">4.6. 如何自定义一个从压缩包中加载类的类加载器？</h3><h3 id="探究tomcat是如何打破双亲委派模型的？">4.7. 探究tomcat是如何打破双亲委派模型的？</h3></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+1 + 2 &#x3D; 3</code></pre></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };
@@ -369,7 +492,7 @@ The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.DiffClassLoa
   <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
   | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
   | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
-  | <img src="http://www.beian.gov.cn/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  | <img src="/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
