@@ -126,7 +126,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-07-31 19:35，
-		<span class="post-count">字数：2.9k，预计阅读：13分钟</span>
+		<span class="post-count">字数：3.7k，预计阅读：17分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -137,7 +137,7 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>我们编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时虚拟机会将<code>class</code>字节码文件加载到内存中，并在内存中生成类对应的数据结构，这就是类加载（Class Loading）机制。</p>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时虚拟机会将<code>class</code>字节码文件加载到内存中，并在内存中生成类对应的数据结构，这就是类加载（Class Loading）机制。</p>
 <a href="\assert\puml\91ed328260be0a043d3e64e3dbcc1166fdb707351512f2ff83de9dfcd1ca91ef.svg" class="gallery-item"><img src="\assert\puml\91ed328260be0a043d3e64e3dbcc1166fdb707351512f2ff83de9dfcd1ca91ef.svg"></a>
 
 <blockquote>
@@ -157,7 +157,7 @@
 <a href="\assert\puml\a08d5cc4aeb3de7e8b1e88dbca8b00352a46b799178b961b6d683739430a627d.svg" class="gallery-item"><img src="\assert\puml\a08d5cc4aeb3de7e8b1e88dbca8b00352a46b799178b961b6d683739430a627d.svg"></a>
 
 <p><strong>在类加载的加载阶段加载不存在的类会抛出什么异常？</strong></p>
-<p>我们编写一个类使用<code>Class#forName</code>去加载一个并不存在的类<code>java.lang.NotExistClass</code>。运行结果如下，从堆栈信息中我们可以看到虚拟机使用了<code>AppClassLoader</code>去加载该类，且在执行<code>URLClassLoader#findClass</code>方法时并未找到该类，故抛出了<code>ClassNotFoundException</code>异常。</p>
+<p>编写一个类使用<code>Class#forName</code>去加载一个并不存在的类<code>java.lang.NotExistClass</code>。运行结果如下，从堆栈信息中可以看到虚拟机使用了<code>AppClassLoader</code>去加载该类，且在执行<code>URLClassLoader#findClass</code>方法时并未找到该类，故抛出了<code>ClassNotFoundException</code>异常。</p>
 <pre class="line-numbers language-none"><code class="language-none">Exception in thread &quot;main&quot; java.lang.ClassNotFoundException: java.lang.NotExistClass
 	at java.net.URLClassLoader.findClass(URLClassLoader.java:387)
 	at java.lang.ClassLoader.loadClass(ClassLoader.java:418)
@@ -168,7 +168,7 @@
 	at com.remeio.upsnippet.jvm.classloader.LoadNotExistClassTest.main(LoadNotExistClassTest.java:6)</code></pre>
 
 <p><strong>在类加载的验证阶段验证失败会抛出什么错误？</strong></p>
-<p>我们编写一个类并将其编译为<code>class</code>文件，然后在<code>class</code>文件内容起始位置添加<code>ERROR_FILE_CLASS</code>字符串，最后运行程序。运行结果如下，从堆栈信息中我们可以看到虚拟机在执行原生方法<code>ClassLoader#defineClass1</code>时抛出了<code>ClassFormatError</code>错误，原因是<code>class</code>文件头部不是有效的魔数<code>0xCAFEBABE</code>。</p>
+<p>编写一个类并将其编译为<code>class</code>文件，然后在<code>class</code>文件内容起始位置添加<code>ERROR_FILE_CLASS</code>字符串，最后运行程序。运行结果如下，从堆栈信息中可以看到虚拟机在执行原生方法<code>ClassLoader#defineClass1</code>时抛出了<code>ClassFormatError</code>错误，原因是<code>class</code>文件头部不是有效的魔数<code>0xCAFEBABE</code>。</p>
 <pre class="line-numbers language-none"><code class="language-none">~\upsnippet\upsnippet-jvm\target\classes&gt;java com.remeio.upsnippet.jvm.classloader.VerifyErrorTest
 Exception in thread &quot;main&quot; java.lang.ClassFormatError: Incompatible magic value 1163022927 in class file com&#x2F;remeio&#x2F;upsnippet&#x2F;jvm&#x2F;classloader&#x2F;VerifyErrorTest
         at java.lang.ClassLoader.defineClass1(Native Method)
@@ -185,8 +185,8 @@ Exception in thread &quot;main&quot; java.lang.ClassFormatError: Incompatible ma
         at java.lang.ClassLoader.loadClass(Unknown Source)
         at sun.launcher.LauncherHelper.checkAndLoadMain(Unknown Source)</code></pre>
 
-<p><strong>在类加载的准备阶段不同类型的零值分别是什么？</strong></p>
-<p>我们编写一个类并为其定义不同类型的非<code>final</code>静态字段，然后打印各字段对应的零值。代码如下：</p>
+<p><strong>在类加载的准备阶段不同类型的静态字段的零值分别是什么？</strong></p>
+<p>编写一个类并为其定义不同类型的非<code>final</code>静态字段，然后打印各字段对应的零值。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public class ZeroValueTest &#123;
     private static boolean booleanZeroValue;
     private static byte byteZeroValue;
@@ -221,7 +221,7 @@ Exception in thread &quot;main&quot; java.lang.ClassFormatError: Incompatible ma
     &#125;
 &#125;</code></pre>
 
-<p>从打印信息中我们可以看到不同类型的静态字段的零值，运行结果如下：</p>
+<p>从打印信息中可以看到不同类型的静态字段的零值，运行结果如下：</p>
 <pre class="line-numbers language-none"><code class="language-none">boolean: false
 byte: 0
 char:  
@@ -234,7 +234,7 @@ object: null
 array: null</code></pre>
 
 <p><strong>在类加载的初始化阶段初始化失败会抛出什么错误？</strong></p>
-<p>我们编写一个类并为其定义一个非<code>final</code>修饰的静态字段，然后为该字段赋值为<code>1 / 0</code>。代码如下：</p>
+<p>编写一个类并为其定义一个非<code>final</code>修饰的静态字段，然后为该字段赋值为<code>1 / 0</code>。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InitializerErrorTest &#123;
     private static int notFinalStaticField &#x3D; 1 &#x2F; 0;
 
@@ -246,12 +246,12 @@ array: null</code></pre>
         &#x2F;&#x2F; Load this class
     &#125;
 &#125;</code></pre>
-<p>运行结果如下，从堆栈信息中我们可以看到虚拟机在执行<code>InitializerErrorTest#&lt;clinit&gt;</code>方法时抛出了<code>java.lang.ExceptionInInitializerError</code>错误，原因是初始化时抛出了<code>ArithmeticException</code>异常。</p>
+<p>运行结果如下，从堆栈信息中可以看到虚拟机在执行<code>InitializerErrorTest#&lt;clinit&gt;</code>方法时抛出了<code>java.lang.ExceptionInInitializerError</code>错误，原因是初始化时抛出了<code>ArithmeticException</code>异常。</p>
 <pre class="line-numbers language-none"><code class="language-none">Exception in thread &quot;main&quot; java.lang.ExceptionInInitializerError
 Caused by: java.lang.ArithmeticException: &#x2F; by zero
 	at com.remeio.upsnippet.jvm.classloader.InitializerErrorTest.&lt;clinit&gt;(InitializerErrorTest.java:4)</code></pre>
 
-<p>我们并未在代码中定义<code>&lt;clinit&gt;</code>方法，为什么在运行程序时会执行该方法？其实该方法是虚拟机根据用户编写的非<code>final</code>修饰的静态字段的赋值代码和类的静态代码块自动生成的，并且在类加载的初始化阶段会执行该方法。</p>
+<p>在以上代码中并未定义<code>&lt;clinit&gt;</code>方法，为什么在运行程序时会执行该方法？其实该方法是虚拟机根据用户编写的非<code>final</code>修饰的静态字段的赋值代码和类的静态代码块自动生成的，并且在类加载的初始化阶段会执行该方法。</p>
 <h3 id="类加载的时机？">1.3. 类加载的时机？</h3><p>类的加载发生在类的初始化之前。《Java虚拟机规范》规定了当对一个类型进行主动引用时会触发类的初始化，有以下几种情况：</p>
 <ol>
 <li>当执行Java程序的<code>main</code>方法时；</li>
@@ -276,6 +276,7 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 <li>当获取被<code>final</code>修饰的类的静态字段时。</li>
 </ol>
 <p><strong>探究类加载的时机？</strong></p>
+<p>编写一个类并定义一些内部类，并通过不同的方式来触发内部类的初始化。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InitializerMomentTest &#123;
 
     public static void main(String[] args) &#123;
@@ -329,19 +330,24 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
     &#125;
 
 &#125;</code></pre>
-<pre class="line-numbers language-none"><code class="language-none">[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenBeforeChildLoad from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+
+<p>运行结果如下：</p>
+<ul>
+<li>通过执行程序的<code>main</code>方法触发<code>InitializerMomentTest</code>类的初始化；</li>
+<li>通过实例化类来触发<code>LoadWhenNew</code>类的初始化；</li>
+<li>由于要父类要先于子类初始化，所以要先初始化<code>LoadWhenBeforeChildLoad</code>类；</li>
+<li>通过获取类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenGetStatic</code>类的初始化；</li>
+<li>通过设置类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenPutStatic</code>类的初始化；</li>
+<li>通过访问类的静态方法来触发<code>LoadWhenInvokeStatic</code>类的初始化；</li>
+<li>通过反射的方式触发<code>LoadWhenClassForName</code>类的初始化。</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenBeforeChildLoad from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
 [Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenNew from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
 [Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenGetStatic from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
 [Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenPutStatic from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
 [Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenInvokeStatic from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
 [Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenClassForName from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]</code></pre>
-
-
-
-
-
-
-
 
 <h2 id="类加载器">2. 类加载器</h2><h3 id="有哪些类加载器？">2.1. 有哪些类加载器？</h3><ul>
 <li>启动类加载器（Bootstrap Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib</code>下的<code>jar</code>；</li>
@@ -350,6 +356,7 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 <li>自定义类加载器（User Class Loader），自定义加载<code>class</code>二进制字节流。</li>
 </ul>
 <p><strong>加载不同的类使用的是什么类型的类加载器？</strong></p>
+<p>编写一段代码去加载<code>java.lang.String</code>，<code>javafx.event.Event</code>和<code>DiffClassLoaderTest</code>类，并打印各类型对应的类加载器。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
 import javafx.event.Event;
 import lombok.extern.slf4j.Slf4j;
@@ -375,14 +382,25 @@ public class DiffClassLoaderTest &#123;
     &#125;
 
 &#125;</code></pre>
-<pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;class java.lang.String&#39; is &#39;null&#39;
+
+<p>运行结果如下，可以看到：</p>
+<ul>
+<li>加载<code>java.lang.String</code>（类所在路径为<code>jre\lib\rt.jar</code>）的类加载器为<code>null</code>，其实是启动类加载器；</li>
+<li>加载<code>javafx.event.Event</code>（类所在路径为<code>jre/lib/ext/jfxrt.jar</code>）的类加载器是扩展类加载器；</li>
+<li>加载<code>DiffClassLoaderTest</code>（类所在路径为<code>classpath</code>）的类加载器是应用类加载器。</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">[Loaded java.lang.String from D:\program\java\jdk1.8\jre\lib\rt.jar]
+[Loaded javafx.event.Event from file:&#x2F;D:&#x2F;program&#x2F;java&#x2F;jdk1.8&#x2F;jre&#x2F;lib&#x2F;ext&#x2F;jfxrt.jar]
+[Loaded com.remeio.upsnippet.jvm.classloader.DiffClassLoaderTest from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+The class loader of &#39;class java.lang.String&#39; is &#39;null&#39;
 The class loader of &#39;class javafx.event.Event&#39; is &#39;sun.misc.Launcher$ExtClassLoader@5010be6&#39;
 The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.DiffClassLoaderTest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;</code></pre>
 
 <h3 id="类加载器加载类的过程？">2.2. 类加载器加载类的过程？</h3><a href="\assert\puml\6a4b0fa382a2e0ef8cc76cf79b7e227d21b1caa2cf32bf44c69bfc582846934b.svg" class="gallery-item"><img src="\assert\puml\6a4b0fa382a2e0ef8cc76cf79b7e227d21b1caa2cf32bf44c69bfc582846934b.svg"></a>
 
-<h3 id="如何自定义类加载器？">2.3. 如何自定义类加载器？</h3><p>一般来说自定义类加载器，只需要重写<code>ClassLoader#findClass</code>方法，在此方法中去实现<code>class</code>二进制字节流的获取，并使用<code>ClassLoader#defineClass</code>从<code>class</code>二进制字节流中加载类。</p>
-<p><strong>如何自定义一个类加载器从指定路径加载类？</strong></p>
+<h3 id="如何自定义类加载器？">2.3. 如何自定义类加载器？</h3><p>一般来说自定义类加载器，只需要重写<code>ClassLoader#findClass</code>方法，在此方法中去实现<code>class</code>二进制字节流的获取，并使用<code>ClassLoader#defineClass</code>从<code>class</code>二进制字节流中创建<code>Class</code>对象。</p>
+<p><strong>如何实现一个从指定路径加载类的类加载器？</strong></p>
+<p>除了加载<code>JAVA_HOME</code>和<code>classpath</code>下的类，如果我们还需要从别的路径加载类便需要自定义类加载器。我们定义一个自定义类加载器<code>CustomClassPathClassLoader</code>，继承<code>ClassLoader</code>类并重写<code>ClassLoader#findClass</code>方法，让其从指定路径的文件中去获取<code>class</code>二进制字节流，然后使用<code>ClassLoader#defineClass</code>来创建<code>Class</code>对象。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -420,20 +438,32 @@ public class CustomClassPathClassLoader extends ClassLoader &#123;
         &#125;
     &#125;
 &#125;
-</code></pre>
+public class CustomClassLoaderTest &#123;
+
+    public static void main(String[] args) throws Exception &#123;
+        final String customClassPath &#x3D; &quot;E:\\project\\remeio\\upsnippet\\upsnippet-jvm\\src\\main\\java\\&quot;;
+        ClassLoader customClassPathClassLoader &#x3D; new CustomClassPathClassLoader(customClassPath);
+        Class&lt;?&gt; clazz &#x3D; customClassPathClassLoader.loadClass(&quot;com.remeio.upsnippet.jvm.classloader.lib.Test&quot;);
+        System.out.println(&quot;Class loader of &#39;&quot; + clazz + &quot;&#39;: &quot; + clazz.getClassLoader());
+    &#125;
+&#125;</code></pre>
+
+<p>运行结果如下，可以看到<code>Test</code>类是由自定义类加载器加载的。</p>
+<pre class="line-numbers language-none"><code class="language-none">Class loader of &#39;class com.remeio.upsnippet.jvm.classloader.lib.Test&#39;: com.remeio.upsnippet.jvm.classloader.CustomClassPathClassLoader@279f2327</code></pre>
 
 
 <h2 id="双亲委派模型">3. 双亲委派模型</h2><h3 id="什么是双亲委派模型？">3.1. 什么是双亲委派模型？</h3><p>双亲委派模型（Parents Delegation Model）就是当使用类加载器去加载一个类时，会首先委派给其父类加载器去加载，若父类加载器加载失败，自身才会去尝试加载。</p>
 <h3 id="为什么需要双亲委派模型？">3.2. 为什么需要双亲委派模型？</h3><ol>
 <li>使类的加载具有层次性，避免类的重复加载；</li>
-<li>为了安全性的考虑，避免用户自定义类来覆盖JDK中的类，如自定义java.lang.Object类。</li>
+<li>为了安全性的考虑，避免用户自定义类来覆盖JDK中的类，如自定义<code>java.lang.Object</code>类。</li>
 </ol>
 <h3 id="如何打破双亲委派模型？">3.3. 如何打破双亲委派模型？</h3><ol>
 <li>双亲委派模型的实现逻辑在<code>ClassLoader#loadClass</code>方法中，可以通过自定义类加载器重写该方法打破双亲委派模型；</li>
 <li>使用SPI（Service Provider Interface）机制，使用线程上下文中的类加载器加载类。</li>
 </ol>
-<h3 id="SPI机制详解">3.4. SPI机制详解</h3><p>SPI（Service Provider Interface）是由JDK提供接口，而服务商提供接口实现，根据双亲委派模型，JDK编写的代码加载类使用的是启动类加载器，无法加载到服务商提供的接口实现，而SPI机制在加载服务商提供接口实现类时，使用<code>Thread#getContextClassLoader</code>获取线程上下文中的类加载器加载类，如此以来就打破了双亲委派模型。</p>
+<h3 id="SPI机制详解">3.4. SPI机制详解</h3><p>SPI（Service Provider Interface）机制是由JDK定义服务接口，由服务商来实现服务，以满足不同服务商的需求。根据双亲委派模型，JDK源码加载类使用的是启动类加载器，无法加载<code>classpath</code>下的服务商提供的服务，而SPI机制则使用了线程上下文中的类加载器即应用类加载器去加载服务商提供的服务，如此以来便打破了双亲委派模型。</p>
 <p><strong>探究SPI机制是如何打破双亲委派模型的？</strong></p>
+<p>编写使用<code>MySQL</code>驱动去连接数据库的代码，并打印当前线程上下文中的类加载器，加载<code>java.sql.Connection</code>的类加载器以及加载<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
 import lombok.extern.slf4j.Slf4j;
 
@@ -475,11 +505,23 @@ public class SPITest &#123;
 
 &#125;
 </code></pre>
+
+<p>运行结果如下，可以看到当前线程上下文中的类加载器为应用类加载器，加载<code>java.sql.Connection</code>的类加载器为启动类加载器，加载<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器同当前线程上下文中的类加载器一致，都是应用类加载器。</p>
 <pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;Thread[main,5,main]&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
 The class loader of &#39;interface java.sql.Connection&#39; is &#39;null&#39;
 The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.SPITest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
 The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
-1 + 2 &#x3D; 3</code></pre></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+1 + 2 &#x3D; 3</code></pre>
+
+<p>从源码上讲，<code>java.sql.DriverManager</code>类在初始化时会调用<code>DriverManager#loadInitialDrivers</code>方法加载所有由服务商提供的<code>java.sql.Driver</code>驱动实现类。具体步骤为，首先会调用<code>ServiceLoader#load</code>方法返回一个<code>ServiceLoader</code>，然后从<code>META-INF/services/</code>下获取由服务商提供的<code>java.sql.Driver</code>驱动实现类的类名，最后通过当前线程上下文中的类加载器即应用类加载器去加载该实现类。</p>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>java.sql.DriverManager#loadInitialDrivers</code></li>
+<li><code>java.util.ServiceLoader.LazyIterator#nextService</code></li>
+</ul>
+</blockquote>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };
