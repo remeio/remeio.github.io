@@ -137,8 +137,8 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时虚拟机会将<code>class</code>字节码文件加载到内存中，并在内存中生成类对应的数据结构，这就是类加载（Class Loading）机制。</p>
-<a href="\assert\puml\91ed328260be0a043d3e64e3dbcc1166fdb707351512f2ff83de9dfcd1ca91ef.svg" class="gallery-item"><img src="\assert\puml\91ed328260be0a043d3e64e3dbcc1166fdb707351512f2ff83de9dfcd1ca91ef.svg"></a>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>我们编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时虚拟机会将<code>class</code>字节码文件加载到内存中，并在内存中生成<code>Class</code>对象，这就是类加载（Class Loading）机制。</p>
+<a href="\assert\puml\4b8b3d16ac36faf0df66cd7769dc438ce0728fc18c03fe0721784609a39ac085.svg" class="gallery-item"><img src="\assert\puml\4b8b3d16ac36faf0df66cd7769dc438ce0728fc18c03fe0721784609a39ac085.svg"></a>
 
 <blockquote>
 <p>虚拟机参数：可以通过<code>-verbose:class</code>来查看类加载的过程。</p>
@@ -335,7 +335,7 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 <ul>
 <li>通过执行程序的<code>main</code>方法触发<code>InitializerMomentTest</code>类的初始化；</li>
 <li>通过实例化类来触发<code>LoadWhenNew</code>类的初始化；</li>
-<li>由于要父类要先于子类初始化，所以要先初始化<code>LoadWhenBeforeChildLoad</code>类；</li>
+<li>由于父类要先于子类初始化，所以要先初始化<code>LoadWhenBeforeChildLoad</code>类；</li>
 <li>通过获取类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenGetStatic</code>类的初始化；</li>
 <li>通过设置类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenPutStatic</code>类的初始化；</li>
 <li>通过访问类的静态方法来触发<code>LoadWhenInvokeStatic</code>类的初始化；</li>
@@ -385,9 +385,9 @@ public class DiffClassLoaderTest &#123;
 
 <p>运行结果如下，可以看到：</p>
 <ul>
-<li>加载<code>java.lang.String</code>（类所在路径为<code>jre\lib\rt.jar</code>）的类加载器为<code>null</code>，其实是启动类加载器；</li>
-<li>加载<code>javafx.event.Event</code>（类所在路径为<code>jre/lib/ext/jfxrt.jar</code>）的类加载器是扩展类加载器；</li>
-<li>加载<code>DiffClassLoaderTest</code>（类所在路径为<code>classpath</code>）的类加载器是应用类加载器。</li>
+<li>加载<code>java.lang.String</code>（类所在路径为<code>jre\lib\rt.jar</code>）的类加载器为启动类加载器（打印出来为<code>null</code>）；</li>
+<li>加载<code>javafx.event.Event</code>（类所在路径为<code>jre/lib/ext/jfxrt.jar</code>）的类加载器为扩展类加载器；</li>
+<li>加载<code>DiffClassLoaderTest</code>（类所在路径为<code>classpath</code>）的类加载器为应用类加载器。</li>
 </ul>
 <pre class="line-numbers language-none"><code class="language-none">[Loaded java.lang.String from D:\program\java\jdk1.8\jre\lib\rt.jar]
 [Loaded javafx.event.Event from file:&#x2F;D:&#x2F;program&#x2F;java&#x2F;jdk1.8&#x2F;jre&#x2F;lib&#x2F;ext&#x2F;jfxrt.jar]
@@ -451,7 +451,6 @@ public class CustomClassLoaderTest &#123;
 <p>运行结果如下，可以看到<code>Test</code>类是由自定义类加载器加载的。</p>
 <pre class="line-numbers language-none"><code class="language-none">Class loader of &#39;class com.remeio.upsnippet.jvm.classloader.lib.Test&#39;: com.remeio.upsnippet.jvm.classloader.CustomClassPathClassLoader@279f2327</code></pre>
 
-
 <h2 id="双亲委派模型">3. 双亲委派模型</h2><h3 id="什么是双亲委派模型？">3.1. 什么是双亲委派模型？</h3><p>双亲委派模型（Parents Delegation Model）就是当使用类加载器去加载一个类时，会首先委派给其父类加载器去加载，若父类加载器加载失败，自身才会去尝试加载。</p>
 <h3 id="为什么需要双亲委派模型？">3.2. 为什么需要双亲委派模型？</h3><ol>
 <li>使类的加载具有层次性，避免类的重复加载；</li>
@@ -461,9 +460,9 @@ public class CustomClassLoaderTest &#123;
 <li>双亲委派模型的实现逻辑在<code>ClassLoader#loadClass</code>方法中，可以通过自定义类加载器重写该方法打破双亲委派模型；</li>
 <li>使用SPI（Service Provider Interface）机制，使用线程上下文中的类加载器加载类。</li>
 </ol>
-<h3 id="SPI机制详解">3.4. SPI机制详解</h3><p>SPI（Service Provider Interface）机制是由JDK定义服务接口，由服务商来实现服务，以满足不同服务商的需求。根据双亲委派模型，JDK源码加载类使用的是启动类加载器，无法加载<code>classpath</code>下的服务商提供的服务，而SPI机制则使用了线程上下文中的类加载器即应用类加载器去加载服务商提供的服务，如此以来便打破了双亲委派模型。</p>
+<h3 id="SPI机制详解">3.4. SPI机制详解</h3><p>SPI（Service Provider Interface）机制是指为满足服务商不同的需求，由JDK源码定义服务接口，服务商提供不同的服务实现。加载JDK源码（这里指<code>rt.jar</code>）使用的是启动类加载器，无法加载<code>classpath</code>下的服务商提供的服务实现，而SPI机制则利用线程上下文中的类加载器即应用类加载器去加载服务商提供的服务实现，如此以来便打破了双亲委派模型。</p>
 <p><strong>探究SPI机制是如何打破双亲委派模型的？</strong></p>
-<p>编写使用<code>MySQL</code>驱动去连接数据库的代码，并打印当前线程上下文中的类加载器，加载<code>java.sql.Connection</code>的类加载器以及加载<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器。代码如下：</p>
+<p>编写使用<code>MySQL</code>驱动去连接数据库的代码，并打印当前线程上下文中的类加载器，加载服务定义<code>java.sql.Connection</code>的类加载器以及加载服务实现<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
 import lombok.extern.slf4j.Slf4j;
 
@@ -506,14 +505,19 @@ public class SPITest &#123;
 &#125;
 </code></pre>
 
-<p>运行结果如下，可以看到当前线程上下文中的类加载器为应用类加载器，加载<code>java.sql.Connection</code>的类加载器为启动类加载器，加载<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器同当前线程上下文中的类加载器一致，都是应用类加载器。</p>
+<p>运行结果如下，可以看到当前线程上下文中的类加载器为应用类加载器，加载服务定义<code>java.sql.Connection</code>的类加载器为启动类加载器，加载服务实现<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器同当前线程上下文中的类加载器一致，都是应用类加载器。</p>
 <pre class="line-numbers language-none"><code class="language-none">The class loader of &#39;Thread[main,5,main]&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
 The class loader of &#39;interface java.sql.Connection&#39; is &#39;null&#39;
 The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.SPITest&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
 The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun.misc.Launcher$AppClassLoader@18b4aac2&#39;
 1 + 2 &#x3D; 3</code></pre>
 
-<p>从源码上讲，<code>java.sql.DriverManager</code>类在初始化时会调用<code>DriverManager#loadInitialDrivers</code>方法加载所有由服务商提供的<code>java.sql.Driver</code>驱动实现类。具体步骤为，首先会调用<code>ServiceLoader#load</code>方法返回一个<code>ServiceLoader</code>，然后从<code>META-INF/services/</code>下获取由服务商提供的<code>java.sql.Driver</code>驱动实现类的类名，最后通过当前线程上下文中的类加载器即应用类加载器去加载该实现类。</p>
+<p>从源码上讲，<code>java.sql.DriverManager</code>类在类加载的初始化阶段会调用<code>DriverManager#loadInitialDrivers</code>方法加载所有由服务商提供的服务接口<code>java.sql.Driver</code>的服务实现。具体步骤为:</p>
+<ol>
+<li>调用<code>ServiceLoader#load</code>方法返回一个<code>ServiceLoader</code>；</li>
+<li>从<code>META-INF/services/java.sql.Driver</code>文件中获取由服务商提供的服务实现的类名；</li>
+<li>通过当前线程上下文中的类加载器即应用类加载器去加载该服务实现。</li>
+</ol>
 <blockquote>
 <p>对应源码所在位置：</p>
 <ul>
