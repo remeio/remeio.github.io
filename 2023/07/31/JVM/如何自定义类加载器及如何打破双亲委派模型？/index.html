@@ -130,7 +130,7 @@
 	  </div>
       <div class="article-tags">
         
-        <a href="/tags/源码">#源码</a>
+        <a href="/tags/总结">#总结</a>
         
       </div>
     </div>
@@ -138,7 +138,7 @@
   <div class="article">
   
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="类加载机制">1. 类加载机制</h2><h3 id="什么是类加载机制？">1.1. 什么是类加载机制？</h3><p>我们编写的Java代码会被编译器编译为<code>class</code>字节码文件，运行程序时虚拟机会将<code>class</code>字节码文件加载到内存中，并在内存中生成<code>Class</code>对象，这就是类加载（Class Loading）机制。</p>
-<a href="\assert\puml\4b8b3d16ac36faf0df66cd7769dc438ce0728fc18c03fe0721784609a39ac085.svg" class="gallery-item"><img src="\assert\puml\4b8b3d16ac36faf0df66cd7769dc438ce0728fc18c03fe0721784609a39ac085.svg"></a>
+<a href="\assert\puml\d5623126a1dfc92a6910d7c90834e0af92c3331468fcd481bcbcc6d1a2c6b140.svg" class="gallery-item"><img src="\assert\puml\d5623126a1dfc92a6910d7c90834e0af92c3331468fcd481bcbcc6d1a2c6b140.svg"></a>
 
 <blockquote>
 <p>虚拟机参数：可以通过<code>-verbose:class</code>来查看类加载的过程。</p>
@@ -355,6 +355,8 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 <li>应用类加载器（Application Class Loader），用来加载<code>classpath</code>下的<code>jar</code>；</li>
 <li>自定义类加载器（User Class Loader），自定义加载<code>class</code>二进制字节流。</li>
 </ul>
+<a href="\assert\puml\825360d956786e29a45331a1365b146af4083f6eeebe95dad44f93ba2d9cc80d.svg" class="gallery-item"><img src="\assert\puml\825360d956786e29a45331a1365b146af4083f6eeebe95dad44f93ba2d9cc80d.svg"></a>
+
 <p><strong>加载不同的类使用的是什么类型的类加载器？</strong></p>
 <p>编写一段代码去加载<code>java.lang.String</code>，<code>javafx.event.Event</code>和<code>DiffClassLoaderTest</code>类，并打印各类型对应的类加载器。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
@@ -461,6 +463,9 @@ public class CustomClassLoaderTest &#123;
 <li>使用SPI（Service Provider Interface）机制，使用线程上下文中的类加载器加载类。</li>
 </ol>
 <h3 id="SPI机制详解">3.4. SPI机制详解</h3><p>SPI（Service Provider Interface）机制是指为满足服务商不同的需求，由JDK源码定义服务接口，服务商提供不同的服务实现。加载JDK源码（这里指<code>rt.jar</code>）使用的是启动类加载器，无法加载<code>classpath</code>下的服务商提供的服务实现，而SPI机制则利用线程上下文中的类加载器即应用类加载器去加载服务商提供的服务实现，如此以来便打破了双亲委派模型。</p>
+<a href="\assert\puml\c4e5e2716abc00e4e1a752e2d201a9d9f9d254f9517b9c29810e5518bb4e7075.svg" class="gallery-item"><img src="\assert\puml\c4e5e2716abc00e4e1a752e2d201a9d9f9d254f9517b9c29810e5518bb4e7075.svg"></a>
+
+
 <p><strong>探究SPI机制是如何打破双亲委派模型的？</strong></p>
 <p>编写使用<code>MySQL</code>驱动去连接数据库的代码，并打印当前线程上下文中的类加载器，加载服务定义<code>java.sql.Connection</code>的类加载器以及加载服务实现<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">

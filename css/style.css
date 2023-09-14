@@ -421,7 +421,6 @@ hr {
 }
 .article img {
   max-width: 100%;
-  min-width: 50%;
   border-radius: 8px;
   display: block;
   object-fit: cover;
