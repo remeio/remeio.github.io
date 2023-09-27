@@ -5,7 +5,7 @@
   
   <title>
     
-    叫我小旗好了
+    Java集合框架中Map接口有哪些实现？
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -95,90 +95,55 @@
   </script>
 </header>
     <main class="main-body">
-  <h2 class="page-title">分类: JVM</h2>
-  <ul class="post-list">
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/09/23/JVM/虚拟机如何调优及案例分析？/" title="虚拟机如何调优及案例分析？">
-		
-		  〖JVM〗
-		
-		虚拟机如何调优及案例分析？
-	  </a>
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
     </div>
-    <span class="post-list-date">
-      2023-09-23 18:00
-    </span>
-  </li>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#xxx%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. xxx接口详解</span></a></li></ol>
+  </div>
   
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/09/12/JVM/什么是垃圾回收及有哪些垃圾收集器？/" title="什么是垃圾回收及有哪些垃圾收集器？">
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">Java集合框架中Map接口有哪些实现？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/Java-Collections-Framework">Java-Collections-Framework</a><span>，</span>
 		
-		  〖JVM〗
-		
-		什么是垃圾回收及有哪些垃圾收集器？
-	  </a>
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-09-26 20:00，
+		<span class="post-count">字数：21，预计阅读：1分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
     </div>
-    <span class="post-list-date">
-      2023-09-12 19:00
-    </span>
-  </li>
+  </div>
+  <div class="article">
   
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/09/09/JVM/对象是如何创建的及是如何分配内存的？/" title="对象是如何创建的及是如何分配内存的？">
-		
-		  〖JVM〗
-		
-		对象是如何创建的及是如何分配内存的？
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-09-09 18:00
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/09/01/JVM/运行时数据区有哪些部分组成？/" title="运行时数据区有哪些部分组成？">
-		
-		  〖JVM〗
-		
-		运行时数据区有哪些部分组成？
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-09-01 19:00
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/31/JVM/如何自定义类加载器及如何打破双亲委派模型？/" title="如何自定义类加载器及如何打破双亲委派模型？">
-		
-		  〖JVM〗
-		
-		如何自定义类加载器及如何打破双亲委派模型？
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-31 19:35
-    </span>
-  </li>
-  
-</ul>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="xxx接口详解">1. xxx接口详解</h2></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
 </main>
     <footer>
   <div class="footer-info">

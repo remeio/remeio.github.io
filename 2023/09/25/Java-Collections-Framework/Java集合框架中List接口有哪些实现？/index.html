@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Java集合框架中List接口有哪些实现？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#List%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. List接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#List%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-text">1.1. List接口有哪些操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.2. List接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArrayList%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. ArrayList详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E4%BA%86%E6%95%B0%E7%BB%84%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E9%9C%80%E8%A6%81ArrayList%EF%BC%9F"><span class="toc-text">2.1. 有了数组为什么还需要ArrayList？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. ArrayList底层是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. ArrayList是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList%E4%B8%AD%E6%93%8D%E4%BD%9C%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9F"><span class="toc-text">2.4. ArrayList中操作的时间复杂度？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E4%B8%8B%E6%A0%87%E8%AE%BF%E9%97%AE%E5%85%83%E7%B4%A0-ArrayList-get"><span class="toc-text">2.4.1. 指定下标访问元素-ArrayList#get</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%85%83%E7%B4%A0-ArrayList-add-E"><span class="toc-text">2.4.2. 添加新元素-ArrayList#add(E)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%8C%87%E5%AE%9A%E4%B8%8B%E6%A0%87%E7%9A%84%E5%85%83%E7%B4%A0-ArrayList-remove-int"><span class="toc-text">2.4.3. 删除指定下标的元素-ArrayList#remove(int)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFfast-fail%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="toc-text">2.5. 什么是fast-fail机制？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedList%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedList详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. LinkedList是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList%E4%B8%AD%E6%93%8D%E4%BD%9C%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9F"><span class="toc-text">3.2. LinkedList中操作的时间复杂度？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E4%B8%8B%E6%A0%87%E8%AE%BF%E9%97%AE%E5%85%83%E7%B4%A0-LinkedList-get"><span class="toc-text">3.2.1. 指定下标访问元素-LinkedList#get</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%8C%87%E5%AE%9A%E4%B8%8B%E6%A0%87%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%85%83%E7%B4%A0-LinkedList-add-int-E"><span class="toc-text">3.2.2. 在指定下标添加新元素-LinkedList#add(int, E)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%8C%87%E5%AE%9A%E4%B8%8B%E6%A0%87%E7%9A%84%E5%85%83%E7%B4%A0-LinkedList-remove-int"><span class="toc-text">3.2.3. 删除指定下标的元素-LinkedList#remove(int)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList%E5%92%8CLinkedList%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">3.3. ArrayList和LinkedList有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Vector%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. Vector详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vector%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">4.1. Vector底层是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList%E5%92%8CVector%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">4.2. ArrayList和Vector有什么区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Stack%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">4.3. Stack底层是如何实现的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">5. 参考文档</span></a></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">Java集合框架中List接口有哪些实现？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/Java-Collections-Framework">Java-Collections-Framework</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-09-25 20:00，
+		<span class="post-count">字数：2.3k，预计阅读：9分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="List接口详解">1. List接口详解</h2><h3 id="List接口有哪些操作？">1.1. List接口有哪些操作？</h3><p><code>List</code>列表是一个有序的<code>Collection</code>，有时也被叫做序列（sequence）。<code>List</code>可能包含重复的元素。除了从<code>Collection</code>接口继承的操作外，<code>List</code>接口还包括以下操作：</p>
+<ul>
+<li><p>位置访问（Positional access）<br>通过数字下标操作列表中的元素。包括的方法有<code>get</code>，<code>set</code>，<code>add</code>，<code>addAll</code>，<code>remove</code>。</p>
+</li>
+<li><p>搜索（Search）<br>在列表中搜索指定的对象，并返回其对应的数字下标。搜索方法包括<code>indexOf</code>和<code>lastIndexOf</code>。</p>
+</li>
+<li><p>迭代（Iteration）<br>继承<code>Iterator</code>接口的语义。使用<code>listIterator</code>方法可以返回一个迭代器。</p>
+</li>
+<li><p>范围视图（Range-view）<br><code>sublist</code>方法可对指定范围的列表进行操作。</p>
+</li>
+</ul>
+<p>Java平台提供了两种常规用途的<code>List</code>接口的实现，分别是<code>ArrayList</code>和<code>LinkedList</code>。<code>ArrayList</code>在一般情况下有更好性能，<code>LinkedList</code>在特定场景下有更好的性能。</p>
+<h3 id="List接口有哪些实现？">1.2. List接口有哪些实现？</h3><a href="\assert\puml\092e2ab57c2104b0b00f760418341e551f3ff21b466d4bd6a8e7f859c5e3e07f.svg" class="gallery-item"><img src="\assert\puml\092e2ab57c2104b0b00f760418341e551f3ff21b466d4bd6a8e7f859c5e3e07f.svg"></a>
+
+<h2 id="ArrayList详解">2. ArrayList详解</h2><h3 id="有了数组为什么还需要ArrayList？">2.1. 有了数组为什么还需要ArrayList？</h3><ol>
+<li>在声明数组时需要指定数组的大小，而<code>ArrayList</code>则不需要；</li>
+<li><code>ArrayList</code>提供了一系列封装好的操作，比直接操作数组更方便。</li>
+</ol>
+<h3 id="ArrayList底层是如何实现的？">2.2. ArrayList底层是如何实现的？</h3><ul>
+<li>从继承关系上看，<code>ArrayList</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口；</li>
+<li>从底层数据结构上看，<code>ArrayList</code>基于动态数组，当容量不足时会自动扩容；</li>
+<li>从存储元素上看，<code>ArrayList</code>允许存储<code>null</code>元素以及存储重复的元素；</li>
+<li>从线程安全上看，<code>ArrayList</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
+</ul>
+<h3 id="ArrayList是如何扩容的？">2.3. ArrayList是如何扩容的？</h3><ol>
+<li>在添加新元素前，如果最小容量大于当前数组的大小，则触发扩容，否者直接添加新元素（如果是无参构造器声明的<code>ArrayList</code>，首次扩容时，最小容量为10）；</li>
+<li>把当前数组的大小的1.5倍作为新容量（如果新容量仍小于最小容量，则取最小容量作为新容量）；</li>
+<li>调用<code>Arrays#copyOf</code>方法进行数组扩容后，添加新元素。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public boolean add(E e) &#123;
+	&#x2F;&#x2F; 1. 添加新元素前，如果有必要则进行扩容
+	ensureCapacityInternal(size + 1);  &#x2F;&#x2F; Increments modCount!!
+	elementData[size++] &#x3D; e;
+	return true;
+&#125;
+
+
+private static int calculateCapacity(Object[] elementData, int minCapacity) &#123;
+	&#x2F;&#x2F; 2. 如果是无参构造器声明的ArrayList，首次扩容时，最小容量为10
+	if (elementData &#x3D;&#x3D; DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;
+		return Math.max(DEFAULT_CAPACITY, minCapacity);
+	&#125;
+	return minCapacity;
+&#125;
+
+private void ensureCapacityInternal(int minCapacity) &#123;
+	ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
+&#125;
+
+private void ensureExplicitCapacity(int minCapacity) &#123;
+	modCount++;
+
+	&#x2F;&#x2F; 3. 最小容量大于当前数组的大小才进行扩容
+	&#x2F;&#x2F; overflow-conscious code
+	if (minCapacity - elementData.length &gt; 0)
+		grow(minCapacity);
+&#125;
+
+
+private void grow(int minCapacity) &#123;
+	&#x2F;&#x2F; overflow-conscious code
+	int oldCapacity &#x3D; elementData.length;
+	&#x2F;&#x2F; 4. 当前数组数组大小的1.5倍作为新容量
+	int newCapacity &#x3D; oldCapacity + (oldCapacity &gt;&gt; 1);
+	&#x2F;&#x2F; 5. 如果新容量仍不够，取最小容量作为新容量
+	if (newCapacity - minCapacity &lt; 0)
+		newCapacity &#x3D; minCapacity;
+	if (newCapacity - MAX_ARRAY_SIZE &gt; 0)
+		&#x2F;&#x2F; 在最小容量不大于MAX_ARRAY_SIZE时，限制新容量不大于MAX_ARRAY_SIZE，避免虚拟机无法创建数组
+		newCapacity &#x3D; hugeCapacity(minCapacity);
+	&#x2F;&#x2F; minCapacity is usually close to size, so this is a win:
+	&#x2F;&#x2F; 进行数组扩容 
+	elementData &#x3D; Arrays.copyOf(elementData, newCapacity);
+&#125;
+
+private static int hugeCapacity(int minCapacity) &#123;
+	if (minCapacity &lt; 0) &#x2F;&#x2F; overflow
+		throw new OutOfMemoryError();
+	return (minCapacity &gt; MAX_ARRAY_SIZE) ?
+		Integer.MAX_VALUE :
+		MAX_ARRAY_SIZE;
+&#125;</code></pre>
+
+<h3 id="ArrayList中操作的时间复杂度？">2.4. ArrayList中操作的时间复杂度？</h3><h4 id="指定下标访问元素-ArrayList-get">2.4.1. 指定下标访问元素-ArrayList#get</h4><ul>
+<li>通过指定下标访问数组中的元素，是随机访问，时间复杂度为O(1)；</li>
+<li>平均时间复杂度为O(n)。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public E get(int index) &#123;
+	rangeCheck(index);
+	&#x2F;&#x2F; 下标访问数组
+	return elementData(index);
+&#125;</code></pre>
+
+<h4 id="添加新元素-ArrayList-add-E">2.4.2. 添加新元素-ArrayList#add(E)</h4><ul>
+<li>当需要扩容时，由于需要复制数组，时间复杂度为O(n)；</li>
+<li>当不需要扩容时，时间复杂度为O(1)；</li>
+<li>平均时间复杂度为O(n)。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public boolean add(E e) &#123;
+	&#x2F;&#x2F; 需要扩容时，会发生数组复制
+	ensureCapacityInternal(size + 1);  &#x2F;&#x2F; Increments modCount!!
+	elementData[size++] &#x3D; e;
+	return true;
+&#125;</code></pre>
+
+<h4 id="删除指定下标的元素-ArrayList-remove-int">2.4.3. 删除指定下标的元素-ArrayList#remove(int)</h4><ul>
+<li>当删除的是最后一个元素时，时间复杂度为O(1)；</li>
+<li>当删除的不是最后一个元素时，由于需要移动数组，时间复杂度为O(n);</li>
+<li>平均时间复杂度为O(n)。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public E remove(int index) &#123;
+	rangeCheck(index);
+
+	modCount++;
+	E oldValue &#x3D; elementData(index);
+	&#x2F;&#x2F; 有且仅有删除最后一个元素时（index为size-1），不满足以下条件
+	int numMoved &#x3D; size - index - 1;
+	if (numMoved &gt; 0)
+		&#x2F;&#x2F; 数组移动
+		System.arraycopy(elementData, index+1, elementData, index,
+						 numMoved);
+	elementData[--size] &#x3D; null; &#x2F;&#x2F; clear to let GC do its work
+
+	return oldValue;
+&#125;</code></pre>
+
+<h3 id="什么是fast-fail机制？">2.5. 什么是fast-fail机制？</h3><p><code>fast-fail</code>机制是指当迭代器被创建后，如果修改了列表（不包括迭代器本身的<code>remove</code>和<code>add</code>操作），迭代器会抛出<code>ConcurrentModificationException</code>异常。因此当并发修改时，迭代器会快速失败来避免后续的并发风险，来提示开发者避免在多线程下使用线程不安全的列表。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">final void checkForComodification() &#123;
+	&#x2F;&#x2F; 列表都会记录当前的修改次数modCount，然后会同迭代器内部记录的expectedModCount进行比较，如果不同则代表有别的线程对列表进行了修改操作
+	if (modCount !&#x3D; expectedModCount)
+		throw new ConcurrentModificationException();
+&#125;</code></pre>
+
+<h2 id="LinkedList详解">3. LinkedList详解</h2><h3 id="LinkedList是如何实现的？">3.1. LinkedList是如何实现的？</h3><ul>
+<li>从继承关系上看，<code>LinkedList</code>实现了<code>List</code>接口和<code>Deque</code>接口；</li>
+<li>从底层数据结构上看，<code>LinkedList</code>基于双向链表，无需扩容；</li>
+<li>从存储元素上看，<code>LinkedList</code>允许存储<code>null</code>元素以及存储重复的元素；</li>
+<li>从线程安全上看，<code>LinkedList</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
+</ul>
+<h3 id="LinkedList中操作的时间复杂度？">3.2. LinkedList中操作的时间复杂度？</h3><h4 id="指定下标访问元素-LinkedList-get">3.2.1. 指定下标访问元素-LinkedList#get</h4><ul>
+<li>当要访问的元素在头尾节点时，时间复杂度为O(1)；</li>
+<li>当要访问的元素不在头尾节点时，由于需要遍历链表，时间复杂度为O(n)；</li>
+<li>平均时间复杂度为O(n)。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public E get(int index) &#123;
+	checkElementIndex(index);
+	&#x2F;&#x2F; 遍历链表
+	return node(index).item;
+&#125;
+
+Node&lt;E&gt; node(int index) &#123;
+	&#x2F;&#x2F; assert isElementIndex(index);
+	&#x2F;&#x2F; 遍历一半的链表
+	if (index &lt; (size &gt;&gt; 1)) &#123;
+		Node&lt;E&gt; x &#x3D; first;
+		for (int i &#x3D; 0; i &lt; index; i++)
+			x &#x3D; x.next;
+		return x;
+	&#125; else &#123;
+		Node&lt;E&gt; x &#x3D; last;
+		for (int i &#x3D; size - 1; i &gt; index; i--)
+			x &#x3D; x.prev;
+		return x;
+	&#125;
+&#125;</code></pre>
+
+<h4 id="在指定下标添加新元素-LinkedList-add-int-E">3.2.2. 在指定下标添加新元素-LinkedList#add(int, E)</h4><ul>
+<li>当添加的新元素在头尾节点时，时间复杂度为O(1)；</li>
+<li>当添加的新元素不在头尾节点时，由于需要遍历链表找到插入位置，时间复杂度为O(n)；</li>
+<li>平均时间复杂度为O(n)。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public void add(int index, E element) &#123;
+	checkPositionIndex(index);
+
+	&#x2F;&#x2F; 尾结点添加
+	if (index &#x3D;&#x3D; size)
+		linkLast(element);
+	&#x2F;&#x2F; 非尾结点添加元素，需要遍历链表找到插入位置
+	else
+		linkBefore(element, node(index));
+&#125;</code></pre>
+
+<h4 id="删除指定下标的元素-LinkedList-remove-int">3.2.3. 删除指定下标的元素-LinkedList#remove(int)</h4><ul>
+<li>当删除的元素在头节点时，时间复杂度为O(1)；</li>
+<li>当删除的元素不在头节点时，由于需要遍历链表找到删除位置，时间复杂度为O(n);</li>
+<li>平均时间复杂度为O(n)。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public E remove(int index) &#123;
+	checkElementIndex(index);
+	return unlink(node(index));
+&#125;</code></pre>
+<h3 id="ArrayList和LinkedList有什么区别？">3.3. ArrayList和LinkedList有什么区别？</h3><p>官方建议在选择使用<code>LinkedList</code>时，应该同时测试<code>ArrayList</code>和<code>LinkedList</code>的性能，来验证是否真的有必要选用<code>LinkedList</code>，通常来说<code>ArrayList</code>拥有更好的性能。</p>
+<ul>
+<li>底层数据结构不同，<code>ArrayList</code>基于数组，而<code>LinkedList</code>基于链表。</li>
+<li>消耗内存大小不同，相比于<code>ArrayList</code>，<code>LinkedList</code>需要存储链表的节点，会消耗更多的内存空间。</li>
+<li>性能不同，<code>ArrayList</code>是常量级访问，线性级修改，<code>LinkedList</code>是线性级访问，常量级修改。</li>
+<li>实现接口不同， <code>LinkedList</code>实现了<code>Deque</code>接口，可以当做双向队列使用，这个是<code>ArrayList</code>做不到的。</li>
+</ul>
+<h2 id="Vector详解">4. Vector详解</h2><h3 id="Vector底层是如何实现的？">4.1. Vector底层是如何实现的？</h3><ul>
+<li>从继承关系上看，<code>Vector</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口；</li>
+<li>从底层数据结构上看，<code>Vector</code>基于动态数组，当容量不足时会自动扩容；</li>
+<li>从存储元素上看，<code>Vector</code>允许存储<code>null</code>元素以及存储重复的元素；</li>
+<li>从线程安全上看，<code>Vector</code>是线程安全的，采用<code>synchronized</code>修饰了所有方法。</li>
+</ul>
+<h3 id="ArrayList和Vector有什么区别？">4.2. ArrayList和Vector有什么区别？</h3><p><code>Vector</code>可以理解为线程安全的<code>ArrayList</code>（线程安全的<code>List</code>的实现推荐使用<code>CopyOnWriteArrayList</code>）。</p>
+<ul>
+<li>线程安全性不同，<code>ArrayList</code>是线程不安全的，<code>Vector</code>采用了<code>synchronized</code>关键字修饰了所有方法，是线程安全的；</li>
+<li>扩容大小不同，<code>ArrayList</code>扩容为原数组大小的1.5倍，而<code>Vector</code>扩容为原数组的2倍；</li>
+<li>性能不同，相比于<code>ArrayList</code>，<code>Vector</code>中的方法需要加锁，性能要比<code>ArrayList</code>差。</li>
+</ul>
+<h3 id="Stack底层是如何实现的？">4.3. Stack底层是如何实现的？</h3><p><code>Stack</code>继承了<code>Vector</code>，是线程安全的，可以当做堆栈使用（推荐使用<code>ArrayDeque</code>代替<code>Stack</code>）。</p>
+<h2 id="参考文档">5. 参考文档</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/intro/index.html">The Java™ Tutorials-Lesson: Introduction to Collections</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/interfaces/list.html">The Java™ Tutorials-The List Interface</a> </li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/implementations/list.html">The Java™ Tutorials-List Implementations
+</a></li>
+</ul>
+</div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
+  | <img src="/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  </div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+
+</html>

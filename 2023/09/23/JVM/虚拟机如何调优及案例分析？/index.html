@@ -5,7 +5,7 @@
   
   <title>
     
-    如何进行虚拟机调优及案例分析？
+    虚拟机如何调优及案例分析？
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -99,7 +99,7 @@
     <div class="toc-toggle">
       <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
     </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%E7%90%86%E8%AE%BA"><span class="toc-text">1. 虚拟机调优理论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要虚拟机调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 调优的过程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5"><span class="toc-text">2. 虚拟机调优手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%82%E6%95%B0%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">2.1. 虚拟机参数有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK%E5%B7%A5%E5%85%B7%E5%8C%85%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%EF%BC%9F"><span class="toc-text">2.2. JDK工具包中有哪些工具？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E5%8F%8A%E5%88%86%E6%9E%90%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84GC%E6%97%A5%E5%BF%97%EF%BC%9F"><span class="toc-text">2.3. 如何打印及分析虚拟机的GC日志？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B"><span class="toc-text">3. JVM调优案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84%E5%A0%86%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.2. 如何为虚拟机指定合适的Java虚拟机栈大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%9F"><span class="toc-text">3.3. 如何为虚拟机选择合适的垃圾收集器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E9%A2%91%E7%B9%81%E5%8F%91%E7%94%9FFull-GC%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-text">3.4. 程序频繁发生Full GC如何解决？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.5. 程序发生内存溢出如何排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E6%AD%BB%E9%94%81%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.6. 程序发生死锁如何排查？</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%90%86%E8%AE%BA"><span class="toc-text">1. 调优理论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 调优的过程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5"><span class="toc-text">2. 调优手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%82%E6%95%B0%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">2.1. 虚拟机参数有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK%E5%B7%A5%E5%85%B7%E5%8C%85%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%EF%BC%9F"><span class="toc-text">2.2. JDK工具包中有哪些工具？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E5%8F%8A%E5%88%86%E6%9E%90%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84GC%E6%97%A5%E5%BF%97%EF%BC%9F"><span class="toc-text">2.3. 如何打印及分析虚拟机的GC日志？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B"><span class="toc-text">3. 调优案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84%E5%A0%86%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.2. 如何为虚拟机指定合适的Java虚拟机栈大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%9F"><span class="toc-text">3.3. 如何为虚拟机选择合适的垃圾收集器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.4. 程序发生内存溢出如何排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E6%AD%BB%E9%94%81%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.5. 程序发生死锁如何排查？</span></a></li></ol></li></ol>
   </div>
   
   <script>
@@ -118,7 +118,7 @@
   </script>
   
   <div class="article-header">
-    <h1 class="article-title">如何进行虚拟机调优及案例分析？</h1>
+    <h1 class="article-title">虚拟机如何调优及案例分析？</h1>
     <div class="article-details">
       <div class="article-post-date">
 	  	
@@ -126,7 +126,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-09-23 18:00，
-		<span class="post-count">字数：3k，预计阅读：13分钟</span>
+		<span class="post-count">字数：3.1k，预计阅读：14分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -137,10 +137,13 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="虚拟机调优理论">1. 虚拟机调优理论</h2><h3 id="为什么需要虚拟机调优？">1.1. 为什么需要虚拟机调优？</h3><ul>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="调优理论">1. 调优理论</h2><h3 id="为什么需要调优？">1.1. 为什么需要调优？</h3><ul>
 <li>提高程序运行的性能，如提供程序的吞吐量，降低程序的响应时间等；</li>
-<li>解决程序出现的问题，如解决内存溢出，死锁等问题。</li>
+<li>解决程序出现的问题，如解决内存溢出，内存泄漏，死锁等问题。</li>
 </ul>
+<blockquote>
+<p>性能问题一般需要调整应用程序，虚拟机调优是最后手段。</p>
+</blockquote>
 <h3 id="调优的过程是怎样的？">1.2. 调优的过程是怎样的？</h3><ol>
 <li>监控虚拟机的行为，如堆的内存占用，GC次数，GC耗时等；</li>
 <li>确定目标，如降低内存占用，减小响应延迟等；</li>
@@ -149,7 +152,7 @@
 <li>结果验收，灰量测试，全量发布。</li>
 </ol>
 <a href="\assert\puml\1d9581b4c356216b04bd3f11c0e449e3b5102203ceaa87ccc1eae6d08b5aeadc.svg" class="gallery-item"><img src="\assert\puml\1d9581b4c356216b04bd3f11c0e449e3b5102203ceaa87ccc1eae6d08b5aeadc.svg"></a>
-<h2 id="虚拟机调优手段">2. 虚拟机调优手段</h2><h3 id="虚拟机参数有哪些分类？">2.1. 虚拟机参数有哪些分类？</h3><ul>
+<h2 id="调优手段">2. 调优手段</h2><h3 id="虚拟机参数有哪些分类？">2.1. 虚拟机参数有哪些分类？</h3><ul>
 <li>标准参数，以<code>-</code>开头，如<code>-version</code>等；</li>
 <li>非标准参数，以<code>-X</code>开头，如<code>-Xms</code>，<code>-Xmx</code>等；</li>
 <li>不稳定参数，以<code>-XX</code>开头，如<code>-XX:+UseG1GC</code>等。</li>
@@ -157,7 +160,7 @@
 <h3 id="JDK工具包中有哪些工具？">2.2. JDK工具包中有哪些工具？</h3><p>JDK工具：</p>
 <ul>
 <li>jps：打印当前系统中的Java进程；</li>
-<li>jinfo：打印指定Java进程的虚拟机参数和系统属性，及调整虚拟机参数；</li>
+<li>jinfo：打印指定Java进程的虚拟机参数和系统属性，及设置虚拟机参数；</li>
 <li>jmap：打印指定Java进程的堆的内存信息，及转储堆的内存快照文件；</li>
 <li>jstat：打印指定Java进程的堆内存信息和GC信息；</li>
 <li>jstack：打印指定Java进程的堆栈信息；</li>
@@ -172,7 +175,7 @@
 <li>JProfile：可视化工具；</li>
 <li>Arthas：线上监控诊断工具。</li>
 </ul>
-<h3 id="如何打印及分析虚拟机的GC日志？">2.3. 如何打印及分析虚拟机的GC日志？</h3><p>可以通过指定虚拟机参数来设置打印的虚拟机的GC日志：</p>
+<h3 id="如何打印及分析虚拟机的GC日志？">2.3. 如何打印及分析虚拟机的GC日志？</h3><p>可以通过指定虚拟机参数来设置打印的虚拟机的GC日志信息：</p>
 <ul>
 <li><code>-XX:+PrintGC</code>：开启打印GC日志</li>
 <li><code>-XX:+PrintGCDetail</code>：开启打印GC详细日志；</li>
@@ -181,6 +184,8 @@
 <li><code>-XX:+PrintHeapAtGC</code>：开启GC时打印堆信息；</li>
 <li><code>-Xloggc:&lt;filepath&gt;</code>：指定GC日志输出文件的路径</li>
 </ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">-XX:+PrintGC -XX:+PrintGCDetail -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:.&#x2F;gc.log</code></pre>
+
 <p>下面是一段GC日志的示例，我们进行以下分析:</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">Java HotSpot(TM) 64-Bit Server VM (25.181-b13) for linux-amd64 JRE (1.8.0_181-b13), built on Jul  7 2018 00:56:38 by &quot;java_re&quot; with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
 Memory: 4k page, physical 8174940k(1150320k free), swap 4194300k(361300k free)
@@ -245,7 +250,7 @@ Heap after GC invocations&#x3D;11 (full 1):
 <li>GC后堆内存和元空间占用的变化；</li>
 <li>GC的耗时。</li>
 </ul>
-<h2 id="JVM调优案例">3. JVM调优案例</h2><h3 id="如何为虚拟机指定合适的堆内存大小和元空间大小？">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</h3><p>最佳实践：</p>
+<h2 id="调优案例">3. 调优案例</h2><h3 id="如何为虚拟机指定合适的堆内存大小和元空间大小？">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</h3><p>最佳实践：</p>
 <ul>
 <li>整堆建议设置为老年代实际使用内存的4倍；</li>
 <li>新生代建议设置为老年代实际使用内存的1~1.5倍；</li>
@@ -257,7 +262,7 @@ Heap after GC invocations&#x3D;11 (full 1):
 <a href="jvm-memory-size-before.png" class="gallery-item"><img src="jvm-memory-size-before.png"></a>
 
 <p>从下图我们可以看到GC的吞吐量为<code>99.044%</code>，GC平均暂停时间为<code>60.0 ms</code>，GC最大暂停时间为<code>280 ms</code>。<br><a href="key-before.png" class="gallery-item"><img src="key-before.png"></a></p>
-<p>从下图中我们可以看到在程序运行的过程中发生了3次Full GC，原因是<code>Metadata GC Threshold</code>，本质上是元空间达到阈值需要扩容时触发。（调优目标：Full GC很耗时，应尽可能避免Full GC）</p>
+<p>从下图中我们可以看到在程序运行的过程中发生了3次Full GC，原因是<code>Metadata GC Threshold</code>，本质上是元空间达到阈值需要扩容时触发了Full GC。（调优目标：Full GC很耗时，应尽可能避免Full GC）</p>
 <a href="graph-before.png" class="gallery-item"><img src="graph-before.png"></a>
 
 <p>从下图中我们可以看到在程序运行的过程中共发生了<code>28</code>次GC，总耗时<code>1 sec 680 ms</code>；Minor GC发生了<code>25</code>次，总耗时<code>1 sec 200 ms</code>；Full GC发生了<code>3</code>次，总耗时<code>480 ms</code>.</p>
@@ -287,9 +292,12 @@ Heap after GC invocations&#x3D;11 (full 1):
 <li>响应时间优先：选用ParNew搭配CMS，虚拟机参数为<code>-XX:+UseConcMarkSweepGC</code>；</li>
 <li>全功能但不全能：选用G1，虚拟机参数为<code>-XX:+UseG1GC</code>。</li>
 </ul>
-<h3 id="程序频繁发生Full-GC如何解决？">3.4. 程序频繁发生Full GC如何解决？</h3><p>TODO</p>
-<h3 id="程序发生内存溢出如何排查？">3.5. 程序发生内存溢出如何排查？</h3><p>TODO</p>
-<h3 id="程序发生死锁如何排查？">3.6. 程序发生死锁如何排查？</h3><p>以两个线程死锁为例，线程A获取到锁m，并尝试获取锁n；而线程B获取到锁n，并尝试获取锁m；此时线程A和线程B由于永远获取不到各自所需的锁而产生死锁。</p>
+<h3 id="程序发生内存溢出如何排查？">3.4. 程序发生内存溢出如何排查？</h3><ol>
+<li>在启动应用程序时，需要打开虚拟机参数<code>-XX:+HeapDumpOnOutOfMemoryError</code>，以便在发生内存溢出时转储堆的内存快照文件。</li>
+<li>使用MAT等工具分析堆的内存快照文件，排查是否发生了内存泄漏；如果发生了内存泄漏，需要修复相应的代码。 </li>
+<li>排查堆的内存空间是否分配的不合理；如果不合理，需要调节虚拟机参数。</li>
+</ol>
+<h3 id="程序发生死锁如何排查？">3.5. 程序发生死锁如何排查？</h3><p>以两个线程死锁为例，线程A获取到锁m，并尝试获取锁n；而线程B获取到锁n，并尝试获取锁m；此时线程A和线程B由于永远获取不到各自所需的锁而产生死锁。</p>
 <p><strong>1. 首先，通过<code>jps -l</code>命令获取指定Java进程的进程ID；</strong></p>
 <pre class="line-numbers language-none"><code class="language-none">$ jps -l
 11840 com.remeio.upsnippet.jvm.gc.DeadLockTest
