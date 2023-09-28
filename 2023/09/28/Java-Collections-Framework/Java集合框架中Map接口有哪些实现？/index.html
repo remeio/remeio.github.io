@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Java集合框架中Map接口有哪些实现？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Map接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-text">1.1. Map接口有哪些操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.2. Map接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. HashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%BA%95%E5%B1%82%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. HashMap底层是怎么实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. HashMap是如何解决哈希冲突的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E9%94%AE%E5%80%BC%E5%AF%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. HashMap是如何添加键值对的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90%EF%BC%9FHashMap%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%89%A9%E5%AE%B9%EF%BC%9F"><span class="toc-text">2.4. 什么是负载因子？HashMap为什么需要扩容？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%A0%B9%E6%8D%AE%E9%94%AE%E6%89%BE%E5%88%B0%E5%80%BC%E7%9A%84%EF%BC%9F"><span class="toc-text">2.5. HashMap是如何根据键找到值的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedHashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E5%BA%95%E5%B1%82%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. LinkedHashMap底层是怎么实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E5%92%8CHashMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">3.2. LinkedHashMap和HashMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hashtable%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. Hashtable详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">4.1. Hashtable底层是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. Hashtable是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E5%92%8CHashMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">4.3. Hashtable和HashMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Properties%E8%AF%A6%E8%A7%A3"><span class="toc-text">5. Properties详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Properties%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">5.1. Properties底层是如何实现的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TreeMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">6. TreeMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">6.1. TreeMap底层是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%8E%92%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">6.2. TreeMap是如何排序的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E5%92%8CHashMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">6.3. TreeMap和HashMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EnumMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">7. EnumMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EnumMap%E5%BA%95%E5%B1%82%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">7.1. EnumMap底层是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EnumMap%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-text">7.2. EnumMap有哪些使用场景？</span></a></li></ol></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">Java集合框架中Map接口有哪些实现？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/Java-Collections-Framework">Java-Collections-Framework</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-09-28 20:00，
+		<span class="post-count">字数：1.7k，预计阅读：7分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="Map接口详解">1. Map接口详解</h2><h3 id="Map接口有哪些操作？">1.1. Map接口有哪些操作？</h3><p><code>Map</code>是指将键映射到对应的值。一个<code>Map</code>不能包含重复的键：每个键最多只能映射一个值。<code>Map</code>接口包括以下操作：</p>
+<ul>
+<li><p>基础操作（Basic operations）<br>如<code>put</code>，<code>get</code>，<code>remove</code>，<code>containsKey</code>，<code>containsValue</code>，<code>size</code>以及<code>empty</code>方法。</p>
+</li>
+<li><p>批量操作（Bulk operations）<br>如<code>putAll</code>，<code>clear</code>方法。</p>
+</li>
+<li><p>集合视图（Collection views）<br>如<code>keySet</code>，<code>entrySet</code>，<code>values</code>方法。</p>
+</li>
+</ul>
+<h3 id="Map接口有哪些实现？">1.2. Map接口有哪些实现？</h3><a href="\assert\puml\e7a927b9e23d12ba494fec727e78704d453664cbcc36495606065ac4e407dbab.svg" class="gallery-item"><img src="\assert\puml\e7a927b9e23d12ba494fec727e78704d453664cbcc36495606065ac4e407dbab.svg"></a>
+
+<h2 id="HashMap详解">2. HashMap详解</h2><h3 id="HashMap底层是怎么实现的？">2.1. HashMap底层是怎么实现的？</h3><ul>
+<li>从底层数据结构上看，<code>HashMap</code>使用了数组，链表以及红黑树；</li>
+<li>从存储元素上看，<code>HashMap</code>允许存储<code>null</code>键和<code>null</code>值，是无序的；</li>
+<li>从线程安全上看，<code>HashMap</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
+</ul>
+<h3 id="HashMap是如何解决哈希冲突的？">2.2. HashMap是如何解决哈希冲突的？</h3><p>哈希冲突是指两个对象经过哈希函数计算得到的哈希值相同。解决哈希冲突的方法有：</p>
+<ul>
+<li>开放定址法：冲突时寻找新的空闲的内存地址。</li>
+<li>再哈希法：再次计算哈希值直到不发生哈希冲突。</li>
+<li>链表法：利用链表维护哈希冲突的节点。</li>
+<li>建立公共溢出区：额外开辟一块内存区域来维护冲突的节点。</li>
+</ul>
+<p><code>HashMap</code>使用链表法解决哈希冲突，哈希值相同的键所对应的节点由一条链表维护。</p>
+<a href="\assert\puml\a565ac645164fc65855e5537c6c9ab7ac1421964feaba614e16de7ec1d57a54b.svg" class="gallery-item"><img src="\assert\puml\a565ac645164fc65855e5537c6c9ab7ac1421964feaba614e16de7ec1d57a54b.svg"></a>
+
+<p>在一定的条件下（最小树化容量为64，树化阈值为8），<code>HashMap</code>会将链表转为红黑树，原因是当链表中的节点越来越多时，查询的时间复杂度会由O(1)退化为O(n)；而使用红黑树时，查询的时间复杂度为O(logn)，比链表的查询效率要高，代价是新增和修改操作需要维护红黑树的结构，故在一定条件下，红黑树也会转为链表（链化阈值为6）。</p>
+<a href="\assert\puml\12913965b32d32b0a42f8146e9aaf8acd893d8fdf411d80ac5a900ad120bebe2.svg" class="gallery-item"><img src="\assert\puml\12913965b32d32b0a42f8146e9aaf8acd893d8fdf411d80ac5a900ad120bebe2.svg"></a>
+<h3 id="HashMap是如何添加键值对的？">2.3. HashMap是如何添加键值对的？</h3><ol>
+<li><p>首先通过哈希函数计算当前键的哈希值，并通过位运算获取当前键在数组中的下标；如果该下标对应的节点为空，则创建当前键值对的节点即可。否者代表发生了哈希冲突。</p>
+</li>
+<li><p>发生哈希冲突后，首先判断当前下标对应的节点的哈希值和键同当前键是否相同，如果是则修改键对应的值即可。否者需要链表或红黑树解决哈希冲突。</p>
+</li>
+<li><p>首先判断当前下标对应的节点的类型是否是树节点，如果是则代表是红黑树，在红黑树中创建当前键值对的节点即可。否者需要通过链表解决哈希冲突。</p>
+</li>
+<li><p>遍历当前下标对应的节点所在的链表，在链表尾部添加当前键值对的节点，如果链表的长度大于8，且数组的大小大于64时，链表会被转为红黑树。</p>
+</li>
+<li><p>最后，如果键值对的个数大于扩容的阈值，即数组的大小乘以负载因子，会进行扩容。</p>
+</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public V put(K key, V value) &#123;
+	return putVal(hash(key), key, value, false, true);
+&#125;
+
+static final int hash(Object key) &#123;
+	int h;
+	return (key &#x3D;&#x3D; null) ? 0 : (h &#x3D; key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+&#125;
+
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                   boolean evict) &#123;
+	Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+	if ((tab &#x3D; table) &#x3D;&#x3D; null || (n &#x3D; tab.length) &#x3D;&#x3D; 0)
+		n &#x3D; (tab &#x3D; resize()).length;
+	if ((p &#x3D; tab[i &#x3D; (n - 1) &amp; hash]) &#x3D;&#x3D; null)
+		tab[i] &#x3D; newNode(hash, key, value, null);
+	else &#123;
+		Node&lt;K,V&gt; e; K k;
+		if (p.hash &#x3D;&#x3D; hash &amp;&amp;
+			((k &#x3D; p.key) &#x3D;&#x3D; key || (key !&#x3D; null &amp;&amp; key.equals(k))))
+			e &#x3D; p;
+		else if (p instanceof TreeNode)
+			e &#x3D; ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+		else &#123;
+			for (int binCount &#x3D; 0; ; ++binCount) &#123;
+				if ((e &#x3D; p.next) &#x3D;&#x3D; null) &#123;
+					p.next &#x3D; newNode(hash, key, value, null);
+					if (binCount &gt;&#x3D; TREEIFY_THRESHOLD - 1) &#x2F;&#x2F; -1 for 1st
+						treeifyBin(tab, hash);
+					break;
+				&#125;
+				if (e.hash &#x3D;&#x3D; hash &amp;&amp;
+					((k &#x3D; e.key) &#x3D;&#x3D; key || (key !&#x3D; null &amp;&amp; key.equals(k))))
+					break;
+				p &#x3D; e;
+			&#125;
+		&#125;
+		if (e !&#x3D; null) &#123; &#x2F;&#x2F; existing mapping for key
+			V oldValue &#x3D; e.value;
+			if (!onlyIfAbsent || oldValue &#x3D;&#x3D; null)
+				e.value &#x3D; value;
+			afterNodeAccess(e);
+			return oldValue;
+		&#125;
+	&#125;
+	++modCount;
+	if (++size &gt; threshold)
+		resize();
+	afterNodeInsertion(evict);
+	return null;
+&#125;</code></pre>
+
+<h3 id="什么是负载因子？HashMap为什么需要扩容？">2.4. 什么是负载因子？HashMap为什么需要扩容？</h3><p>如果不进行扩容，当元素较多时，会频繁发生哈希冲突，导致大量的元素存放在链表或红黑树中，导致查询效率较差。扩容会<br>什么是负载因子？负载因子是指当存储元素达到容量乘以负载因子时，需要扩容。负载因子越大，哈希冲突的几率越小，浪费的内存空间越多，负载因子越小，哈希冲突的几率越大，浪费的内存空间越少。默认取0.75。</p>
+<h3 id="HashMap是如何根据键找到值的？">2.5. HashMap是如何根据键找到值的？</h3><p>首先通过哈希函数计算当前键的哈希值，并通过位运算获取当前键在数组中的下标；如果该下标对应的节点不为空，则遍历链表或红黑树查找。</p>
+<p>判断当前下标对应的节点的类型是否是树节点，如果是则代表是红黑树，在红黑树中查找当前键对应的值。否者需要遍历链表。</p>
+<p>遍历链表查找当前键对应的值。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public V get(Object key) &#123;
+	Node&lt;K,V&gt; e;
+	return (e &#x3D; getNode(hash(key), key)) &#x3D;&#x3D; null ? null : e.value;
+&#125;
+
+final Node&lt;K,V&gt; getNode(int hash, Object key) &#123;
+	Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; first, e; int n; K k;
+	if ((tab &#x3D; table) !&#x3D; null &amp;&amp; (n &#x3D; tab.length) &gt; 0 &amp;&amp;
+		(first &#x3D; tab[(n - 1) &amp; hash]) !&#x3D; null) &#123;
+		if (first.hash &#x3D;&#x3D; hash &amp;&amp; &#x2F;&#x2F; always check first node
+			((k &#x3D; first.key) &#x3D;&#x3D; key || (key !&#x3D; null &amp;&amp; key.equals(k))))
+			return first;
+		if ((e &#x3D; first.next) !&#x3D; null) &#123;
+			if (first instanceof TreeNode)
+				return ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);
+			do &#123;
+				if (e.hash &#x3D;&#x3D; hash &amp;&amp;
+					((k &#x3D; e.key) &#x3D;&#x3D; key || (key !&#x3D; null &amp;&amp; key.equals(k))))
+					return e;
+			&#125; while ((e &#x3D; e.next) !&#x3D; null);
+		&#125;
+	&#125;
+	return null;
+&#125;</code></pre>
+<h2 id="LinkedHashMap详解">3. LinkedHashMap详解</h2><h3 id="LinkedHashMap底层是怎么实现的？">3.1. LinkedHashMap底层是怎么实现的？</h3><h3 id="LinkedHashMap和HashMap有什么区别？">3.2. LinkedHashMap和HashMap有什么区别？</h3><h2 id="Hashtable详解">4. Hashtable详解</h2><h3 id="Hashtable底层是如何实现的？">4.1. Hashtable底层是如何实现的？</h3><h3 id="Hashtable是如何扩容的？">4.2. Hashtable是如何扩容的？</h3><h3 id="Hashtable和HashMap有什么区别？">4.3. Hashtable和HashMap有什么区别？</h3><h2 id="Properties详解">5. Properties详解</h2><h3 id="Properties底层是如何实现的？">5.1. Properties底层是如何实现的？</h3><h2 id="TreeMap详解">6. TreeMap详解</h2><h3 id="TreeMap底层是如何实现的？">6.1. TreeMap底层是如何实现的？</h3><h3 id="TreeMap是如何排序的？">6.2. TreeMap是如何排序的？</h3><h3 id="TreeMap和HashMap有什么区别？">6.3. TreeMap和HashMap有什么区别？</h3><h2 id="EnumMap详解">7. EnumMap详解</h2><h3 id="EnumMap底层是如何实现的？">7.1. EnumMap底层是如何实现的？</h3><h3 id="EnumMap有哪些使用场景？">7.2. EnumMap有哪些使用场景？</h3></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.3.0/dist/lg-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-fullscreen.js@1.2.0/dist/lg-fullscreen.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lg-thumbnail@1.2.1/dist/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
+  | <img src="/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  </div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+
+</html>
