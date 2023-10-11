@@ -34,9 +34,24 @@
   
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
 
-
   
 <link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  
+<link rel="stylesheet" href="/lightgallery/lightgallery.css">
+
+  
+<script src="/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/lightgallery/lg-thumbnail.min.js"></script>
 
 <meta name="generator" content="Hexo 6.3.0"></head>
 <script>
@@ -135,7 +150,7 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><blockquote>
+  <link rel="stylesheet" type="text/css" href="null"><div class=".article-gallery"><blockquote>
 <p>在阅读本文前请先确保你了解什么是<code>BeanDefinition</code>。</p>
 </blockquote>
 <h2 id="背景">1. 背景</h2><p>搞明白XML配置的Bean是如何被加载到Spring中的可以使我们了解Spring的XML配置文件中有哪些配置信息，以及各个配置信息是如何生效的。Spring的XML配置文件提供了很多标签和属性，我们不仅可以使用<code>bean</code>标签配置Bean，还可以使用<code>alias</code>标签配置别名，使用<code>import</code>标签导入资源，使用<code>component-scan</code>标签开启组件扫描等。</p>
@@ -331,7 +346,7 @@ public class BeanDefinitionLoadTest &#123;
 <li>处理<code>context:annotation-config</code>：<code>BeanDefinitionParserDelegate#parseCustomElement(Element)</code></li>
 </ul>
 <p>运行结果如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">testBean: TestBean(name&#x3D;foo, age&#x3D;1), testBeanWithAlia: TestBean(name&#x3D;foo, age&#x3D;1), innerTestBean: TestBean(name&#x3D;bar, age&#x3D;1)</code></pre></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.staticfile.org/lightgallery/2.7.2/lightgallery.min.js"></script><script src="https://cdn.staticfile.org/lg-zoom/1.3.0/lg-zoom.min.js"></script><script src="https://cdn.staticfile.org/lg-fullscreen/1.2.1/lg-fullscreen.min.js"></script><script src="https://cdn.staticfile.org/lg-thumbnail/1.2.1/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+<pre class="line-numbers language-none"><code class="language-none">testBean: TestBean(name&#x3D;foo, age&#x3D;1), testBeanWithAlia: TestBean(name&#x3D;foo, age&#x3D;1), innerTestBean: TestBean(name&#x3D;bar, age&#x3D;1)</code></pre></div><script src="null"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };

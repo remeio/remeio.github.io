@@ -34,9 +34,24 @@
   
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
 
-
   
 <link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  
+<link rel="stylesheet" href="/lightgallery/lightgallery.css">
+
+  
+<script src="/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/lightgallery/lg-thumbnail.min.js"></script>
 
 <meta name="generator" content="Hexo 6.3.0"></head>
 <script>
@@ -137,7 +152,7 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="背景">1. 背景</h2><p>为什么要搞清楚Bean在Spring中是如何表示的，主要有以下两个方面的原因：</p>
+  <link rel="stylesheet" type="text/css" href="null"><div class=".article-gallery"><h2 id="背景">1. 背景</h2><p>为什么要搞清楚Bean在Spring中是如何表示的，主要有以下两个方面的原因：</p>
 <ol>
 <li>对于使用者来说，在使用XML或注解配置Bean时，我们需要知道有哪些可配置项，才能进行配置；</li>
 <li>对于开发者来说，在Spring处理Bean的过程中，会依赖Bean在Spring中的表示，是阅读源码的前置知识。</li>
@@ -376,7 +391,7 @@ public class BeanDefinitionBuilderTest &#123;
 </code></pre>
 <p>运行结果如下，其实通过<code>BeanDefinitionBuilder</code>编程式创建一个<code>BeanDefinition</code>并注册在日常开发中并不常用，<code>BeanDefinition</code>的创建和注册工作通常由Spring帮我们完成，我们只需要关注Bean是如何配置的即可，如XML或注解是如何配置的。</p>
 <pre class="line-numbers language-none"><code class="language-none">TestBean(name&#x3D;foo, age&#x3D;1) had initialized
-Loaded from: BeanDefinitionBuilder, bean definition type: class org.springframework.beans.factory.support.GenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestBean]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;initialize; destroyMethodName&#x3D;null, bean: TestBean(name&#x3D;foo, age&#x3D;1)</code></pre></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.staticfile.org/lightgallery/2.7.2/lightgallery.min.js"></script><script src="https://cdn.staticfile.org/lg-zoom/1.3.0/lg-zoom.min.js"></script><script src="https://cdn.staticfile.org/lg-fullscreen/1.2.1/lg-fullscreen.min.js"></script><script src="https://cdn.staticfile.org/lg-thumbnail/1.2.1/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+Loaded from: BeanDefinitionBuilder, bean definition type: class org.springframework.beans.factory.support.GenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestBean]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;initialize; destroyMethodName&#x3D;null, bean: TestBean(name&#x3D;foo, age&#x3D;1)</code></pre></div><script src="null"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };

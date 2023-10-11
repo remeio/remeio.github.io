@@ -34,9 +34,24 @@
   
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
 
-
   
 <link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  
+<link rel="stylesheet" href="/lightgallery/lightgallery.css">
+
+  
+<script src="/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/lightgallery/lg-thumbnail.min.js"></script>
 
 <meta name="generator" content="Hexo 6.3.0"></head>
 <script>
@@ -137,7 +152,7 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css"><div class=".article-gallery"><h2 id="背景">1. 背景</h2><h3 id="什么是依赖注入？">1.1. 什么是依赖注入？</h3><p>宽泛地讲，依赖注入（Dependency Inject，DI）是控制反转（Inversion of Control，IoC）的一种实现方式，本质上就是将依赖的创建和管理委派给IoC容器，使用者只需要声明要注入的依赖便可完成依赖的获取。在日常开发中，最常使用的Spring注解是<code>@Component</code>和<code>@Autowired</code>（或<code>@Resource</code>），前者将Bean注册到Spring的IoC容器中，后者完成Bean的依赖注入。依赖注入有字段注入，方法注入和构造器注入三种方式。</p>
+  <link rel="stylesheet" type="text/css" href="null"><div class=".article-gallery"><h2 id="背景">1. 背景</h2><h3 id="什么是依赖注入？">1.1. 什么是依赖注入？</h3><p>宽泛地讲，依赖注入（Dependency Inject，DI）是控制反转（Inversion of Control，IoC）的一种实现方式，本质上就是将依赖的创建和管理委派给IoC容器，使用者只需要声明要注入的依赖便可完成依赖的获取。在日常开发中，最常使用的Spring注解是<code>@Component</code>和<code>@Autowired</code>（或<code>@Resource</code>），前者将Bean注册到Spring的IoC容器中，后者完成Bean的依赖注入。依赖注入有字段注入，方法注入和构造器注入三种方式。</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">@Component
 public class Client &#123;
 
@@ -561,7 +576,7 @@ public class MarkedAnnotationBeanPostProcessor implements InstantiationAwareBean
             return beanFactory.getTypeConverter().convertIfNecessary(result, descriptor.getDependencyType());
         &#125;
     &#125;
-&#125;</code></pre></div><script src="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/js/lightgallery.min.js"></script><script src="https://cdn.staticfile.org/lightgallery/2.7.2/lightgallery.min.js"></script><script src="https://cdn.staticfile.org/lg-zoom/1.3.0/lg-zoom.min.js"></script><script src="https://cdn.staticfile.org/lg-fullscreen/1.2.1/lg-fullscreen.min.js"></script><script src="https://cdn.staticfile.org/lg-thumbnail/1.2.1/lg-thumbnail.min.js"></script><script>if (typeof lightGallery !== 'undefined') {
+&#125;</code></pre></div><script src="null"></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };
