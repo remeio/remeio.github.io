@@ -53,6 +53,10 @@
   
 <script src="/lightgallery/lg-thumbnail.min.js"></script>
 
+  
+  
+<script src="https://cdn.staticfile.org/echarts/4.8.0/echarts.min.js"></script>
+
 <meta name="generator" content="Hexo 6.3.0"></head>
 <script>
   function setIsNight(isNight) {
@@ -150,7 +154,7 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href="null"><div class=".article-gallery"><blockquote>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><blockquote>
 <p>在阅读本文前请先确保你了解什么是<code>BeanDefinition</code>。</p>
 </blockquote>
 <h2 id="背景">1. 背景</h2><p>搞明白XML配置的Bean是如何被加载到Spring中的可以使我们了解Spring的XML配置文件中有哪些配置信息，以及各个配置信息是如何生效的。Spring的XML配置文件提供了很多标签和属性，我们不仅可以使用<code>bean</code>标签配置Bean，还可以使用<code>alias</code>标签配置别名，使用<code>import</code>标签导入资源，使用<code>component-scan</code>标签开启组件扫描等。</p>
@@ -346,7 +350,7 @@ public class BeanDefinitionLoadTest &#123;
 <li>处理<code>context:annotation-config</code>：<code>BeanDefinitionParserDelegate#parseCustomElement(Element)</code></li>
 </ul>
 <p>运行结果如下：</p>
-<pre class="line-numbers language-none"><code class="language-none">testBean: TestBean(name&#x3D;foo, age&#x3D;1), testBeanWithAlia: TestBean(name&#x3D;foo, age&#x3D;1), innerTestBean: TestBean(name&#x3D;bar, age&#x3D;1)</code></pre></div><script src="null"></script><script>if (typeof lightGallery !== 'undefined') {
+<pre class="line-numbers language-none"><code class="language-none">testBean: TestBean(name&#x3D;foo, age&#x3D;1), testBeanWithAlia: TestBean(name&#x3D;foo, age&#x3D;1), innerTestBean: TestBean(name&#x3D;bar, age&#x3D;1)</code></pre></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };
