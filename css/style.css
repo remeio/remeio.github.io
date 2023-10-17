@@ -373,7 +373,9 @@ blockquote p {
   overflow: auto;
 }
 table {
-  font-size: 1.5rem;
+  width: 100%;
+  table-layout: fixed;
+  font-size: 1.3rem;
   font-family: var(--global-font-family);
   transition-property: background-color, color;
   transition-duration: 0.5s;
@@ -393,8 +395,8 @@ tbody {
 }
 th,
 td {
-  padding: 1.6rem;
-  border-bottom: 1px solid var(--tbborder);
+  padding: 0.8rem;
+  border: 1px solid var(--tbborder);
   position: relative;
   transition-property: border-color;
   transition-duration: 0.5s;

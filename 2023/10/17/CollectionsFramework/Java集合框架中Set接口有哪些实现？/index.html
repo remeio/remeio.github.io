@@ -5,7 +5,7 @@
   
   <title>
     
-    关于
+    Java集合框架中Set接口有哪些实现？
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -114,10 +114,53 @@
   </script>
 </header>
     <main class="main-body">
-  <h2 class="page-title">关于</h2>
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Set接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-text">1.1. Set接口有哪些操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.2. Set接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. HashSet详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedHashSet详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TreeSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. TreeSet详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EnumSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">5. EnumSet详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">6. 参考文档</span></a></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">Java集合框架中Set接口有哪些实现？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/CollectionsFramework">CollectionsFramework</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-10-17 20:00，
+		<span class="post-count">字数：76，预计阅读：1分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><p>写点什么，留下点什么。</p>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="Set接口详解">1. Set接口详解</h2><h3 id="Set接口有哪些操作？">1.1. Set接口有哪些操作？</h3><h3 id="Set接口有哪些实现？">1.2. Set接口有哪些实现？</h3><h2 id="HashSet详解">2. HashSet详解</h2><h2 id="LinkedHashSet详解">3. LinkedHashSet详解</h2><h2 id="TreeSet详解">4. TreeSet详解</h2><h2 id="EnumSet详解">5. EnumSet详解</h2><h2 id="参考文档">6. 参考文档</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/intro/index.html">The Java™ Tutorials-Lesson: Introduction to Collections</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/interfaces/set.html">The Java™ Tutorials-The Set Interface</a> </li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/implementations/set.html">The Java™ Tutorials-Set Implementations</a></li>
+</ul>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
@@ -125,116 +168,6 @@
         lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
         }</script>
 </div>
-  <h3>活动图</h3>
-  
-<div id="calendar_box" style="width:100%;overflow-x:auto;overflow-y:hidden;">
-<div id="calendar" style="width: 600px;height:185px;"></div>
-</div>
-
-<script type="text/javascript">
-  (function(){
-    function dateFormat(date){
-      date = new Date(date)
-      return date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0')
-    }
-    let calendarChart = echarts.init(document.getElementById('calendar'));
-    let endDate = new Date().getTime()
-    let startDate = new Date(endDate - 40*7*24*3600*1000).getTime()
-    let startDay = Math.ceil(startDate/(24*3600*1000))
-    let endDay = Math.ceil(endDate/(24*3600*1000))
-
-    let commitData = {"2023-10-17":2,"2023-10-16":1,"2023-10-13":1,"2023-10-11":3,"2023-10-08":2,"2023-09-29":1,"2023-09-28":1,"2023-09-27":1,"2023-09-26":2,"2023-09-25":2,"2023-09-23":1,"2023-09-18":1,"2023-09-14":2,"2023-09-13":2,"2023-09-12":1,"2023-09-11":1,"2023-09-10":1,"2023-09-09":2,"2023-09-01":2,"2023-08-31":2,"2023-08-30":2,"2023-08-29":3,"2023-08-27":1,"2023-08-13":2,"2023-08-09":1,"2023-08-07":1,"2023-08-06":1,"2023-08-05":2,"2023-07-31":2,"2023-07-30":2,"2023-07-29":1,"2023-07-26":1,"2023-07-24":1,"2023-07-23":1,"2023-07-17":3,"2023-07-16":5,"2023-07-10":1,"2023-07-09":1,"2023-07-07":1,"2023-07-06":2,"2023-07-05":4,"2023-07-04":1,"2023-07-03":11}
-    let seriesData = []
-
-    for(let i = startDay;i <= endDay;i++){
-      let date = i*24*3600*1000
-      let formatDate = dateFormat(date)
-      let times = commitData[formatDate] || 0
-      seriesData.push([formatDate, times])
-    }
-    let option = {
-      title: {
-        text: "",
-        x: "center"
-      },
-      backgroundColor: "#FFFFFF",
-      tooltip: {
-        padding: 10,
-        backgroundColor: "#555",
-        borderColor: "#777",
-        borderWidth: 1,
-        formatter: function(a) {
-          var b = a.value;
-          return '<div style="font-size: 14px;">' + b[0] + "：" + b[1] + "</div>"
-        }
-      },
-      visualMap: {
-        show: !1,
-        showLabel: !0,
-        min: 0,
-        max: 4,
-        calculable: !1,
-        inRange: {
-          symbol: "rect",
-          color: ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"]
-        },
-        itemWidth: 12,
-        itemHeight: 12,
-        orient: "horizontal",
-        left: "center",
-        top: 0
-      },
-      calendar: [{
-        top: 50,
-        left: "center",
-        range: [dateFormat(startDate), dateFormat(endDate)],
-        cellSize: [13, 13],
-        splitLine: {
-          show: !1
-        },
-        name: {
-          textStyle: {
-            color: "#3C4858"
-          }
-        },
-        itemStyle: {
-          borderColor: "#fff",
-          borderWidth: 2
-        },
-        yearLabel: {
-          show: !1
-        },
-        monthLabel: {
-          nameMap: "cn",
-          fontSize: 11,
-          color: "#3C4858"
-        },
-        dayLabel: {
-          formatter: "{start} 1st",
-          nameMap: "cn",
-          fontSize: 11,
-          color: "#3C4858"
-        }
-      }],
-      series: [{
-        type: "heatmap",
-        coordinateSystem: "calendar",
-        calendarIndex: 0,
-        data: seriesData
-      }]
-    };
-
-    calendarChart.setOption(option);
-
-    let box = document.getElementById("calendar_box")
-    let child = document.getElementById("calendar")
-    window.addEventListener('load',function(){
-        box.scrollLeft = (child.clientWidth - box.clientWidth) / 2
-    })
-
-  })();
-</script>
-
 </main>
     <footer>
   <div class="footer-info">
