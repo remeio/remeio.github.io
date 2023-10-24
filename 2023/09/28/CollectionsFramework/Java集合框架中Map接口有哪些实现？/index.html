@@ -156,80 +156,80 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="Map接口详解">1. Map接口详解</h2><h3 id="Map接口有哪些实现？">1.1. Map接口有哪些实现？</h3><a href="\assert\puml\73697802d7b0349a9991cfc21fa179e8d963da2b8a113feb3f3c26a0515149d2.svg" class="gallery-item"><img src="\assert\puml\73697802d7b0349a9991cfc21fa179e8d963da2b8a113feb3f3c26a0515149d2.svg"></a>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="Map接口详解">1. Map接口详解</h2><h3 id="Map接口有哪些实现？">1.1. Map接口有哪些实现？</h3><a href="\assert\puml\fee641279b86272576278da76587cc8b6b398e7a8c9b49d5090cca6511ff17fa.svg" class="gallery-item"><img src="\assert\puml\fee641279b86272576278da76587cc8b6b398e7a8c9b49d5090cca6511ff17fa.svg"></a>
 
 <h3 id="Map接口的实现有什么不同？">1.2. Map接口的实现有什么不同？</h3><div class="article-table"><table>
 <thead>
 <tr>
-<th align="center"></th>
-<th align="center">HashMap</th>
-<th align="center">LinkedHashMap</th>
-<th align="center">Hashtable</th>
-<th align="center">TreeMap</th>
+<th align="left"></th>
+<th align="left">HashMap</th>
+<th align="left">LinkedHashMap</th>
+<th align="left">Hashtable</th>
+<th align="left">TreeMap</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><strong>底层数据结构</strong></td>
-<td align="center">数组，链表和红黑树</td>
-<td align="center">HashMap和双向链表</td>
-<td align="center">数组和链表</td>
-<td align="center">红黑树</td>
+<td align="left"><strong>底层数据结构</strong></td>
+<td align="left">数组，链表和红黑树</td>
+<td align="left">HashMap和双向链表</td>
+<td align="left">数组和链表</td>
+<td align="left">红黑树</td>
 </tr>
 <tr>
-<td align="center"><strong>初始容量</strong></td>
-<td align="center">16</td>
-<td align="center">16</td>
-<td align="center">11</td>
-<td align="center">&#x2F;</td>
+<td align="left"><strong>初始容量</strong></td>
+<td align="left">16</td>
+<td align="left">16</td>
+<td align="left">11</td>
+<td align="left">&#x2F;</td>
 </tr>
 <tr>
-<td align="center"><strong>扩容</strong></td>
-<td align="center">2倍</td>
-<td align="center">2倍</td>
-<td align="center">2倍+1</td>
-<td align="center">&#x2F;</td>
+<td align="left"><strong>扩容</strong></td>
+<td align="left">2倍</td>
+<td align="left">2倍</td>
+<td align="left">2倍+1</td>
+<td align="left">&#x2F;</td>
 </tr>
 <tr>
-<td align="center"><strong>有序性</strong></td>
-<td align="center">无序</td>
-<td align="center">插入顺序和访问顺序</td>
-<td align="center">无序</td>
-<td align="center">自然排序和比较器排序</td>
+<td align="left"><strong>有序性</strong></td>
+<td align="left">无序</td>
+<td align="left">插入顺序和访问顺序</td>
+<td align="left">无序</td>
+<td align="left">自然排序和比较器排序</td>
 </tr>
 <tr>
-<td align="center"><strong>允许空键</strong></td>
-<td align="center">是</td>
-<td align="center">是</td>
-<td align="center">否</td>
-<td align="center">自定义比较器排序时可能允许</td>
+<td align="left"><strong>允许空键</strong></td>
+<td align="left">是</td>
+<td align="left">是</td>
+<td align="left">否</td>
+<td align="left">自定义比较器排序时可能允许</td>
 </tr>
 <tr>
-<td align="center"><strong>允许空值</strong></td>
-<td align="center">是</td>
-<td align="center">是</td>
-<td align="center">否</td>
-<td align="center">是</td>
+<td align="left"><strong>允许空值</strong></td>
+<td align="left">是</td>
+<td align="left">是</td>
+<td align="left">否</td>
+<td align="left">是</td>
 </tr>
 <tr>
-<td align="center"><strong>线程安全性</strong></td>
-<td align="center">不安全（fast-fail）</td>
-<td align="center">不安全（fast-fail）</td>
-<td align="center">安全（内置锁）</td>
-<td align="center">不安全（fast-fail）</td>
+<td align="left"><strong>线程安全性</strong></td>
+<td align="left">不安全（fast-fail）</td>
+<td align="left">不安全（fast-fail）</td>
+<td align="left">安全（内置锁）</td>
+<td align="left">不安全（fast-fail）</td>
 </tr>
 <tr>
-<td align="center"><strong>添加新的键值对</strong></td>
-<td align="center">O(1)</td>
-<td align="center">O(1)</td>
-<td align="center">O(1)</td>
-<td align="center">O(logn)</td>
+<td align="left"><strong>添加新的键值对</strong></td>
+<td align="left">O(1)</td>
+<td align="left">O(1)</td>
+<td align="left">O(1)</td>
+<td align="left">O(logn)</td>
 </tr>
 <tr>
-<td align="center"><strong>根据键查找值</strong></td>
-<td align="center">O(1)</td>
-<td align="center">O(1)</td>
-<td align="center">O(1)</td>
-<td align="center">O(logn)</td>
+<td align="left"><strong>根据键查找值</strong></td>
+<td align="left">O(1)</td>
+<td align="left">O(1)</td>
+<td align="left">O(1)</td>
+<td align="left">O(logn)</td>
 </tr>
 </tbody></table></div>
 <h2 id="HashMap详解">2. HashMap详解</h2><h3 id="HashMap是如何设计的？">2.1. HashMap是如何设计的？</h3><ul>
@@ -647,7 +647,7 @@ private void addEntry(int hash, K key, V value, int index) &#123;
 </ul>
 <h2 id="EnumMap详解">6. EnumMap详解</h2><h3 id="EnumMap是如何设计的？">6.1. EnumMap是如何设计的？</h3><ul>
 <li>继承关系：<code>EnumMap</code>继承了<code>AbstractMap</code>；</li>
-<li>底层数据结构：<code>EnumMap</code>使用了固定大小的数组，每个下标代表枚举所对应的键，每个下标对应的值代表枚举所对应的值；</li>
+<li>底层数据结构：<code>EnumMap</code>使用了固定大小的数组，每个下标代表枚举项所对应的键，每个下标对应的值代表枚举项所对应的值；</li>
 <li>存储元素：<code>EnumMap</code>不允许<code>null</code>键，允许<code>null</code>值，且键只能是指定的枚举类型；</li>
 <li>线程安全：<code>EnumaMap</code>是线程不安全的。</li>
 </ul>

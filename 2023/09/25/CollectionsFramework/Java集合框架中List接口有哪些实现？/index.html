@@ -157,7 +157,7 @@
   <div class="article">
   
   <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="List详解">1. List详解</h2><h3 id="List接口有哪些实现？">1.1. List接口有哪些实现？</h3><p>Java平台提供了两种常规用途的<code>List</code>接口的实现，分别是<code>ArrayList</code>和<code>LinkedList</code>。<code>ArrayList</code>在一般场景下有更好性能，<code>LinkedList</code>在特定场景下有更好的性能。</p>
-<a href="\assert\puml\95fe799ce16fc56d21776920672a88a9c47ca627f206e870c28b3430ade9ef55.svg" class="gallery-item"><img src="\assert\puml\95fe799ce16fc56d21776920672a88a9c47ca627f206e870c28b3430ade9ef55.svg"></a>
+<a href="\assert\puml\d611af3e45c12c674146060e2983d71ff11c9e48f675bdadbee8d622c589f06d.svg" class="gallery-item"><img src="\assert\puml\d611af3e45c12c674146060e2983d71ff11c9e48f675bdadbee8d622c589f06d.svg"></a>
 
 <h3 id="List接口的实现有什么不同？">1.2. List接口的实现有什么不同？</h3><div class="article-table"><table>
 <thead>
@@ -229,7 +229,7 @@
 <td align="left">O(1)</td>
 </tr>
 </tbody></table></div>
-<h2 id="ArrayList详解">2. ArrayList详解</h2><a href="\assert\puml\970b16a7d4c1d17af32895e8505176ea52967ffbcc9633e2026184f141609f9c.svg" class="gallery-item"><img src="\assert\puml\970b16a7d4c1d17af32895e8505176ea52967ffbcc9633e2026184f141609f9c.svg"></a>
+<h2 id="ArrayList详解">2. ArrayList详解</h2><a href="\assert\puml\d104d88e3b5e917e03e912e0920aa7f2fed0cd0d836437e378a56a48e204e4ad.svg" class="gallery-item"><img src="\assert\puml\d104d88e3b5e917e03e912e0920aa7f2fed0cd0d836437e378a56a48e204e4ad.svg"></a>
 
 <h3 id="ArrayList和数组有什么区别？">2.1. ArrayList和数组有什么区别？</h3><ul>
 <li>大小不同。数组的大小是固定的，在声明的时候就需要指定；<code>ArrayList</code>的大小会按需动态调整；</li>
@@ -310,7 +310,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 &#125;</code></pre>
 
 
-<h2 id="LinkedList详解">3. LinkedList详解</h2><a href="\assert\puml\24ac8c6311318c21ccb74b2cc3ed5c6f034e5ae1b1599c76bf9fa198175fecdc.svg" class="gallery-item"><img src="\assert\puml\24ac8c6311318c21ccb74b2cc3ed5c6f034e5ae1b1599c76bf9fa198175fecdc.svg"></a>
+<h2 id="LinkedList详解">3. LinkedList详解</h2><a href="\assert\puml\17eff452fba44948226bd68d24eee39b765d46eeb413d71fce9f10e63ec94470.svg" class="gallery-item"><img src="\assert\puml\17eff452fba44948226bd68d24eee39b765d46eeb413d71fce9f10e63ec94470.svg"></a>
 
 <h3 id="LinkedList是如何设计的？">3.1. LinkedList是如何设计的？</h3><ul>
 <li>继承关系：<code>LinkedList</code>实现了<code>List</code>接口和<code>Deque</code>接口；</li>
@@ -325,7 +325,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 <li>实现的接口不同。<code>LinkedList</code>额外实现了<code>Deque</code>接口，可以当做双向队列使用。</li>
 </ul>
 <h3 id="什么时候选用LinkedList？">3.3. 什么时候选用LinkedList？</h3><p>官方建议在选择使用<code>LinkedList</code>前，应该同时测试<code>ArrayList</code>和<code>LinkedList</code>的性能，来验证是否真的有必要选用<code>LinkedList</code>，通常来说<code>ArrayList</code>拥有更好的性能。线程不安全的<code>Deque</code>推荐使用<code>ArrayDeque</code>，线程安全的<code>Deque</code>推荐使用<code>ConcurrentLinkedDeque</code>。</p>
-<h2 id="Vector详解">4. Vector详解</h2><a href="\assert\puml\370ae5055c8c89c974ed2808431ba4d78b742cb7372626dbf8b43a600d608231.svg" class="gallery-item"><img src="\assert\puml\370ae5055c8c89c974ed2808431ba4d78b742cb7372626dbf8b43a600d608231.svg"></a>
+<h2 id="Vector详解">4. Vector详解</h2><a href="\assert\puml\d0d5242203a95b95c2bbf2fea2ea66808d5d6fd30309731e0720731da8398ea5.svg" class="gallery-item"><img src="\assert\puml\d0d5242203a95b95c2bbf2fea2ea66808d5d6fd30309731e0720731da8398ea5.svg"></a>
 
 <h3 id="Vector是如何设计的？">4.1. Vector是如何设计的？</h3><ul>
 <li>继承关系：<code>Vector</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口；</li>
