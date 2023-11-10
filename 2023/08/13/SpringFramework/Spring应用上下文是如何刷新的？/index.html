@@ -165,10 +165,10 @@
 <h3 id="为什么要使用ApplicationContext？">1.2. 为什么要使用ApplicationContext？</h3><p>Spring应用在启动时，会根据指定的XML配置文件或配置类进行Bean定义的加载，Bean的创建等，也就是应用上下文的刷新。通常来说，作为框架使用者我们会把<code>IoC</code>容器的创建交给Spring框架去做，而不需要显式地创建一个Bean工厂完成上面的动作。再者，应用上下文提供了一系列的企业级特性，这些是Bean工厂不具备的。</p>
 <h3 id="ApplicationContext的继承体系">1.3. ApplicationContext的继承体系</h3><p><code>ApplicationContext</code>接口是一个中心接口，它继承了一系列的接口。</p>
 <ul>
-<li>继承了<code>HierarchicalBeanFactory</code>和<code>ListableBeanFactory</code>接口表明其拥有<code>IoC</code>容器相关的功能；</li>
-<li>继承了<code>ResourcePatternResolver</code>接口表明其拥有资源加载的能力；</li>
-<li>继承了<code>MessageSource</code>接口表明其拥有消息解析的能力，如国际化；</li>
-<li>继承了<code>ApplicationEventPublisher</code>接口表明其拥有发布事件的能力；</li>
+<li>继承了<code>HierarchicalBeanFactory</code>和<code>ListableBeanFactory</code>接口表明其拥有<code>IoC</code>容器相关的功能。</li>
+<li>继承了<code>ResourcePatternResolver</code>接口表明其拥有资源加载的能力。</li>
+<li>继承了<code>MessageSource</code>接口表明其拥有消息解析的能力，如国际化。</li>
+<li>继承了<code>ApplicationEventPublisher</code>接口表明其拥有发布事件的能力。</li>
 <li>继承了<code>EnvironmentCapable</code>接口表明其拥有获取环境的能力。</li>
 </ul>
 <p>其继承体系类图如下：</p>
@@ -188,7 +188,7 @@
 <a href="\assert\puml\38e76bbc918fef0ad22475dc2e075094b85c49b05032d50eba1002ae1987c66c.svg" class="gallery-item"><img src="\assert\puml\38e76bbc918fef0ad22475dc2e075094b85c49b05032d50eba1002ae1987c66c.svg"></a>
 
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#prepareRefresh</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#prepareRefresh</code>。</p>
 </blockquote>
 <h3 id="获取应用上下文使用的Bean工厂（obtainFreshBeanFactory）">2.2. 获取应用上下文使用的Bean工厂（obtainFreshBeanFactory）</h3><ol>
 <li>刷新Bean工厂；</li>
@@ -204,7 +204,7 @@
 <a href="\assert\puml\a410a60d969c4dea1bf328a8103cdd69b570328e40b39ed2af8a34873968e9f1.svg" class="gallery-item"><img src="\assert\puml\a410a60d969c4dea1bf328a8103cdd69b570328e40b39ed2af8a34873968e9f1.svg"></a>
 
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#obtainFreshBeanFactory</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#obtainFreshBeanFactory</code>。</p>
 </blockquote>
 <h3 id="准备应用上下文使用的Bean工厂（prepareBeanFactory）">2.3. 准备应用上下文使用的Bean工厂（prepareBeanFactory）</h3><ol>
 <li>设置Bean工厂的Bean类加载器；</li>
@@ -218,7 +218,7 @@
 <a href="\assert\puml\ebd87bcaf43d1dd2e4a43d5239c9a99d709c88caef8b6f07d5b0241f47c538ce.svg" class="gallery-item"><img src="\assert\puml\ebd87bcaf43d1dd2e4a43d5239c9a99d709c88caef8b6f07d5b0241f47c538ce.svg"></a>
 
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#prepareBeanFactory</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#prepareBeanFactory</code>。</p>
 </blockquote>
 <p>Bean后置处理器<code>ApplicationContextAwareProcessor</code>首先会判断Bean的类型是否是以下几种<code>Aware</code>子接口；如果是的话，会调用对应接口的<code>setter</code>方法来设置值。</p>
 <ul>
@@ -231,15 +231,15 @@
 <li><code>ApplicationStartupAware</code></li>
 </ul>
 <blockquote>
-<p>对应源码所在位置：<code>ApplicationContextAwareProcessor#postProcessBeforeInitialization</code></p>
+<p>对应源码所在位置：<code>ApplicationContextAwareProcessor#postProcessBeforeInitialization</code>。</p>
 </blockquote>
 <p>Bean后置处理器<code>ApplicationListenerDetector</code>首先会判断Bean的类型是否是<code>ApplicationListener</code>；如果是的话，会调用<code>AbstractApplicationContext#addApplicationListener</code>方法在应用上下文中注册该Bean为事件监听器。</p>
 <blockquote>
-<p>对应源码所在位置：<code>ApplicationListenerDetector#postProcessAfterInitialization</code></p>
+<p>对应源码所在位置：<code>ApplicationListenerDetector#postProcessAfterInitialization</code>。</p>
 </blockquote>
 <h3 id="应用上下文子类对Bean工厂进行后置处理（postProcessBeanFactory）">2.4. 应用上下文子类对Bean工厂进行后置处理（postProcessBeanFactory）</h3><p>允许应用上下文子类对Bean工厂进行后置处理（模板方法模式，默认为空实现，应用上下文子类可重写此方法）。</p>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#postProcessBeanFactory</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#postProcessBeanFactory</code>。</p>
 </blockquote>
 <h3 id="Bean工厂后置处理器后置处理（invokeBeanFactoryPostProcessors）">2.5. Bean工厂后置处理器后置处理（invokeBeanFactoryPostProcessors）</h3><p>委派给<code>PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors</code>方法，调用Bean工厂后置处理器的后置处理方法。处理逻辑如下：</p>
 <ol>
@@ -254,7 +254,7 @@
 <li>执行Bean工厂中剩余的常规Bean工厂后置处理器的后置处理方法；</li>
 </ol>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#invokeBeanFactoryPostProcessors</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#invokeBeanFactoryPostProcessors</code>。</p>
 </blockquote>
 <h3 id="注册Bean后置处理器（registerBeanPostProcessors）">2.6. 注册Bean后置处理器（registerBeanPostProcessors）</h3><p>委派给<code>PostProcessorRegistrationDelegate#registerBeanPostProcessors</code>方法，注册Bean后置处理器。处理逻辑如下：</p>
 <ol>
@@ -264,19 +264,19 @@
 <li>重新注册合并Bean定义Bean后置处理器。</li>
 </ol>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#registerBeanPostProcessors</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#registerBeanPostProcessors</code>。</p>
 </blockquote>
 <h3 id="初始化消息源（initMessageSource）">2.7. 初始化消息源（initMessageSource）</h3><p>如果Bean工厂中没有Bean名称为<code>messageSource</code>的消息源，则创建一个消息源并注册到Bean工厂中。</p>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#initMessageSource</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#initMessageSource</code>。</p>
 </blockquote>
 <h3 id="初始化应用事件广播器（initApplicationEventMulticaster）">2.8. 初始化应用事件广播器（initApplicationEventMulticaster）</h3><p>如果Bean工厂中没有Bean名称为<code>applicationEventMulticaster</code>应用事件广播器，则创建一个应用事件广播器并注册到Bean工厂中。</p>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#initApplicationEventMulticaster</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#initApplicationEventMulticaster</code>。</p>
 </blockquote>
 <h3 id="应用上下文子类刷新（onRefresh）">2.9. 应用上下文子类刷新（onRefresh）</h3><p>允许应用上下文子类进行自定义刷新（模板方法模式，默认为空实现，应用上下文子类可重写此方法）。</p>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#onRefresh</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#onRefresh</code>。</p>
 </blockquote>
 <h3 id="注册事件监听器（registerListeners）">2.10. 注册事件监听器（registerListeners）</h3><ol>
 <li>获取所有静态声明的事件监听器并注册</li>
@@ -285,7 +285,7 @@
 <a href="\assert\puml\b3cb3960b4b8b931568e1ce2f4ddd85726a5340c770c2bd09330ab9f25181a35.svg" class="gallery-item"><img src="\assert\puml\b3cb3960b4b8b931568e1ce2f4ddd85726a5340c770c2bd09330ab9f25181a35.svg"></a>
 
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#registerListeners</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#registerListeners</code>。</p>
 </blockquote>
 <h3 id="完成Bean工厂的初始化（finishBeanFactoryInitialization）">2.11. 完成Bean工厂的初始化（finishBeanFactoryInitialization）</h3><ol>
 <li>设置转换服务；</li>
@@ -296,7 +296,7 @@
 <a href="\assert\puml\d1673ed16964ea2a08f3b54b70a96796e3d92f24b9c6eba808b92c3343cd3f35.svg" class="gallery-item"><img src="\assert\puml\d1673ed16964ea2a08f3b54b70a96796e3d92f24b9c6eba808b92c3343cd3f35.svg"></a>
 
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#finishBeanFactoryInitialization</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#finishBeanFactoryInitialization</code>。</p>
 </blockquote>
 <h3 id="完成刷新（finishRefresh）">2.12. 完成刷新（finishRefresh）</h3><ol>
 <li>重置缓存；</li>
@@ -307,7 +307,7 @@
 </ol>
 <a href="\assert\puml\299b90e50f49e6d30dd74bcdc1611baa7b7e59a800a1c52ecffce78a271cf661.svg" class="gallery-item"><img src="\assert\puml\299b90e50f49e6d30dd74bcdc1611baa7b7e59a800a1c52ecffce78a271cf661.svg"></a>
 <blockquote>
-<p>对应源码所在位置：<code>AbstractApplicationContext#finishRefresh</code></p>
+<p>对应源码所在位置：<code>AbstractApplicationContext#finishRefresh</code>。</p>
 </blockquote>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {

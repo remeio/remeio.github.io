@@ -158,25 +158,25 @@
   
   <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="背景">1. 背景</h2><h3 id="如何将一个Bean注册到IoC容器中？">1.1. 如何将一个Bean注册到IoC容器中？</h3><p>如何将一个Bean注册到IoC容器中？</p>
 <ul>
-<li>在Spring2.5之前的版本，可以通过XML配置的方式，也就是通过<code>bean</code>标签来配置Bean；</li>
-<li>在Spring2.5及之后的版本，可以通过注解扫描的方式，也就是在类上标注<code>@Component</code>或其派生注解；</li>
+<li>在Spring2.5之前的版本，可以通过XML配置的方式，也就是通过<code>bean</code>标签来配置Bean。</li>
+<li>在Spring2.5及之后的版本，可以通过注解扫描的方式，也就是在类上标注<code>@Component</code>或其派生注解。</li>
 <li>在Spring3.0及之后的版本，可以通过配置类的方式，也就是在类上标注<code>@Configuration</code>注解。</li>
 </ul>
 <p>使用配置类注册Bean有以下几种方式：</p>
-<ol>
-<li>通过在配置类上标注<code>@ComponentScan</code>注解使用组件扫描的方式；</li>
-<li>通过在配置类上标注<code>@Import</code>注解导入配置类，导入<code>ImportSelector</code>或导入<code>ImportBeanDefinitionRegistrar</code>的方式；</li>
-<li>通过在配置类上标注<code>@ImportResource</code>注解导入资源的方式；</li>
+<ul>
+<li>通过在配置类上标注<code>@ComponentScan</code>注解使用组件扫描的方式。</li>
+<li>通过在配置类上标注<code>@Import</code>注解导入配置类，导入<code>ImportSelector</code>或导入<code>ImportBeanDefinitionRegistrar</code>的方式。</li>
+<li>通过在配置类上标注<code>@ImportResource</code>注解导入资源的方式。</li>
 <li>通过在配置类的方法上标注<code>@Bean</code>注解声明Bean的方式。</li>
-</ol>
-<h3 id="为什么要有配置类？">1.2. 为什么要有配置类？</h3><p>从基于XML的配置过渡到基于Java代码的配置，提供更好的可读性和灵活性。</p>
+</ul>
+<h3 id="为什么要有配置类？">1.2. 为什么要有配置类？</h3><p>从基于XML的配置过渡到基于Java代码的配置，以提供更好的可读性和灵活性。</p>
 <h3 id="如何描述一个配置类？">1.3. 如何描述一个配置类？</h3><p>描述一个配置类也就是描述配置类携带的信息，配置类包含以下信息：</p>
 <ul>
-<li>配置类所标注的注解；</li>
-<li>配置类的Bean名称；</li>
-<li>配置类是否是被其他配置类导入的；</li>
-<li>配置类声明的Bean方法；</li>
-<li>配置类声明的导入资源；</li>
+<li>配置类所标注的注解。</li>
+<li>配置类的Bean名称。</li>
+<li>配置类是否是被其他配置类导入的。</li>
+<li>配置类声明的Bean方法。</li>
+<li>配置类声明的导入资源。</li>
 <li>配置类声明的<code>ImportBeanDefinitionRegistrar</code>。</li>
 </ul>
 <p>Spring通过<code>ConfigurationClass</code>类来描述配置类。<code>ConfigurationClass</code>的类图如下：</p>
@@ -198,23 +198,23 @@
 <li>Bean定义的<code>org.springframework.context.annotation.ConfigurationClassPostProcessor.candidate</code>属性的属性值是<code>true</code>，即显式注册的Bean。</li>
 </ol>
 <blockquote>
-<p>对应源码所在位置：<code>ConfigurationClassUtils#checkConfigurationClassCandidate</code></p>
+<p>对应源码所在位置：<code>ConfigurationClassUtils#checkConfigurationClassCandidate</code>。</p>
 </blockquote>
 <h3 id="依次解析每个配置类">2.2. 依次解析每个配置类</h3><h4 id="评估条件">2.2.1. 评估条件</h4><p>根据当前配置类所标注的注解信息和条件评估器<code>ConditionEvaluator</code>来决定是否跳过该配置类的解析。</p>
 <blockquote>
-<p>对应源码所在位置：<code>ConditionEvaluator#shouldSkip</code></p>
+<p>对应源码所在位置：<code>ConditionEvaluator#shouldSkip</code>。</p>
 </blockquote>
 <h4 id="处理内部类">2.2.2. 处理内部类</h4><p>如果当前配置类中声明的内部类也是配置类，则对内部类进行配置类的解析。</p>
 <blockquote>
-<p>对应源码所在位置：<code>ConfigurationClassParser#processMemberClasses</code></p>
+<p>对应源码所在位置：<code>ConfigurationClassParser#processMemberClasses</code>。</p>
 </blockquote>
 <h4 id="处理-PropertySource注解">2.2.3. 处理@PropertySource注解</h4><p>如果当前配置类标注了<code>@PropertySouce</code>注解，则为Spring应用上下文中的环境添加配置源。</p>
 <blockquote>
-<p>对应源码所在位置：<code>PropertySourceRegistry#processPropertySource</code></p>
+<p>对应源码所在位置：<code>PropertySourceRegistry#processPropertySource</code>。</p>
 </blockquote>
 <h4 id="处理-ComponentScan注解">2.2.4. 处理@ComponentScan注解</h4><p>如果当前配置类标注了<code>@ComponentScan</code>注解，则对指定的包名进行组件扫描。如果扫描到的组件是配置类，则进行配置类的解析。</p>
 <blockquote>
-<p>对应源码所在位置：<code>ComponentScanAnnotationParser#parse</code></p>
+<p>对应源码所在位置：<code>ComponentScanAnnotationParser#parse</code>。</p>
 </blockquote>
 <h4 id="处理-Import注解">2.2.5. 处理@Import注解</h4><p>如果当前配置类标注了<code>@Import</code>注解，有以下三种情况：</p>
 <ol>
@@ -223,31 +223,32 @@
 <li>当导入的是其他类时，则当作配置类进行处理，进行配置类的解析。</li>
 </ol>
 <blockquote>
-<p>对应源码所在位置：<code>ConfigurationClassParser#processImports</code></p>
+<p>对应源码所在位置：<code>ConfigurationClassParser#processImports</code>。</p>
 </blockquote>
 <h4 id="处理-ImportResource注解">2.2.6. 处理@ImportResource注解</h4><p>如果当前配置类标注了<code>@ImportResource</code>注解，则由<code>ConfigurationClass</code>收集，供后续Bean定义的加载。</p>
 <blockquote>
-<p>对应源码所在位置：<code>ConfigurationClass#addImportedResource</code></p>
+<p>对应源码所在位置：<code>ConfigurationClass#addImportedResource</code>。</p>
 </blockquote>
 <h4 id="处理-Bean注解">2.2.7. 处理@Bean注解</h4><p>如果当前配置类的某些方法标注了<code>@Bean</code>注解，则由<code>ConfigurationClass</code>收集，供后续Bean定义的加载。</p>
 <blockquote>
-<p>对应源码所在位置：<code>ConfigurationClassParser#retrieveBeanMethodMetadata</code></p>
+<p>对应源码所在位置：<code>ConfigurationClassParser#retrieveBeanMethodMetadata</code>。</p>
 </blockquote>
 <h3 id="依次从每个配置类中加载Bean定义">2.3. 依次从每个配置类中加载Bean定义</h3><h4 id="注册被-Import导入的配置类">2.3.1. 注册被@Import导入的配置类</h4><p>如果当前配置类是被其他配置类导入的，则进行Bean定义的注册。</p>
 <blockquote>
-<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#registerBeanDefinitionForImportedConfigurationClass</code></p>
+<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#registerBeanDefinitionForImportedConfigurationClass</code>。</p>
 </blockquote>
 <h4 id="获取Bean方法并加载Bean定义">2.3.2. 获取Bean方法并加载Bean定义</h4><p>从配置类<code>ConfigurationClass</code>中获取Bean方法，并进行Bean定义的加载。</p>
 <blockquote>
-<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsForBeanMethod</code></p>
+<p>对应源码所在位置：<code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsForBeanMethod</code>。</p>
 </blockquote>
 <h4 id="获取导入资源并加载Bean定义">2.3.3. 获取导入资源并加载Bean定义</h4><p>从配置类<code>ConfigurationClass</code>中获取导入资源，并进行Bean定义的加载。</p>
 <blockquote>
-<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsFromImportedResources</code></p>
+<p>对应源码所在位置：</p>
+<p><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsFromImportedResources</code>。</p>
 </blockquote>
 <h4 id="获取ImportBeanDefinitionRegistrar并加载Bean定义">2.3.4. 获取ImportBeanDefinitionRegistrar并加载Bean定义</h4><p>从配置类<code>ConfigurationClass</code>中获取<code>ImportBeanDefinitionRegistrar</code>，并进行Bean定义的加载。</p>
 <blockquote>
-<p>对应源码所在位置：<br><code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsFromRegistrars</code></p>
+<p>对应源码所在位置：<code>ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsFromRegistrars</code>。</p>
 </blockquote>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
