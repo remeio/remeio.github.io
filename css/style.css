@@ -298,10 +298,11 @@ code {
   color: var(--fontColor);
   font-family: Consolas, monospace !important;
   font-size: 13px;
-  line-height: 2.5rem;
+  line-height: 2.4rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  padding: 0.2rem 0.2rem;
+  margin: 0rem 0.2rem;
+  padding: 0.2rem 0.4rem;
   border-radius: 0.4rem;
 }
 h1,
@@ -357,8 +358,8 @@ blockquote {
   background-color: var(--bgColor2);
   padding-inline-start: 1.8rem;
   padding-inline-end: 2rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
   border-left: 2px solid var(--fontColor);
   margin: 0.5rem 0;
   transition-property: background-color, color, border-color;
