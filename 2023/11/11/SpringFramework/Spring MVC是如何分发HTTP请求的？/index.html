@@ -272,6 +272,8 @@ $ Hello foo!</code></pre>
 <p>对应源码所在位置：<code>HandlerMethodReturnValueHandlerComposite#handleReturnValue</code>。</p>
 </blockquote>
 <h2 id="RequestBody和-ResponseBody是如何工作的？">4. @RequestBody和@ResponseBody是如何工作的？</h2><p>上文我们从整体上讲解了处理器适配器是如何处理请求的，但并未讲解处理器方法参数解析器<code>HandlerMethodArgumentResolver</code>和处理器方法返回值处理器<code>HandlerMethodReturnValueHandler</code>是如何实现的。下面我们将讲解标注了<code>@RequestBody</code>注解的参数是如何解析的，以及标注了<code>@ResponseBody</code>注解的返回值是如何处理的。</p>
+<a href="\assert\puml\e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.svg" class="gallery-item"><img src="\assert\puml\e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.svg"></a>
+
 <h3 id="RequestBody参数解析">4.1. @RequestBody参数解析</h3><h3 id="ResponseBody返回值处理">4.2. @ResponseBody返回值处理</h3><h2 id="实战">5. 实战</h2></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
