@@ -280,7 +280,7 @@ $ Hello foo!</code></pre>
 <blockquote>
 <p>对应源码所在位置：<code>RequestResponseBodyMethodProcessor#handleReturnValue</code>。</p>
 </blockquote>
-<h2 id="实战">5. 实战</h2><h3 id="如何打印每个请求的执行时间？">5.1. 如何打印每个请求的执行时间？</h3><p>可以通过自定义拦截器的方式实现在每次处理请求时，打印请求的耗时时间的。首先定义一个拦截器<code>CostTimeHandlerInterceptor</code>，在<code>preHandle</code>方法中记录起始时间，在<code>afterCompletion</code>方法中记录结束时间并打印。代码如下：</p>
+<h2 id="实战">5. 实战</h2><h3 id="如何打印每个请求的执行时间？">5.1. 如何打印每个请求的执行时间？</h3><p>我们希望在每次处理请求后，都打印请求的耗时时间的。首先定义一个拦截器<code>CostTimeHandlerInterceptor</code>，在<code>preHandle</code>方法中记录起始时间，在<code>afterCompletion</code>方法中记录结束时间并打印。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">package com.remeio.upsnippet.spring.mvc.custom;
 
 import lombok.extern.slf4j.Slf4j;
@@ -338,8 +338,7 @@ public class CustomWebMvcConfigurer implements WebMvcConfigurer &#123;
 <pre class="line-numbers language-none"><code class="language-none">Request &#39;&#x2F;custom&#x2F;getUserInfo&#39; costs 4 millis</code></pre>
 
 
-<h3 id="如何实现根据token获取用户信息？">5.2. 如何实现根据token获取用户信息？</h3><p>希望在标注了<code>@RequestUser</code>注解的参数上设置用户信息。</p>
-<p>首先定义一个处理器方法参数解析器<code>RequestUserMethodArgumentResolver</code>，代码如下：</p>
+<h3 id="如何实现根据token获取用户信息？">5.2. 如何实现根据token获取用户信息？</h3><p>我们希望在标注了<code>@RequestUser</code>注解的参数上设置用户信息。首先定义一个处理器方法参数解析器<code>RequestUserMethodArgumentResolver</code>，代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">package com.remeio.upsnippet.spring.mvc.custom;
 
 import com.google.common.collect.ImmutableMap;
@@ -426,8 +425,7 @@ public class CustomController &#123;
 
 &#125;</code></pre>
 
-<h3 id="如何实现响应信息的可视化？">5.3. 如何实现响应信息的可视化？</h3><p>希望在标注了<code>@ResponseVisualization</code>注解的方法上返回可视化的信息。</p>
-<p>首先定义一个处理器方法返回值处理器<code>ResponseVisualizationReturnValueHandler</code>，代码如下：</p>
+<h3 id="如何实现响应信息的可视化？">5.3. 如何实现响应信息的可视化？</h3><p>我们希望在标注了<code>@ResponseVisualization</code>注解的方法上返回可视化的信息。首先定义一个处理器方法返回值处理器<code>ResponseVisualizationReturnValueHandler</code>，代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
