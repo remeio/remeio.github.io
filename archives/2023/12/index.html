@@ -114,7 +114,10 @@
   </script>
 </header>
     <main class="main-body">
-  <h2 class="page-title">分类: SpringFramework</h2>
+  <h2 class="blog-title">🎨叫我小旗好了</h2>
+  <p class="blog-desc"></p>
+  <p class="blog-info"></p>
+  <h3 class="posts-header">全部文章（20篇）：</h3>
   <ul class="post-list">
   
   <li class="post-list-child">
@@ -134,144 +137,33 @@
     </span>
   </li>
   
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/11/11/SpringFramework/Spring MVC是如何分发HTTP请求的？/" title="Spring MVC是如何分发HTTP请求的？">
-		
-		  『SpringFramework』
-		
-		Spring MVC是如何分发HTTP请求的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-11-11 16:25
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/08/27/SpringFramework/@Configuration及其周边注解是如何生效的？/" title="@Configuration及其周边注解是如何生效的？">
-		
-		  『SpringFramework』
-		
-		@Configuration及其周边注解是如何生效的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-08-27 16:12
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/08/13/SpringFramework/Spring应用上下文是如何刷新的？/" title="Spring应用上下文是如何刷新的？">
-		
-		  『SpringFramework』
-		
-		Spring应用上下文是如何刷新的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-08-13 14:51
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/08/05/SpringFramework/@PostConstruct和@PreDestroy是如何生效的？/" title="@PostConstruct和@PreDestroy是如何生效的？">
-		
-		  『SpringFramework』
-		
-		@PostConstruct和@PreDestroy是如何生效的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-08-05 22:54
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/25/SpringFramework/Bean在Spring中是如何完成依赖注入的？/" title="Bean在Spring中是如何完成依赖注入的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何完成依赖注入的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-25 19:59
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/16/SpringFramework/Bean在Spring中是如何被创建的？/" title="Bean在Spring中是如何被创建的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何被创建的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-16 00:04
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/05/SpringFramework/Bean在Spring中是如何被加载的？/" title="Bean在Spring中是如何被加载的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何被加载的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-05 23:38
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/05/SpringFramework/Bean在Spring中是如何表示的？/" title="Bean在Spring中是如何表示的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何表示的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-05 00:24
-    </span>
-  </li>
-  
 </ul>
 </main>
+<script>
+function getHitokoto() {
+	// 获取一言
+	let hitokoto =
+	  "The best time to plant a tree is 20 years ago. The second-best time is now.";
+	var xhr = new XMLHttpRequest();
+	xhr.open("get", "https://v1.hitokoto.cn?c=i", false);
+	xhr.onreadystatechange = function () {
+	  try {
+		if (xhr.readyState === 4) {
+		  var data = JSON.parse(xhr.responseText);
+		  hitokoto =
+			data.hitokoto +
+			(data.from_who == "null" || data.from_who == null ? "" : "——" + data.from_who);
+		  console.log(hitokoto);
+		  document.getElementsByClassName('blog-info')[0].textContent = hitokoto
+		}
+	  } catch (e) {
+		console.log(e);
+	  }
+	};
+	xhr.send();
+}
+getHitokoto();
+</script>
     <footer>
   <div class="footer-info">
   <a style="margin: 0 0.4rem 0 0.4rem">© 2023 徐梦旗</a> 
