@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Spring Boot是如何实现自动配置的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/prism.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">🏠首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">📌分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">🔗标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">👨‍💻关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <script>
+  </script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%EF%BC%9F"><span class="toc-text">1.1. 什么是自动配置？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9D%A1%E4%BB%B6%E9%85%8D%E7%BD%AE%EF%BC%9F"><span class="toc-text">1.2. 什么是条件配置？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot%E5%92%8CSpring%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">1.3. Spring Boot和Spring有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2. 自动配置是如何实现的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%80%99%E9%80%89%E7%9A%84%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-text">2.1. 获取候选的自动配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E9%99%A4%E9%87%8D%E5%A4%8D%E7%9A%84%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-text">2.2. 移除重复的自动配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E9%99%A4%E6%8E%92%E9%99%A4%E7%9A%84%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-text">2.3. 移除排除的自动配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-text">2.4. 过滤自动配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E5%B8%83%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%AF%BC%E5%85%A5%E4%BA%8B%E4%BB%B6"><span class="toc-text">2.5. 发布自动配置导入事件</span></a></li></ol></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">Spring Boot是如何实现自动配置的？</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/SpringFramework">SpringFramework</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-12-06 20:00，
+		<span class="post-count">字数：776，预计阅读：3分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><blockquote>
+<p>本文基于Spring Boot 2.7.0，Spring Framework 5.3.20 编写。</p>
+</blockquote>
+<h2 id="背景">1. 背景</h2><h3 id="什么是自动配置？">1.1. 什么是自动配置？</h3><p>当我们需要集成某些功能时，只需要依赖Spring Boot或第三方提供的Starter即可，自动配置机制会将相关的配置注册到容器中，开箱即用，降低了开发人员的使用成本。通过<code>@EnableAutoConfiguration</code>注解可以开启自动配置。<br>以Spring Boot应用集成Redis为例，首先在pom文件中依赖<code>spring-boot-starter-data-redis</code>，然后在配置文件中配置Redis相关配置，便可使用依赖注入<code>RedisTemplate</code>来操作Redis。</p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup">&lt;dependency&gt;
+	&lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;
+	&lt;artifactId&gt;spring-boot-starter-data-redis&lt;&#x2F;artifactId&gt;
+&lt;&#x2F;dependency&gt;</code></pre>
+
+<h3 id="什么是条件配置？">1.2. 什么是条件配置？</h3><p>条件配置是指在配置上标注条件注解，以根据特定的条件来启用或禁用该配置。常见的条件注解有<code>@ConditionalOnClass</code>，<code>@ConditionalOnMissingBean</code>，<code>ConditionalOnProperty</code>等。</p>
+<blockquote>
+<p>条件注解的原理见文章：<a href="/2023/08/27/SpringFramework/@Configuration%E5%8F%8A%E5%85%B6%E5%91%A8%E8%BE%B9%E6%B3%A8%E8%A7%A3%E6%98%AF%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88%E7%9A%84%EF%BC%9F/">@Configuration及其周边注解是如何生效的？</a></p>
+</blockquote>
+<h3 id="Spring-Boot和Spring有什么区别？">1.3. Spring Boot和Spring有什么区别？</h3><p>Spring Boot对Spring进行了封装，提供了内置容器，自动配置等功能，简化了开发流程，开箱即用。</p>
+<h2 id="自动配置是如何实现的？">2. 自动配置是如何实现的？</h2><p>当我们通过<code>@EnableAutoConfiguration</code>注解开启自动配置时，其标注的<code>@Import</code>注解导入了<code>AutoConfigurationImportSelector</code>。</p>
+<p>在配置类后置处理器<code>ConfigurationClassPostProcessor</code>处理的过程中，会调用<code>AutoConfigurationImportSelector#getAutoConfigurationEntry</code>获取自动配置，最后完成自动配置的注册。下面我们重点来看自动配置的获取。</p>
+<blockquote>
+<p><code>@Import</code>注解的原理见文章：<a href="/2023/08/27/SpringFramework/@Configuration%E5%8F%8A%E5%85%B6%E5%91%A8%E8%BE%B9%E6%B3%A8%E8%A7%A3%E6%98%AF%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88%E7%9A%84%EF%BC%9F/">@Configuration及其周边注解是如何生效的？</a></p>
+</blockquote>
+<h3 id="获取候选的自动配置">2.1. 获取候选的自动配置</h3><a href="\assert\puml\c66e0d4f3f161a516b40425acd7b03dcd224852ec7e4dc9837bb28533ce17ff3.svg" class="gallery-item"><img src="\assert\puml\c66e0d4f3f161a516b40425acd7b03dcd224852ec7e4dc9837bb28533ce17ff3.svg"></a>
+
+<ol>
+<li>从<code>META-INF/spring.factories</code>文件中获取<code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code>指定的自动配置；该方式已在后续的版本中移除；</li>
+<li>从<code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code>文件中获取自动配置；</li>
+<li>返回候选的自动配置。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>AutoConfigurationImportSelector#getCandidateConfigurations</code>。</li>
+<li><code>SpringFactoriesLoader#loadFactoryNames</code>。</li>
+<li><code>ImportCandidates#load</code>。</li>
+</ul>
+</blockquote>
+<h3 id="移除重复的自动配置">2.2. 移除重复的自动配置</h3><p>对候选的自动配置进行去重。</p>
+<blockquote>
+<p>对应源码所在位置：<code>AutoConfigurationImportSelector#removeDuplicates</code>。</p>
+</blockquote>
+<h3 id="移除排除的自动配置">2.3. 移除排除的自动配置</h3><ol>
+<li>获取<code>@EnableAutoConfiguration</code>注解中<code>exclude</code>属性排除的自动配置；</li>
+<li>获取<code>@EnableAutoConfiguration</code>注解中<code>excludeName</code>属性排除的自动配置；</li>
+<li>获取配置文件中<code>spring.autoconfigure.exclude</code>排除的自动配置；</li>
+<li>从候选的自动配置中移除上面排除的自动配置。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>AutoConfigurationImportSelector#getExclusions</code>。</p>
+</blockquote>
+<h3 id="过滤自动配置">2.4. 过滤自动配置</h3><a href="\assert\puml\d0594ffe44d2b8d911738d71ba86a377ad8864100e71fd41237409795d10725b.svg" class="gallery-item"><img src="\assert\puml\d0594ffe44d2b8d911738d71ba86a377ad8864100e71fd41237409795d10725b.svg"></a>
+
+<ol>
+<li>从<code>META-INF/spring.factories</code>文件中获取<code>org.springframework.boot.autoconfigure.AutoConfigurationImportFilter</code>配置的自动配置导入过滤器；</li>
+<li>委派给自动配置导入过滤器对候选的自动配置进行过滤。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>AutoConfigurationImportSelector.ConfigurationClassFilter#filter</code>。</p>
+</blockquote>
+<h3 id="发布自动配置导入事件">2.5. 发布自动配置导入事件</h3><ol>
+<li>从<code>META-INF/spring.factories</code>文件中获取<code>org.springframework.boot.autoconfigure.AutoConfigurationImportListener</code>配置的自动配置导入监听器；</li>
+<li>委派给自动配置导入监听器接收自动配置导入事件。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>AutoConfigurationImportSelector#fireAutoConfigurationImportEvents</code>。</p>
+</blockquote>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a style="margin: 0 0.4rem 0 0.4rem">© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  </div>
+  <div class="footer-info">
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+
+<script>
+  function setIsNight(isNight) {
+    localStorage.setItem('isNight', isNight)
+  }
+
+  function getIsNight() {
+    return localStorage.getItem('isNight')
+  }
+
+  function switchTheme() {
+    let isNight = getIsNight()
+    if (isNight === 'false') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setIsNight('true')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setIsNight('false')
+    }
+  }
+
+  let isNight = getIsNight()
+  if (isNight == null) {
+    isNight = 'false'
+    setIsNight('false')
+  }
+  if (isNight === 'false') {
+    document.documentElement.className = 'light'
+  } else {
+    document.documentElement.className = 'dark'
+  }
+</script>
+
+</html>
