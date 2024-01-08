@@ -38,10 +38,10 @@ body {
 .show-area {
   width: 72.5rem;
   margin: auto;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 .main-body {
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   animation-name: main-up;
   animation-duration: 0.5s;
   animation-timing-function: ease-out;
