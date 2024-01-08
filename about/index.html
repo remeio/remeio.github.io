@@ -146,116 +146,7 @@
         lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
         }</script>
 </div>
-  <h3>提交活动图</h3>
-  
-<div id="calendar_box" style="width:100%;overflow-x:auto;overflow-y:hidden;">
-<div id="calendar" style="width: 600px;height:180px;"></div>
-</div>
-
-<script type="text/javascript">
-  (function(){
-    function dateFormat(date){
-      date = new Date(date)
-      return date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0')
-    }
-    let calendarChart = echarts.init(document.getElementById('calendar'));
-    let endDate = new Date().getTime()
-    let startDate = new Date(endDate - 40*7*24*3600*1000).getTime()
-    let startDay = Math.ceil(startDate/(24*3600*1000))
-    let endDay = Math.ceil(endDate/(24*3600*1000))
-
-    let commitData = {"2024-01-08":10,"2024-01-07":3,"2024-01-06":2,"2024-01-03":3,"2023-12-17":1,"2023-12-07":1,"2023-11-28":1,"2023-11-27":1,"2023-11-24":1,"2023-11-23":1,"2023-11-22":3,"2023-11-20":2,"2023-11-10":1,"2023-11-09":1,"2023-11-08":2,"2023-11-05":2,"2023-10-31":1,"2023-10-24":2,"2023-10-22":1,"2023-10-21":1,"2023-10-20":1,"2023-10-19":1,"2023-10-17":2,"2023-10-16":1,"2023-10-13":1,"2023-10-11":3,"2023-10-08":2,"2023-09-29":1,"2023-09-28":1,"2023-09-27":1,"2023-09-26":2,"2023-09-25":2,"2023-09-23":1,"2023-09-18":1,"2023-09-14":2,"2023-09-13":2,"2023-09-12":1,"2023-09-11":1,"2023-09-10":1,"2023-09-09":2,"2023-09-01":2,"2023-08-31":2,"2023-08-30":2,"2023-08-29":3,"2023-08-27":1,"2023-08-13":2,"2023-08-09":1,"2023-08-07":1,"2023-08-06":1,"2023-08-05":2,"2023-07-31":2,"2023-07-30":2,"2023-07-29":1,"2023-07-26":1,"2023-07-24":1,"2023-07-23":1,"2023-07-17":3,"2023-07-16":5,"2023-07-10":1,"2023-07-09":1,"2023-07-07":1,"2023-07-06":2,"2023-07-05":4,"2023-07-04":1,"2023-07-03":11}
-    let seriesData = []
-
-    for(let i = startDay;i <= endDay;i++){
-      let date = i*24*3600*1000
-      let formatDate = dateFormat(date)
-      let times = commitData[formatDate] || 0
-      seriesData.push([formatDate, times])
-    }
-    let option = {
-      title: {
-        text: "",
-        x: "center"
-      },
-      backgroundColor: "#FFFFFF",
-      tooltip: {
-        padding: 10,
-        backgroundColor: "#555",
-        borderColor: "#777",
-        borderWidth: 1,
-        formatter: function(a) {
-          var b = a.value;
-          return '<div style="font-size: 14px;">' + b[0] + "：" + b[1] + "</div>"
-        }
-      },
-      visualMap: {
-        show: !1,
-        showLabel: !0,
-        min: 0,
-        max: 4,
-        calculable: !1,
-        inRange: {
-          symbol: "rect",
-          color: ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"]
-        },
-        itemWidth: 12,
-        itemHeight: 12,
-        orient: "horizontal",
-        left: "center",
-        top: 0
-      },
-      calendar: [{
-        top: 50,
-        left: "center",
-        range: [dateFormat(startDate), dateFormat(endDate)],
-        cellSize: [13, 13],
-        splitLine: {
-          show: !1
-        },
-        name: {
-          textStyle: {
-            color: "#3C4858"
-          }
-        },
-        itemStyle: {
-          borderColor: "#fff",
-          borderWidth: 2
-        },
-        yearLabel: {
-          show: !1
-        },
-        monthLabel: {
-          nameMap: "cn",
-          fontSize: 11,
-          color: "#3C4858"
-        },
-        dayLabel: {
-          formatter: "{start} 1st",
-          nameMap: "cn",
-          fontSize: 11,
-          color: "#3C4858"
-        }
-      }],
-      series: [{
-        type: "heatmap",
-        coordinateSystem: "calendar",
-        calendarIndex: 0,
-        data: seriesData
-      }]
-    };
-
-    calendarChart.setOption(option);
-
-    let box = document.getElementById("calendar_box")
-    let child = document.getElementById("calendar")
-    window.addEventListener('load',function(){
-        box.scrollLeft = (child.clientWidth - box.clientWidth) / 2
-    })
-
-  })();
-</script>
-
+  <h2 class="page-title">网站统计</h2>
   <h3>发布活动图</h3>
   <div id="posts-calendar" style="height: 180px;width: 100%;"></div>
   <script id="postsCalendar" data-pjax="">
@@ -465,7 +356,7 @@
                     color: color
                 }
             },
-            indicator: [{"name":"CollectionsFramework","max":10},{"name":"JVM","max":10},{"name":"SpringFramework","max":10},{"name":"开发工具","max":10},{"name":"编码","max":10},{"name":"数据库","max":10},{"name":"网络安全","max":10}],
+            indicator: [{"name":"CollectionsFramework","max":10},{"name":"JVM","max":10},{"name":"SpringFramework","max":10},{"name":"开发工具","max":10},{"name":"数据库","max":10},{"name":"编码","max":10},{"name":"网络安全","max":10}],
             nameGap: 5,
             center: ['50%','55%'],
             radius: '75%',
@@ -477,7 +368,7 @@
             itemStyle: {normal: {areaStyle: {type: 'default'}}},
             data : [
                 {
-                    value : [4,5,9,1,2,1,1],
+                    value : [4,5,9,1,1,2,1],
                     // name : 'Categories:'
                     name: '✒️文章篇数'
                 }
@@ -512,7 +403,7 @@
                 type: 'pie',
                 radius: '75%',
                 color: ['#6772e5', '#ff9e0f', '#fa755a', '#3ecf8e', '#82d3f4', '#ab47bc', '#525f7f', '#f51c47', '#26A69A'],
-                data: [{"name":"CollectionsFramework","value":4},{"name":"JVM","value":5},{"name":"SpringFramework","value":9},{"name":"开发工具","value":1},{"name":"编码","value":2},{"name":"数据库","value":1},{"name":"网络安全","value":1}],
+                data: [{"name":"CollectionsFramework","value":4},{"name":"JVM","value":5},{"name":"SpringFramework","value":9},{"name":"开发工具","value":1},{"name":"数据库","value":1},{"name":"编码","value":2},{"name":"网络安全","value":1}],
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
@@ -641,31 +532,26 @@
     </script>
 </main><script>
   function customCharts() {
-    const themeColor = '#3999ff'
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--spColor')
     // 发布活动
     const postsCalendarDom = document.getElementById('posts-calendar')
     const postsCalendar = postsCalendarDom && echarts.init(postsCalendarDom);
     postsCalendar && postsCalendar.setOption({
       title: null,
-      grid: {
-        top: 12,
-        bottom: 0,
-        containLabel: true
-      },
       tooltip: {
-            padding: 10,
-            backgroundColor: '#555',
-            borderColor: '#777',
-            borderWidth: 1,
-            formatter: function (obj) {
-                var value = obj.value;
-                return '<div style="font-size: 14px;">' + value[0] + '<br/> 文章 : ' + value[1] + '</div>';
-            }
-        },
+        padding: 10,
+        backgroundColor: '#555',
+        borderColor: '#777',
+        borderWidth: 1,
+        formatter: function (obj) {
+          var value = obj.value;
+          return '<div style="font-size: 14px;">' + value[0] + ': ' + value[1] + '篇</div>';
+        }
+      },
       calendar: [
-        {top: 20}
+        { top: 20 }
       ],
-      visualMap: { bottom: 10}
+      visualMap: { bottom: 10 }
     });
     // 发布折线图
     const postsChartDom = document.getElementById('posts-chart')
@@ -701,12 +587,18 @@
           width: 0
         },
         areaStyle: {
-          opacity: 1,
+          opacity: 0.6,
           color: themeColor
         },
         itemStyle: null,
         // 平均线
-        markLine: null
+        markLine: {
+          itemStyle: { color: themeColor },
+          symbol: ['none', 'none'],
+          data: [
+            { type: 'average', name: '平均值' }
+          ]
+        }
       }]
     });
     // 分类雷达图
@@ -771,9 +663,20 @@
       series: [
         {
           color: themeColor,
-          itemStyle: null, emphasis: null,
+          itemStyle: {
+            opacity: 0.6,
+            color: themeColor
+          }, emphasis: null,
           markPoint: null,
-          markLine: null
+
+          // 平均线
+          markLine: {
+            itemStyle: { color: themeColor },
+            symbol: ['none', 'none'],
+            data: [
+              { type: 'average', name: '平均值' }
+            ]
+          }
         }
       ]
     })
