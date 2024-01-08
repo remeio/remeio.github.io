@@ -149,7 +149,13 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><blockquote>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:200px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;BeanDefinition的加载&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;BeanDefinition是如何存储的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;BeanDefinition是如何被加载的？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;如何通过路径获取XML配置的资源？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML配置的资源后，如何将其加载为XML文档？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML文档后，如何解析文档中的各种标签？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;实战&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;使用不同类型的路径来获取资源，会返回什么类型的资源？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;使用debug的方式跟踪XML配置文件是如何被加载的？&quot;}]}]}"/>
+</div>
+
+
+<blockquote>
 <p>在阅读本文前请先确保你了解什么是<code>BeanDefinition</code>。</p>
 </blockquote>
 <h2 id="背景">1. 背景</h2><p>以XML配置文件配置的Bean为例，搞明白Bean在Spring中是如何被加载的可以使我们更了解Spring的XML配置文件中有哪些配置信息，以及各个配置信息是如何生效的。Spring的XML配置文件提供了很多标签和属性，我们不仅可以使用<code>bean</code>标签配置Bean，使用<code>alias</code>标签配置别名，还可以使用<code>import</code>标签导入资源，使用<code>component-scan</code>标签开启组件扫描等。</p>
@@ -367,7 +373,7 @@ public class BeanDefinitionLoadTest &#123;
   </div>
 </footer>
   </div>
-</body>
+<script src="/js/markmap.js"></script></body>
 
 <script>
   function setIsNight(isNight) {

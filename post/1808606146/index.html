@@ -149,7 +149,13 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="背景">1. 背景</h2><p>得益于Spring框架的封装，我们只需要简单的几行代码便可创建一个<code>HTTP</code>服务，如下代码：</p>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:300px">
+  <svg data="{&quot;t&quot;:&quot;root&quot;,&quot;d&quot;:0,&quot;v&quot;:&quot;&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;Spring MVC是如何分发HTTP请求的？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2],&quot;f&quot;:true},&quot;v&quot;:&quot;获取给定请求的处理器执行链&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;获取给定处理器的处理器适配器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;拦截器前置处理&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器适配器处理给定的请求和处理器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;应用默认视图名称&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;拦截器后置处理&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;处理分发结果&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;@Controller和@RequestMapping是如何工作的？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;初始化处理器方法&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;找到给定Bean的处理器和方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;创建并注册处理器方法&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;获取给定请求的处理器方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器适配器处理给定的请求和处理器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15],&quot;f&quot;:true},&quot;v&quot;:&quot;创建ServletInvocableHandlerMethod&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器方法参数解析器解析参数&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[16,17],&quot;f&quot;:true},&quot;v&quot;:&quot;反射调用处理器的方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[17,18],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器方法返回值处理器处理返回值&quot;}]}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[18,19]},&quot;v&quot;:&quot;@RequestBody和@ResponseBody是如何工作的？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[19,20],&quot;f&quot;:true},&quot;v&quot;:&quot;@RequestBody参数解析&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[20,21],&quot;f&quot;:true},&quot;v&quot;:&quot;@ResponseBody返回值处理&quot;}]}],&quot;p&quot;:{}}"/>
+</div>
+
+
+<h2 id="背景">1. 背景</h2><p>得益于Spring框架的封装，我们只需要简单的几行代码便可创建一个<code>HTTP</code>服务，如下代码：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">@SpringBootApplication
 @RestController
 public class DemoApplication &#123;
@@ -555,7 +561,7 @@ public class CustomController &#123;
   </div>
 </footer>
   </div>
-</body>
+<script src="/js/markmap.js"></script></body>
 
 <script>
   function setIsNight(isNight) {
