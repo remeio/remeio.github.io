@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    大模型驱动的智能代码评审研究-预演评审代码集
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div class="show-area">
+    <header>
+  <ul class="nav">
+    <li class="nav-child">
+      <a href="/">🏠首页</a>
+    </li>
+    <li class="nav-child">
+      <a href="/categories">📌分类</a>
+    </li>
+    <li class="nav-child">
+      <a href="/tags">🔗标签</a>
+    </li>
+    <li class="nav-child">
+      <a href="/about">👨‍💻关于</a>
+    </li>
+  </ul>
+  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  
+<script>
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+	setThemeMode('light')
+	switchTheme()
+  }
+</script>
+</header>
+    <main class="main-body">
+  <div class="toc-container">
+    <div class="toc-toggle">
+      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+    </div>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E6%BC%94%E8%AF%84%E5%AE%A1%E4%BB%A3%E7%A0%81%E9%9B%86"><span class="toc-text">2. 预演评审代码集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E4%BB%A3%E7%A0%81%E9%9B%86"><span class="toc-text">2.1. 安全漏洞代码集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%90%E8%94%BD%E7%BC%BA%E9%99%B7%E4%BB%A3%E7%A0%81%E9%9B%86"><span class="toc-text">2.2. 隐蔽缺陷代码集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%E4%BB%A3%E7%A0%81%E9%9B%86"><span class="toc-text">2.3. 并发问题代码集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E4%BB%A3%E7%A0%81%E9%9B%86"><span class="toc-text">2.4. 性能问题代码集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%8F%E5%91%B3%E9%81%93%E4%BB%A3%E7%A0%81%E9%9B%86"><span class="toc-text">2.5. 坏味道代码集</span></a></li></ol></li></ol>
+  </div>
+  
+  <script>
+    var show = false
+    function toggleShow() {
+      if (show) {
+        document.getElementsByClassName('toc')[0].className = 'toc'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+      } else {
+        document.getElementsByClassName('toc')[0].className = 'toc show'
+        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+      }
+      show = !show
+    }
+    document.getElementsByClassName('toc')[0].onclick = toggleShow
+  </script>
+  
+  <div class="article-header">
+    <h1 class="article-title">大模型驱动的智能代码评审研究-预演评审代码集</h1>
+    <div class="article-details">
+      <div class="article-post-date">
+	  	
+		  <span>分类：</span><a href="/categories/编码">编码</a><span>，</span>
+		
+		<span>作者：</span> 徐梦旗，
+	  	<span>发布于：</span> 2023-12-16 23:00，
+		<span class="post-count">字数：1.6k，预计阅读：8分钟</span>
+	  </div>
+      <div class="article-tags">
+        
+        <a href="/tags/源码">#源码</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="背景">1. 背景</h2><p>在软件开发过程中，提高代码质量最常用的途径有两个：一个是借助于静态代码扫描工具，一个是借助于团队代码评审。静态代码扫描可以发现代码中潜在的问题，以<a target="_blank" rel="noopener" href="https://rules.sonarsource.com/">Sonar Rules</a>为例，其将扫描规则分为以下四类：</p>
+<ul>
+<li><code>Bug</code>：软件设计与实现中的缺陷，一般会影响软件的正常功能，如NPE，OOM等问题。</li>
+<li><code>Vulnerability</code>：可被利用产生不安全行为的漏洞，如SQL注入，跨站脚本攻击等漏洞。</li>
+<li><code>Security Hotspots</code>：安全热点问题，如越权，密码未加密等问题。</li>
+<li><code>Code Smells</code>：代码的坏味道，如变量命名不规范等问题。</li>
+</ul>
+<p>而团队代码评审相比于静态代码扫描更能发现隐蔽的缺陷，并为代码的可读性及扩展性提供意见。为借助大模型实现智能代码评审，本文将提供预演评审代码集以检测大模型的代码评审能力。</p>
+<blockquote>
+<p>We believe secure, quality software comes from secure, quality code. ——SonarSource</p>
+</blockquote>
+<h2 id="预演评审代码集">2. 预演评审代码集</h2><h3 id="安全漏洞代码集">2.1. 安全漏洞代码集</h3><ul>
+<li>SQL注入风险</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import java.sql.*;  
+  
+public class VulnerableSQLInjectionExample &#123;  
+    public static void main(String[] args) &#123;  
+        String username &#x3D; &quot;admin&quot;; &#x2F;&#x2F; 假设用户输入的用户名为admin  
+        String password &#x3D; &quot;password123&quot;; &#x2F;&#x2F; 假设用户输入的密码为password123  
+  
+        try &#123;  
+            Connection connection &#x3D; DriverManager.getConnection(&quot;jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;mydatabase&quot;, &quot;root&quot;, &quot;password&quot;);  
+            Statement statement &#x3D; connection.createStatement();  
+  
+            String sqlQuery &#x3D; &quot;SELECT * FROM users WHERE username &#x3D; &#39;&quot; + username + &quot;&#39; AND password &#x3D; &#39;&quot; + password + &quot;&#39;&quot;;  
+            ResultSet resultSet &#x3D; statement.executeQuery(sqlQuery);  
+  
+            if (resultSet.next()) &#123;  
+                System.out.println(&quot;登录成功！&quot;);  
+            &#125; else &#123;  
+                System.out.println(&quot;登录失败！&quot;);  
+            &#125;  
+  
+            connection.close();  
+        &#125; catch (SQLException e) &#123;  
+            e.printStackTrace();  
+        &#125;  
+    &#125;  
+&#125;</code></pre>
+
+<ul>
+<li>反序列化漏洞</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import java.io.ObjectInputStream;  
+  
+public class VulnerableClass &#123;  
+    public static void main(String[] args) &#123;  
+        try &#123;  
+            ObjectInputStream ois &#x3D; new ObjectInputStream(System.in);  
+            Object obj &#x3D; ois.readObject();  
+            ois.close();  
+        &#125; catch (Exception e) &#123;  
+            e.printStackTrace();  
+        &#125;  
+    &#125;  
+&#125;</code></pre>
+
+<h3 id="隐蔽缺陷代码集">2.2. 隐蔽缺陷代码集</h3><ul>
+<li>空指针</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">Person person &#x3D; null;  
+String name &#x3D; person.getName();</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">String[] arr &#x3D; new String[] &#123; null, &quot;hello&quot;, &quot;world&quot; &#125;;  
+for (String str : arr) &#123;  
+    System.out.println(str.length());
+&#125;</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public static String printState(int flag) &#123;
+	System.out.println(isOpen(flag) ? &quot;Success&quot; : &quot;Fail&quot;);
+&#125;
+public static Boolean isOpen(int flag) &#123;
+	if (flag &#x3D;&#x3D; 1) &#123;
+		return true;
+	&#125; else if (flag &#x3D;&#x3D; 0) &#123;
+		return false;
+	&#125; else &#123;
+		return null;
+	&#125;
+&#125;</code></pre>
+
+<ul>
+<li>内存泄漏与内存溢出</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import java.util.ArrayList;  
+  
+public class MemoryLeakExample &#123;  
+    public static void main(String[] args) &#123;  
+        while (true) &#123;  
+            ArrayList&lt;Object&gt; list &#x3D; new ArrayList&lt;&gt;();  
+            list.add(new Object());  
+            &#x2F;&#x2F; 没有释放list内存  
+        &#125;  
+    &#125;  
+&#125;</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+
+public class OOMMetaspaceTest &#123;
+
+    public static void main(String[] args) &#123;
+        &#x2F;&#x2F; jdk1.8
+        &#x2F;&#x2F; -verbose:class -XX:MaxMetaspaceSize&#x3D;10m -XX:MetaspaceSize&#x3D;10M
+        while (true) &#123;
+            Enhancer enhancer &#x3D; new Enhancer();
+            enhancer.setSuperclass(OOMMetaspaceTest.class);
+            &#x2F;&#x2F; 不使用缓存
+            enhancer.setUseCache(false);
+            enhancer.setCallback((MethodInterceptor) (o, method, objects, methodProxy) -&gt; method.invoke(o, objects));
+            enhancer.create();
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class MemoryLeakExample &#123;  
+    private static ThreadLocal&lt;String&gt; threadLocal &#x3D; new ThreadLocal&lt;&gt;();  
+  
+    public static void main(String[] args) &#123;  
+        for (int i &#x3D; 0; i &lt; 1000; i++) &#123;  
+            new Thread(() -&gt; &#123;  
+                threadLocal.set(&quot;Value &quot; + Thread.currentThread().getId());  
+                try &#123;  
+                    Thread.sleep(1000);  
+                &#125; catch (InterruptedException e) &#123;  
+                    e.printStackTrace();  
+                &#125;  
+            &#125;).start();  
+        &#125;  
+    &#125;  
+&#125;</code></pre>
+
+<ul>
+<li>死循环或递归</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class DeadlyRecursion &#123;  
+    public static void main(String[] args) &#123;  
+        int n &#x3D; 0;  
+        deadlyMethod(n);  
+    &#125;  
+  
+    public static void deadlyMethod(int n) &#123;
+        deadlyMethod(n);
+    &#125;  
+&#125;</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public static void run(int a, int b) &#123;
+	while (true) &#123;
+		a &#x3D; a + 1;
+		b &#x3D; b + 2;
+		System.out.print(a + &quot;, &quot; + b);
+		if (a &gt; b) &#123;
+			break;
+		&#125;
+	&#125;
+&#125;</code></pre>
+
+
+<ul>
+<li>除零</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">double a &#x3D; 1000;
+double b &#x3D; 0;
+double c &#x3D; a &#x2F; b;</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public static double compute(double m, double n) &#123;
+	double a &#x3D; 100.0;
+	double b &#x3D; m - n;
+	return divide(a, b);
+&#125;
+public static double divide(double a, double b) &#123;
+	return a &#x2F; b;
+&#125;</code></pre>
+<ul>
+<li>使用资源未释放</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import java.io.*;  
+  
+public class UnclosedStreamExample &#123;  
+    public static void main(String[] args) &#123;  
+        try &#123;  
+            FileInputStream inputStream &#x3D; new FileInputStream(&quot;example.txt&quot;);  
+            int data &#x3D; inputStream.read();  
+            while (data !&#x3D; -1) &#123;  
+                System.out.print((char) data);  
+                data &#x3D; inputStream.read();  
+            &#125;  
+        &#125; catch (IOException e) &#123;  
+            e.printStackTrace();  
+        &#125;  
+    &#125;  
+&#125;</code></pre>
+<h3 id="并发问题代码集">2.3. 并发问题代码集</h3><ul>
+<li>死锁</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class DeadlockExample &#123;  
+    public static void main(String[] args) &#123;  
+        Object lock1 &#x3D; new Object();  
+        Object lock2 &#x3D; new Object();  
+  
+        Thread t1 &#x3D; new Thread(() -&gt; &#123;  
+            synchronized (lock1) &#123;  
+                System.out.println(&quot;Thread 1 acquired lock 1&quot;);  
+                try &#123;  
+                    Thread.sleep(1000);  
+                &#125; catch (InterruptedException e) &#123;  
+                    e.printStackTrace();  
+                &#125;  
+                synchronized (lock2) &#123;  
+                    System.out.println(&quot;Thread 1 acquired lock 2&quot;);  
+                &#125;  
+            &#125;  
+        &#125;);  
+  
+        Thread t2 &#x3D; new Thread(() -&gt; &#123;  
+            synchronized (lock2) &#123;  
+                System.out.println(&quot;Thread 2 acquired lock 2&quot;);  
+                try &#123;  
+                    Thread.sleep(1000);  
+                &#125; catch (InterruptedException e) &#123;  
+                    e.printStackTrace();  
+                &#125;  
+                synchronized (lock1) &#123;  
+                    System.out.println(&quot;Thread 2 acquired lock 1&quot;);  
+                &#125;  
+            &#125;  
+        &#125;);  
+  
+        t1.start();  
+        t2.start();  
+    &#125;  
+&#125;</code></pre>
+
+<ul>
+<li>未加锁</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class UnsafeIncrementExample &#123;  
+    private static int count &#x3D; 0;  
+  
+    public static void increment() &#123;  
+        count++;  
+    &#125;  
+  
+    public static int getCount() &#123;  
+        return count;  
+    &#125;  
+  
+    public static void main(String[] args) throws InterruptedException &#123;  
+        Thread t1 &#x3D; new Thread(() -&gt; &#123;  
+            for (int i &#x3D; 0; i &lt; 10000; i++) &#123;  
+                increment();  
+            &#125;  
+        &#125;);  
+  
+        Thread t2 &#x3D; new Thread(() -&gt; &#123;  
+            for (int i &#x3D; 0; i &lt; 10000; i++) &#123;  
+                increment();  
+            &#125;  
+        &#125;);  
+  
+        t1.start();  
+        t2.start();  
+        t1.join();  
+        t2.join();  
+  
+        System.out.println(&quot;Final count: &quot; + getCount());  
+    &#125;  
+&#125;</code></pre>
+
+<ul>
+<li>未释放锁</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class MyClass &#123;
+  public void doSomething() &#123;
+    Lock lock &#x3D; new Lock();
+    lock.lock();
+    if (isInitialized()) &#123;
+      &#x2F;&#x2F; ...
+      lock.unlock();
+    &#125;
+  &#125;
+&#125;</code></pre>
+
+<h3 id="性能问题代码集">2.4. 性能问题代码集</h3><ul>
+<li>for-each 插入大量数据</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InsertDataExample &#123;  
+	@Autowired
+	private UserDao userDao;
+	
+    public void saveUsers(List&lt;String&gt; users) &#123; 
+        &#x2F;&#x2F; 使用for-each循环遍历数据并插入  
+        for (String user : users) &#123;  
+            userDao.insert(user);
+        &#125;  
+    &#125;  
+&#125;</code></pre>
+
+<ul>
+<li>内存访问大量数据</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class GetMaxAgeExample &#123;  
+	@Autowired
+	private UserDao userDao;
+	
+    public int getMaxAge() &#123; 
+        List&lt;User&gt; users &#x3D; userDao.getAllUsers();
+		int maxAge &#x3D; 0;
+        for (User user : users) &#123;  
+            if (user.getAge() &gt; maxAge) &#123;
+				maxAge &#x3D; user.getAge();
+			&#125;
+        &#125;
+		return maxAge;
+    &#125;  
+&#125;</code></pre>
+
+<h3 id="坏味道代码集">2.5. 坏味道代码集</h3><ul>
+<li>变量命名不明确</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">double q &#x3D; 10;
+double w &#x3D; 3.14;
+
+double a &#x3D; w * q * q;
+System.out.println(a);</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public double getA(double a, double b) &#123;
+	return 3.14 * a * a * 2 + 2 * 3.14 * a * b;
+&#125;</code></pre>
+
+<ul>
+<li>switch 没有 default</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">switch (param) &#123;
+  case 0:
+    doSomething();
+    break;
+  case 1:
+    doSomethingElse();
+    break;
+&#125;</code></pre>
+
+<ul>
+<li>使用 &#x3D;&#x3D; 而非 equals</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public boolean same(Integer a, Integer b) &#123;
+	return a &#x3D;&#x3D; b;
+&#125;</code></pre>
+
+
+<ul>
+<li>代码命名不符合规范</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public static final String bean_factory_name &#x3D; &quot;MyBeanFactory&quot;;</code></pre>
+
+<ul>
+<li>大量 IF-ELSE</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public void sendMessageUsingIfElse(String code, String message) &#123;
+	if (&quot;aliyun&quot;.equals(code)) &#123;
+		aliyunSender.sendMessage(message);
+	&#125; else if (&quot;baidu&quot;.equals(code)) &#123;
+		baiduSender.sendMessage(message);
+	&#125; else if (&quot;huawei&quot;.equals(code)) &#123;
+		huaweiSender.sendMessage(message);
+	&#125; else &#123;
+		throw new IllegalArgumentException(&quot;Not support code: &quot; + code);
+	&#125;
+&#125;</code></pre>
+
+<ul>
+<li>try-with-resource</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">FileReader fr &#x3D; null;
+BufferedReader br &#x3D; null;
+
+try &#123; 
+  fr &#x3D; new FileReader(fileName);
+  br &#x3D; new BufferedReader(fr);
+  return br.readLine();
+&#125; catch (...) &#123;
+  &#x2F;&#x2F; ...
+&#125; finally &#123;
+
+  if (br !&#x3D; null) &#123; 
+    try &#123;
+      br.close();
+    &#125; catch(IOException e)&#123;...&#125;
+  &#125;
+
+  if (fr !&#x3D; null ) &#123;
+    try &#123;
+      br.close();
+    &#125; catch(IOException e)&#123;...&#125;
+  &#125;
+
+&#125;</code></pre></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <div class="article-footer">
+    <a href="/post/3453871301/">上一篇：图解MySQL</a>
+    <a href="/post/993662572/">下一篇：Spring Boot是如何实现自动配置的？</a>
+  </div>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a style="margin: 0 0.4rem 0 0.4rem">© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
+  | <a href="/console" style="margin: 0 0.4rem 0 0.4rem">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  </div>
+  <div class="footer-info">
+	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+  </div>
+</footer>
+  </div>
+</body>
+</html>
