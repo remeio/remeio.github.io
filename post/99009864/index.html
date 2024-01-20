@@ -334,8 +334,11 @@
 <h3 id="一条更新语句的执行流程是怎样的？">4.4. 一条更新语句的执行流程是怎样的？</h3><p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E5%92%8C%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84.drawio.svg" title="图解MySQL-InnoDB存储引擎的内存和磁盘结构.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E5%92%8C%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84.drawio.svg" alt="图解MySQL-InnoDB存储引擎的内存和磁盘结构.drawio.svg"></a></p>
 <ol>
 <li>判断要更新的数据页是否在缓冲池中，如果不在需要先从表空间中加载数据页到缓冲池中；</li>
+<li>记录回滚日志；</li>
+<li>更新缓冲池中的数据页；</li>
 <li>在日志缓冲中记录对数据页的变更；</li>
-<li>更新缓冲池中的数据页，并在提交事务前进行日志落盘；</li>
+<li>在二进制日志缓冲中记录二进制日志；</li>
+<li>提交事务前进行日志落盘；</li>
 <li>由检查点机制进行脏页刷盘。</li>
 </ol>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
@@ -346,7 +349,7 @@
         }</script>
 </div>
   <div class="article-footer">
-    <a href="/"></a>
+    <a href="/post/3016273142/">上一篇：InnoDB存储引擎的事务是如何实现的？</a>
     <a href="/post/993662572/">下一篇：Spring Boot是如何实现自动配置的？</a>
   </div>
 </main>
