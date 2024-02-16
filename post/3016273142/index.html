@@ -336,8 +336,8 @@ public:
 <li>对于串行化（Serializable），在事务开始时会创建一致性视图，通过加锁的方式使得记录只有一个版本。</li>
 </ul>
 <h3 id="快照读和当前读有什么区别？">2.6. 快照读和当前读有什么区别？</h3><ul>
-<li>快照读（Current Read）会借助一致性视图对记录进行可见性判断，不会加锁。</li>
-<li>当前读（Snapshot Read）会读取记录的最新版本，会加锁。</li>
+<li>快照读（Snapshot Read）会借助一致性视图对记录进行可见性判断，不会加锁。</li>
+<li>当前读（Current Read）会读取记录的最新版本，会加锁。</li>
 </ul>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
