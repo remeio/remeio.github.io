@@ -290,28 +290,32 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 
 <p>在以上代码中并未定义<code>&lt;clinit&gt;</code>方法，为什么在运行程序时会执行该方法？其实该方法是虚拟机根据用户编写的非<code>final</code>修饰的静态字段的赋值代码和类的静态代码块自动生成的，并且在类加载的初始化阶段会执行该方法。</p>
 <h3 id="类加载的时机？">1.3. 类加载的时机？</h3><p>类的加载发生在类的初始化之前。《Java虚拟机规范》规定了当对一个类型进行主动引用时会触发类的初始化，有以下几种情况：</p>
-<ol>
-<li>当执行Java程序的<code>main</code>方法时；</li>
-<li>当执行<code>new</code>，<code>getstatic</code>，<code>putstatic</code>，<code>invokestatic</code>字节码指令时；<ul>
-<li><code>new</code>字节码指令对应使用<code>new</code>关键字创建对象;</li>
-<li><code>getstatic</code>字节码指令对应获取类中的静态字段（<code>final</code>修饰的静态字段除外）；</li>
-<li><code>putstatic</code>字节码指令对应设置类中的静态字段；</li>
+<ul>
+<li><p>当执行Java程序的<code>main</code>方法时。</p>
+</li>
+<li><p>当执行<code>new</code>，<code>getstatic</code>，<code>putstatic</code>，<code>invokestatic</code>字节码指令时。</p>
+<ul>
+<li><code>new</code>字节码指令对应使用<code>new</code>关键字创建对象。</li>
+<li><code>getstatic</code>字节码指令对应获取类中的静态字段（<code>final</code>修饰的静态字段除外）。</li>
+<li><code>putstatic</code>字节码指令对应设置类中的静态字段。</li>
 <li><code>invokestatic</code>字节码指令对应调用类中的静态方法。</li>
 </ul>
 </li>
-<li>当使用反射的方式获取类型时；<ul>
+<li><p>当使用反射的方式获取类型时。</p>
+<ul>
 <li>当使用<code>Class#forName</code>加载类的时候；</li>
 <li>当使用<code>java.lang.reflect</code>包中的方法的时候。</li>
 </ul>
 </li>
-<li>父类要先于子类初始化。</li>
-</ol>
+<li><p>父类要先于子类初始化。</p>
+</li>
+</ul>
 <p>当对一个类型进行被动引用时不会触发类的初始化，有以下几种情况：</p>
-<ol>
-<li>当使用子类调用父类中的静态字段或方法时；</li>
-<li>当使用数组定义来引用类时；</li>
+<ul>
+<li>当使用子类调用父类中的静态字段或方法时。</li>
+<li>当使用数组定义来引用类时。</li>
 <li>当获取被<code>final</code>修饰的类的静态字段时。</li>
-</ol>
+</ul>
 <p>下面我们将以示例的方式来探究类加载的时机，首先编写一个类并定义一些内部类，并通过不同的方式来触发内部类的初始化。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public class InitializerMomentTest &#123;
 
@@ -369,12 +373,12 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 
 <p>运行结果如下：</p>
 <ul>
-<li>通过执行程序的<code>main</code>方法触发<code>InitializerMomentTest</code>类的初始化；</li>
-<li>通过实例化类来触发<code>LoadWhenNew</code>类的初始化；</li>
-<li>由于父类要先于子类初始化，所以要先初始化<code>LoadWhenBeforeChildLoad</code>类；</li>
-<li>通过获取类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenGetStatic</code>类的初始化；</li>
-<li>通过设置类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenPutStatic</code>类的初始化；</li>
-<li>通过访问类的静态方法来触发<code>LoadWhenInvokeStatic</code>类的初始化；</li>
+<li>通过执行程序的<code>main</code>方法触发<code>InitializerMomentTest</code>类的初始化。</li>
+<li>通过实例化类来触发<code>LoadWhenNew</code>类的初始化。</li>
+<li>由于父类要先于子类初始化，所以要先初始化<code>LoadWhenBeforeChildLoad</code>类。</li>
+<li>通过获取类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenGetStatic</code>类的初始化。</li>
+<li>通过设置类的非<code>final</code>修饰的静态字段来触发<code>LoadWhenPutStatic</code>类的初始化。</li>
+<li>通过访问类的静态方法来触发<code>LoadWhenInvokeStatic</code>类的初始化。</li>
 <li>通过反射的方式触发<code>LoadWhenClassForName</code>类的初始化。</li>
 </ul>
 <pre class="line-numbers language-none"><code class="language-none">[Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
@@ -386,9 +390,9 @@ Caused by: java.lang.ArithmeticException: &#x2F; by zero
 [Loaded com.remeio.upsnippet.jvm.classloader.InitializerMomentTest$LoadWhenClassForName from file:&#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]</code></pre>
 
 <h2 id="类加载器">2. 类加载器</h2><h3 id="有哪些类加载器？">2.1. 有哪些类加载器？</h3><ul>
-<li>启动类加载器（Bootstrap Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib</code>下的<code>jar</code>；</li>
-<li>扩展类加载器（Extension Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib/ext</code>下的<code>jar</code>；</li>
-<li>应用类加载器（Application Class Loader），用来加载<code>classpath</code>下的<code>jar</code>；</li>
+<li>启动类加载器（Bootstrap Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib</code>下的<code>jar</code>。</li>
+<li>扩展类加载器（Extension Class Loader），用来加载<code>$&#123;JAVA_HOME&#125;/lib/ext</code>下的<code>jar</code>。</li>
+<li>应用类加载器（Application Class Loader），用来加载<code>classpath</code>下的<code>jar</code>。</li>
 <li>自定义类加载器（User Class Loader），用来加载自定义的<code>class</code>二进制字节流。</li>
 </ul>
 <a href="\assert\puml\825360d956786e29a45331a1365b146af4083f6eeebe95dad44f93ba2d9cc80d.svg" class="gallery-item"><img src="\assert\puml\825360d956786e29a45331a1365b146af4083f6eeebe95dad44f93ba2d9cc80d.svg"></a>
@@ -423,8 +427,8 @@ public class DiffClassLoaderTest &#123;
 
 <p>运行结果如下，可以看到：</p>
 <ul>
-<li>加载<code>java.lang.String</code>（类所在路径为<code>jre\lib\rt.jar</code>）的类加载器为启动类加载器（打印出来为<code>null</code>）；</li>
-<li>加载<code>javafx.event.Event</code>（类所在路径为<code>jre/lib/ext/jfxrt.jar</code>）的类加载器为扩展类加载器；</li>
+<li>加载<code>java.lang.String</code>（类所在路径为<code>jre\lib\rt.jar</code>）的类加载器为启动类加载器（打印出来为<code>null</code>）。</li>
+<li>加载<code>javafx.event.Event</code>（类所在路径为<code>jre/lib/ext/jfxrt.jar</code>）的类加载器为扩展类加载器。</li>
 <li>加载<code>DiffClassLoaderTest</code>（类所在路径为<code>classpath</code>）的类加载器为应用类加载器。</li>
 </ul>
 <pre class="line-numbers language-none"><code class="language-none">[Loaded java.lang.String from D:\program\java\jdk1.8\jre\lib\rt.jar]
@@ -559,8 +563,8 @@ The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun
 <blockquote>
 <p>对应源码所在位置：</p>
 <ul>
-<li><code>java.sql.DriverManager#loadInitialDrivers</code></li>
-<li><code>java.util.ServiceLoader.LazyIterator#nextService</code></li>
+<li><code>java.sql.DriverManager#loadInitialDrivers</code>。</li>
+<li><code>java.util.ServiceLoader.LazyIterator#nextService</code>。</li>
 </ul>
 </blockquote>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {

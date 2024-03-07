@@ -260,9 +260,9 @@
 </tr>
 </tbody></table></div>
 <h2 id="HashMap详解">2. HashMap详解</h2><h3 id="HashMap是如何设计的？">2.1. HashMap是如何设计的？</h3><ul>
-<li>继承关系：<code>HashMap</code>继承了<code>AbstractMap</code>，实现了<code>Map</code>接口；</li>
-<li>底层数据结构：<code>HashMap</code>使用了动态数组，并使用了链表和红黑树来解决哈希冲突；</li>
-<li>存储元素：<code>HashMap</code>允许存储<code>null</code>键和<code>null</code>值，是无序的；</li>
+<li>继承关系：<code>HashMap</code>继承了<code>AbstractMap</code>，实现了<code>Map</code>接口。</li>
+<li>底层数据结构：<code>HashMap</code>使用了动态数组，并使用了链表和红黑树来解决哈希冲突。</li>
+<li>存储元素：<code>HashMap</code>允许存储<code>null</code>键和<code>null</code>值，是无序的。</li>
 <li>线程安全：<code>HashMap</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
 </ul>
 <a href="\assert\puml\f60efbf510d4e01ecdc6a57643203a1e3326a0271ea670e3e6986b3a3f4d8f21.svg" class="gallery-item"><img src="\assert\puml\f60efbf510d4e01ecdc6a57643203a1e3326a0271ea670e3e6986b3a3f4d8f21.svg"></a>
@@ -485,9 +485,9 @@ final Node&lt;K,V&gt; getNode(int hash, Object key) &#123;
 
 
 <h2 id="LinkedHashMap详解">3. LinkedHashMap详解</h2><h3 id="LinkedHashMap是如何设计的？">3.1. LinkedHashMap是如何设计的？</h3><ul>
-<li>继承关系：<code>LinkedHashMap</code>继承了<code>HashMap</code>，实现了<code>Map</code>接口；</li>
-<li>底层数据结构：除继承了<code>HashMap</code>外，<code>LinkedHashMap</code>额外添加了双向链表来维护顺序；</li>
-<li>存储元素：<code>LinkedHashMap</code>允许存储<code>null</code>键和<code>null</code>值，支持插入顺序和访问顺序；</li>
+<li>继承关系：<code>LinkedHashMap</code>继承了<code>HashMap</code>，实现了<code>Map</code>接口。</li>
+<li>底层数据结构：除继承了<code>HashMap</code>外，<code>LinkedHashMap</code>额外添加了双向链表来维护顺序。</li>
+<li>存储元素：<code>LinkedHashMap</code>允许存储<code>null</code>键和<code>null</code>值，支持插入顺序和访问顺序。</li>
 <li>线程安全：<code>LinkedHashMap</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
 </ul>
 <h3 id="LinkedHashMap是如何实现有序的？">3.2. LinkedHashMap是如何实现有序的？</h3><p><strong>有序的原理</strong></p>
@@ -549,9 +549,9 @@ private void linkNodeLast(LinkedHashMap.Entry&lt;K,V&gt; p) &#123;
 
 <h3 id="LinkedHashMap和HashMap有什么区别？">3.3. LinkedHashMap和HashMap有什么区别？</h3><p><code>LinkedHashMap</code>可以理解为有序的<code>HashMap</code>，支持插入顺序和访问顺序。</p>
 <h2 id="Hashtable详解">4. Hashtable详解</h2><h3 id="Hashtable是如何设计的？">4.1. Hashtable是如何设计的？</h3><ul>
-<li>继承关系：<code>Hashtable</code>继承了<code>Dictionary</code>，实现了<code>Map</code>接口；</li>
-<li>底层数据结构：<code>Hashtable</code>使用了动态数组，并使用了链表来解决哈希冲突；</li>
-<li>存储元素：<code>Hashtable</code>不允许存储<code>null</code>键和<code>null</code>值，是无序的；</li>
+<li>继承关系：<code>Hashtable</code>继承了<code>Dictionary</code>，实现了<code>Map</code>接口。</li>
+<li>底层数据结构：<code>Hashtable</code>使用了动态数组，并使用了链表来解决哈希冲突。</li>
+<li>存储元素：<code>Hashtable</code>不允许存储<code>null</code>键和<code>null</code>值，是无序的。</li>
 <li>线程安全：<code>Hashtable</code>是线程安全的，采用<code>synchronized</code>修饰了所有方法。</li>
 </ul>
 <a href="\assert\puml\f8c29a53433a35c8dcfed62f493ed4f63dd6cf90334fa2be88de1b4caa9627ec.svg" class="gallery-item"><img src="\assert\puml\f8c29a53433a35c8dcfed62f493ed4f63dd6cf90334fa2be88de1b4caa9627ec.svg"></a>
@@ -651,9 +651,9 @@ private void addEntry(int hash, K key, V value, int index) &#123;
 <h3 id="HashMap和Hashtable有什么区别？">4.4. HashMap和Hashtable有什么区别？</h3><p><code>Hashtable</code>可以理解为线程安全的<code>HashMap</code>。线程安全的<code>Map</code>的实现推荐使用<code>ConcurrentHashMap</code>，线程不安全的<code>Map</code>的实现推荐使用<code>HashMap</code>。</p>
 <h3 id="Properties是如何设计的？">4.5. Properties是如何设计的？</h3><p><code>Properties</code>继承了<code>Hashtable</code>，限制键和值的类型都为字符串。</p>
 <h2 id="TreeMap详解">5. TreeMap详解</h2><h3 id="TreeMap是如何设计的？">5.1. TreeMap是如何设计的？</h3><ul>
-<li>继承关系：<code>TreeMap</code>继承了<code>AbstractMap</code>，实现了<code>NavigableMap</code>接口；</li>
-<li>底层数据结构：<code>TreeMap</code>使用了红黑树；</li>
-<li>存储元素：<code>TreeMap</code>允许<code>null</code>值，在使用自然排序的情况下不允许<code>null</code>键，在使用比较器排序的情况下，是否允许<code>null</code>键由比较器决定，是有序的；</li>
+<li>继承关系：<code>TreeMap</code>继承了<code>AbstractMap</code>，实现了<code>NavigableMap</code>接口。</li>
+<li>底层数据结构：<code>TreeMap</code>使用了红黑树。</li>
+<li>存储元素：<code>TreeMap</code>允许<code>null</code>值，在使用自然排序的情况下不允许<code>null</code>键，在使用比较器排序的情况下，是否允许<code>null</code>键由比较器决定，是有序的。</li>
 <li>线程安全：<code>TreeMap</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
 </ul>
 <a href="\assert\puml\663baae68f48b8df1ba0b346bad01a77a8167e557af1d821bb398411b700b4b7.svg" class="gallery-item"><img src="\assert\puml\663baae68f48b8df1ba0b346bad01a77a8167e557af1d821bb398411b700b4b7.svg"></a>
@@ -668,14 +668,14 @@ private void addEntry(int hash, K key, V value, int index) &#123;
 &#125;</code></pre>
 
 <h3 id="HashMap和TreeMap有什么区别？">5.3. HashMap和TreeMap有什么区别？</h3><ul>
-<li>底层数据结构不同。<code>TreeMap</code>底层使用红黑树，<code>HashMap</code>底层使用数组，并使用链表和红黑树解决哈希冲突；</li>
-<li>操作的性能不同。<code>TreeMap</code>新增和查找元素的时间复杂度为O(logn)，<code>HashMap</code>新增和查找元素的时间复杂度为O(1)；</li>
+<li>底层数据结构不同。<code>TreeMap</code>底层使用红黑树，<code>HashMap</code>底层使用数组，并使用链表和红黑树解决哈希冲突。</li>
+<li>操作的性能不同。<code>TreeMap</code>新增和查找元素的时间复杂度为O(logn)，<code>HashMap</code>新增和查找元素的时间复杂度为O(1)。</li>
 <li>适用场景不同。<code>TreeMap</code>适用于需要键值对需要排序的场景。</li>
 </ul>
 <h2 id="EnumMap详解">6. EnumMap详解</h2><h3 id="EnumMap是如何设计的？">6.1. EnumMap是如何设计的？</h3><ul>
-<li>继承关系：<code>EnumMap</code>继承了<code>AbstractMap</code>；</li>
-<li>底层数据结构：<code>EnumMap</code>使用了固定大小的数组，每个下标代表枚举项所对应的键，每个下标对应的值代表枚举项所对应的值；</li>
-<li>存储元素：<code>EnumMap</code>不允许<code>null</code>键，允许<code>null</code>值，且键只能是指定的枚举类型；</li>
+<li>继承关系：<code>EnumMap</code>继承了<code>AbstractMap</code>。</li>
+<li>底层数据结构：<code>EnumMap</code>使用了固定大小的数组，每个下标代表枚举项所对应的键，每个下标对应的值代表枚举项所对应的值。</li>
+<li>存储元素：<code>EnumMap</code>不允许<code>null</code>键，允许<code>null</code>值，且键只能是指定的枚举类型。</li>
 <li>线程安全：<code>EnumaMap</code>是线程不安全的。</li>
 </ul>
 <a href="\assert\puml\54a34486cef7a8b26060c9f1643e0f5cdc4a97057ce49ca4423003af85acf936.svg" class="gallery-item"><img src="\assert\puml\54a34486cef7a8b26060c9f1643e0f5cdc4a97057ce49ca4423003af85acf936.svg"></a>

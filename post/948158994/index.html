@@ -191,7 +191,7 @@
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-Xms</code>：指定虚拟机堆内存的初始大小；</li>
+<li><code>-Xms</code>：指定虚拟机堆内存的初始大小。</li>
 <li><code>-Xmx</code>：指定虚拟机堆内存的最大大小。</li>
 </ul>
 </blockquote>
@@ -226,10 +226,10 @@ Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space
 
 <h2 id="方法区">2. 方法区</h2><h3 id="方法区中存放的是什么？">2.1. 方法区中存放的是什么？</h3><p>类的元数据信息、编译后的代码、静态变量、运行时常量池存放在方法区（Method Area）中。方法区是线程共享的。</p>
 <h3 id="永久代和元空间有什么区别？">2.2. 永久代和元空间有什么区别？</h3><p>在JDK1.7及之前的版本中，方法区的实现是永久代（PermGen）；在JDK1.8及之后的版本中，方法区的实现是元空间（Metaspace）。两者有以下区别：</p>
-<ol>
+<ul>
 <li>存储区域不同：永久代占用的是堆内存；元空间占用的是本地内存，不受堆内存大小的限制。</li>
 <li>存储内容不同：相比于JDK1.6的永久代，JDK1.7的永久代将运行时常量池和静态变量移到了堆中；而JDK1.8则去除了永久代，使用元空间代替。</li>
-</ol>
+</ul>
 <h3 id="方法区可能会发生的异常？">2.3. 方法区可能会发生的异常？</h3><ul>
 <li>在JDK1.8之前的版本中，当永久代内存不足时，会抛出<code>OutOfMemoryError: PermGen space</code>。</li>
 <li>在JDK1.8及之后的版本中，当元空间内存不足时，会抛出<code>OutOfMemoryError: Metaspace</code>。</li>
@@ -263,9 +263,9 @@ Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Metaspace</code
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-XX:PermSize</code>：在JDK1.7及之前的版本中，指定永久代的初始大小；</li>
+<li><code>-XX:PermSize</code>：在JDK1.7及之前的版本中，指定永久代的初始大小。</li>
 <li><code>-XX:MaxPermSize</code>：在JDK1.7及之前的版本中，指定永久代的最大大小。</li>
-<li><code>-XX:MetaspaceSize</code>：在JDK1.8及之后的版本中，指定元空间的初始大小；</li>
+<li><code>-XX:MetaspaceSize</code>：在JDK1.8及之后的版本中，指定元空间的初始大小。</li>
 <li><code>-XX:MaxMetaspaceSize</code>：在JDK1.8及之后的版本中，指定元空间的最大大小。</li>
 </ul>
 </blockquote>
@@ -387,17 +387,17 @@ PS Old Generation
 </code></pre>
 <p>如上示例，从打印信息的<code>Heap Configuration</code>部分可以看到该Java进程的堆的配置：</p>
 <ul>
-<li>堆的最大内存<code>MaxHeapSize</code>为4048MB；</li>
-<li>新生代的最大内存<code>MaxNewSize</code>为1349MB；</li>
-<li>老年代与新生代内存大小的比值<code>NewRatio</code>为2；</li>
-<li><code>Eden</code>区与<code>Survivor</code>区的比值<code>SurvivorRatio</code>为8；</li>
+<li>堆的最大内存<code>MaxHeapSize</code>为4048MB。</li>
+<li>新生代的最大内存<code>MaxNewSize</code>为1349MB。</li>
+<li>老年代与新生代内存大小的比值<code>NewRatio</code>为2。</li>
+<li><code>Eden</code>区与<code>Survivor</code>区的比值<code>SurvivorRatio</code>为8。</li>
 <li>元空间的最大内存<code>MaxMetaspaceSize</code>为16GB。</li>
 </ul>
 <p>从打印信息的<code>Heap Usage</code>部分可以看到该Java进程堆分配的内存为254MB，包括以下两个部分：</p>
 <ul>
 <li>新生代<code>PS Young Generation</code>分配的内存为84.5MB，包括以下三个部分：<ul>
-<li><code>Eden Space</code>分配的内存为63.5MB；</li>
-<li><code>From Space</code>分配的内为10.5MB；</li>
+<li><code>Eden Space</code>分配的内存为63.5MB。</li>
+<li><code>From Space</code>分配的内为10.5MB。</li>
 <li><code>To Space</code>分配的内存为10.5MB。</li>
 </ul>
 </li>
@@ -409,7 +409,7 @@ PS Old Generation
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-XX:+HeapDumpOnOutOfMemoryError</code>：开启当程序出现<code>OOM</code>时自动转储堆的内存快照文件；</li>
+<li><code>-XX:+HeapDumpOnOutOfMemoryError</code>：开启当程序出现<code>OOM</code>时自动转储堆的内存快照文件。</li>
 <li><code>-XX:HeapDumpPath=&lt;file&gt;</code>：指定堆的内存快照文件的输出路径。</li>
 </ul>
 </blockquote>
