@@ -191,23 +191,23 @@
 
 <p>如上图所示，可达性分析结果如下：</p>
 <ul>
-<li>对象<code>R1</code>，<code>R2</code>是<code>GC Roots</code>，故存活；</li>
-<li>对象<code>A</code>被<code>R1</code>直接引用，故存活；</li>
-<li>对象<code>B</code>，<code>F</code>并未被<code>R1</code>或<code>R2</code>直接或间接地引用，故死亡；</li>
-<li>对象<code>C</code>被<code>R2</code>直接引用，及被<code>R1</code>间接引用，故存活；</li>
+<li>对象<code>R1</code>，<code>R2</code>是<code>GC Roots</code>，故存活。</li>
+<li>对象<code>A</code>被<code>R1</code>直接引用，故存活。</li>
+<li>对象<code>B</code>，<code>F</code>并未被<code>R1</code>或<code>R2</code>直接或间接地引用，故死亡。</li>
+<li>对象<code>C</code>被<code>R2</code>直接引用，及被<code>R1</code>间接引用，故存活。</li>
 <li>对象<code>D</code>被<code>R1</code>间接引用，其引用链为<code>R1 → A → D</code>，故存活。</li>
 </ul>
 <h3 id="哪些对象可以作为GC-Roots？">1.4. 哪些对象可以作为GC Roots？</h3><ul>
-<li>虚拟机栈中的栈帧中的局部变量表引用的对象；</li>
-<li>方法区中，类静态属性引用的对象；</li>
-<li>方法区中，常量引用的对象；</li>
-<li>本地方法栈中，<code>JNI</code>引用的对象；</li>
+<li>虚拟机栈中的栈帧中的局部变量表引用的对象。</li>
+<li>方法区中，类静态属性引用的对象。</li>
+<li>方法区中，常量引用的对象。</li>
+<li>本地方法栈中，<code>JNI</code>引用的对象。</li>
 <li>虚拟机内部的引用。</li>
 </ul>
 <h3 id="有哪些对象引用？">1.5. 有哪些对象引用？</h3><ul>
-<li>强引用（Strong Reference），不会发生垃圾回收直至发生OOM；</li>
-<li>软引用（Soft Reference），内存不足时会被垃圾回收，适合用作缓存；</li>
-<li>弱引用（Weak Reference），在下次GC时会被垃圾回收，如<code>ThreadLocal</code>的实现；</li>
+<li>强引用（Strong Reference），不会发生垃圾回收直至发生OOM。</li>
+<li>软引用（Soft Reference），内存不足时会被垃圾回收，适合用作缓存。</li>
+<li>弱引用（Weak Reference），在下次GC时会被垃圾回收，如<code>ThreadLocal</code>的实现。</li>
 <li>虚引用（Plantom Reference）,在下次GC时会被垃圾回收，用作回调机制。</li>
 </ul>
 <a href="\assert\puml\c2f72211623c714d38c08fe393907c192a118cb66bdf98cee62b0e4d3ffe1c5e.svg" class="gallery-item"><img src="\assert\puml\c2f72211623c714d38c08fe393907c192a118cb66bdf98cee62b0e4d3ffe1c5e.svg"></a>
@@ -215,7 +215,7 @@
 <h3 id="ThreadLocal为什么使用弱引用？">1.6. ThreadLocal为什么使用弱引用？</h3><p><code>ThreadLocal</code>是指线程本地变量，即为每个线程提供一份变量副本。本质上是在每个线程中都维护了一个<code>ThreadLocalMap</code>，内部<code>Entry</code>的键<code>reference</code>是<code>ThreadLocal</code>，内部<code>Entry</code>的值<code>value</code>是<code>ThreadLocal</code>对应的值。</p>
 <ol>
 <li><code>ThreadLocal</code>使用的引用是弱引用，当客户端的强引用不再引用时，会在下次GC时会被回收，从根本上避免了内存泄漏；</li>
-<li><code>ThreadLocal</code>对应的值使用的是强引用，在使用完后需要手动调用<code>ThreadLocal#remove</code>移除引用，避免发生内存泄漏</li>
+<li><code>ThreadLocal</code>对应的值使用的是强引用，在使用完后需要手动调用<code>ThreadLocal#remove</code>移除引用，避免发生内存泄漏。</li>
 </ol>
 <a href="\assert\puml\858c374e3ee8099389a217262b30a8469c5ff9c4356e4e16a9cdcc9707fdec40.svg" class="gallery-item"><img src="\assert\puml\858c374e3ee8099389a217262b30a8469c5ff9c4356e4e16a9cdcc9707fdec40.svg"></a>
 
@@ -262,9 +262,9 @@
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-XX:+UseSerialGC</code>：指定垃圾收集器为Serial搭配Serial Old；</li>
-<li><code>-XX:+UseParallelGC</code>：指定垃圾收集器为Parallel Scavenge搭配Parallel Old；</li>
-<li><code>-XX:+UseParallelOldGC</code>：指定垃圾收集器为Parallel Scavenge搭配Parallel Old ；</li>
+<li><code>-XX:+UseSerialGC</code>：指定垃圾收集器为Serial搭配Serial Old。</li>
+<li><code>-XX:+UseParallelGC</code>：指定垃圾收集器为Parallel Scavenge搭配Parallel Old。</li>
+<li><code>-XX:+UseParallelOldGC</code>：指定垃圾收集器为Parallel Scavenge搭配Parallel Old。</li>
 <li><code>-XX:+UseParNewGC</code>：指定垃圾收集器为ParNew搭配Serial Old，于JDK9移除。</li>
 <li><code>-XX:+UseConcMarkSweepGC</code>：指定垃圾收集器为ParNew搭配CMS，加Serial Old；</li>
 <li><code>-XX:+UseConcMarkSweepGC -XX:-UseParNewGC</code>：指定垃圾收集器为Serial搭配CMS，于JDK9移除。</li>
@@ -276,13 +276,13 @@
 <li>初始标记，标记<code>GC Roots</code>对象，耗时短，会<code>STW</code>；</li>
 <li>并发标记，标记<code>GC Roots</code>引用链上的对象，耗时长，不会<code>STW</code>；</li>
 <li>重新标记，修复并发标记期间新产生的对象，会<code>STW</code>；</li>
-<li>并发清除，清除垃圾对象，不会<code>STW</code>；</li>
+<li>并发清除，清除垃圾对象，不会<code>STW</code>。</li>
 </ol>
 <h3 id="G1垃圾收集器垃圾回收的过程是怎样的？">2.5. G1垃圾收集器垃圾回收的过程是怎样的？</h3><ol>
 <li>初始标记，标记<code>GC Roots</code>对象，耗时短，会<code>STW</code>；</li>
 <li>并发标记，标记<code>GC Roots</code>引用链上的对象，耗时长，不会<code>STW</code>；</li>
 <li>最终标记，修复并发标记期间新产生的对象，会<code>STW</code>；</li>
-<li>筛选回收，对各个<code>Region</code>的回收价值和成本排序，根据用户期望GC停顿时间确定回收计划，会<code>STW</code>；</li>
+<li>筛选回收，对各个<code>Region</code>的回收价值和成本排序，根据用户期望GC停顿时间确定回收计划，会<code>STW</code>。</li>
 </ol>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {

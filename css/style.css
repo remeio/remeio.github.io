@@ -372,8 +372,8 @@ ol p {
 }
 blockquote {
   background-color: var(--bgColor2);
-  padding-inline-start: 1.8rem;
-  padding-inline-end: 2rem;
+  padding-inline-start: 1rem;
+  padding-inline-end: 1rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   border-left: 2px solid var(--fontColor);
@@ -382,7 +382,7 @@ blockquote {
   transition-duration: 0.5s;
 }
 blockquote p {
-  margin: 1rem 0rem;
+  margin: 0.8rem 0rem;
 }
 .article-table {
   max-width: 100%;

@@ -183,7 +183,7 @@
 
 
 <h2 id="调优理论">1. 调优理论</h2><h3 id="为什么需要调优？">1.1. 为什么需要调优？</h3><ul>
-<li>提高程序运行的性能，如提供程序的吞吐量，降低程序的响应时间等；</li>
+<li>提高程序运行的性能，如提供程序的吞吐量，降低程序的响应时间等。</li>
 <li>解决程序出现的问题，如解决内存溢出，内存泄漏，死锁等问题。</li>
 </ul>
 <blockquote>
@@ -198,36 +198,36 @@
 </ol>
 <a href="\assert\puml\1d9581b4c356216b04bd3f11c0e449e3b5102203ceaa87ccc1eae6d08b5aeadc.svg" class="gallery-item"><img src="\assert\puml\1d9581b4c356216b04bd3f11c0e449e3b5102203ceaa87ccc1eae6d08b5aeadc.svg"></a>
 <h2 id="调优手段">2. 调优手段</h2><h3 id="虚拟机参数有哪些分类？">2.1. 虚拟机参数有哪些分类？</h3><ul>
-<li>标准参数，以<code>-</code>开头，如<code>-version</code>等；</li>
-<li>非标准参数，以<code>-X</code>开头，如<code>-Xms</code>，<code>-Xmx</code>等；</li>
+<li>标准参数，以<code>-</code>开头，如<code>-version</code>等。</li>
+<li>非标准参数，以<code>-X</code>开头，如<code>-Xms</code>，<code>-Xmx</code>等。</li>
 <li>不稳定参数，以<code>-XX</code>开头，如<code>-XX:+UseG1GC</code>等。</li>
 </ul>
 <h3 id="JDK工具包中有哪些工具？">2.2. JDK工具包中有哪些工具？</h3><p>JDK工具：</p>
 <ul>
-<li>jps：打印当前系统中的Java进程；</li>
-<li>jinfo：打印指定Java进程的虚拟机参数和系统属性，及设置虚拟机参数；</li>
-<li>jmap：打印指定Java进程的堆的内存信息，及转储堆的内存快照文件；</li>
-<li>jstat：打印指定Java进程的堆内存信息和GC信息；</li>
-<li>jstack：打印指定Java进程的堆栈信息；</li>
-<li>jhat：分析堆的内存快照文件；</li>
-<li>jconsole：可视化工具；</li>
+<li>jps：打印当前系统中的Java进程。</li>
+<li>jinfo：打印指定Java进程的虚拟机参数和系统属性，及设置虚拟机参数。</li>
+<li>jmap：打印指定Java进程的堆的内存信息，及转储堆的内存快照文件。</li>
+<li>jstat：打印指定Java进程的堆内存信息和GC信息。</li>
+<li>jstack：打印指定Java进程的堆栈信息。</li>
+<li>jhat：分析堆的内存快照文件。</li>
+<li>jconsole：可视化工具。</li>
 <li>visualvm：可视化工具。</li>
 </ul>
 <p>第三方工具：</p>
 <ul>
-<li>GC Easy：分析GC日志；</li>
-<li>MAT：分析堆的内存快照文件；</li>
-<li>JProfile：可视化工具；</li>
+<li>GC Easy：分析GC日志。</li>
+<li>MAT：分析堆的内存快照文件。</li>
+<li>JProfile：可视化工具。</li>
 <li>Arthas：线上监控诊断工具。</li>
 </ul>
-<h3 id="如何打印及分析虚拟机的GC日志？">2.3. 如何打印及分析虚拟机的GC日志？</h3><p>可以通过指定虚拟机参数来设置打印的虚拟机的GC日志信息：</p>
+<h3 id="如何打印及分析虚拟机的GC日志？">2.3. 如何打印及分析虚拟机的GC日志？</h3><p>可以通过指定虚拟机参数来设置打印的虚拟机的GC日志信息</p>
 <ul>
-<li><code>-XX:+PrintGC</code>：开启打印GC日志</li>
-<li><code>-XX:+PrintGCDetail</code>：开启打印GC详细日志；</li>
-<li><code>-XX:+PrintGCTimeStamps</code>：开启打印GC耗时；</li>
-<li><code>-XX:+PrintGCDateStamps</code>：开启打印GC发生的时间；</li>
-<li><code>-XX:+PrintHeapAtGC</code>：开启GC时打印堆信息；</li>
-<li><code>-Xloggc:&lt;filepath&gt;</code>：指定GC日志输出文件的路径</li>
+<li><code>-XX:+PrintGC</code>：开启打印GC日志。</li>
+<li><code>-XX:+PrintGCDetail</code>：开启打印GC详细日志。</li>
+<li><code>-XX:+PrintGCTimeStamps</code>：开启打印GC耗时。</li>
+<li><code>-XX:+PrintGCDateStamps</code>：开启打印GC发生的时间。</li>
+<li><code>-XX:+PrintHeapAtGC</code>：开启GC时打印堆信息。</li>
+<li><code>-Xloggc:&lt;filepath&gt;</code>：指定GC日志输出文件的路径。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">-XX:+PrintGC -XX:+PrintGCDetail -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:.&#x2F;gc.log</code></pre>
 
@@ -290,15 +290,15 @@ Heap after GC invocations&#x3D;11 (full 1):
 
 <p>从上面的示例中可以看到GC日志包含以下信息：</p>
 <ul>
-<li>GC发生的时间；</li>
-<li>GC的类型和发生的原因；</li>
-<li>GC后堆内存和元空间占用的变化；</li>
+<li>GC发生的时间。</li>
+<li>GC的类型和发生的原因。</li>
+<li>GC后堆内存和元空间占用的变化。</li>
 <li>GC的耗时。</li>
 </ul>
 <h2 id="调优案例">3. 调优案例</h2><h3 id="如何为虚拟机指定合适的堆内存大小和元空间大小？">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</h3><p>最佳实践：</p>
 <ul>
-<li>整堆建议设置为老年代实际使用内存的4倍；</li>
-<li>新生代建议设置为老年代实际使用内存的1~1.5倍；</li>
+<li>整堆建议设置为老年代实际使用内存的4倍。</li>
+<li>新生代建议设置为老年代实际使用内存的1~1.5倍。</li>
 <li>元空间建议设置为元空间实际使用内存的2倍。</li>
 </ul>
 <p>可以通过GC Easy对GC日志的分析结果来决定虚拟机堆内存大小和元空间大小，如下示例：</p>
@@ -333,8 +333,8 @@ Heap after GC invocations&#x3D;11 (full 1):
 
 <h3 id="如何为虚拟机指定合适的Java虚拟机栈大小？">3.2. 如何为虚拟机指定合适的Java虚拟机栈大小？</h3><p>通过虚拟机参数<code>-Xss1m</code>设置线程堆栈的大小为1MB即可。</p>
 <h3 id="如何为虚拟机选择合适的垃圾收集器？">3.3. 如何为虚拟机选择合适的垃圾收集器？</h3><ul>
-<li>吞吐量优先：选用Parallel Scavenge搭配Parallel Old，虚拟机参数为<code>-XX:+UseParallelGC</code>；</li>
-<li>响应时间优先：选用ParNew搭配CMS，虚拟机参数为<code>-XX:+UseConcMarkSweepGC</code>；</li>
+<li>吞吐量优先：选用Parallel Scavenge搭配Parallel Old，虚拟机参数为<code>-XX:+UseParallelGC</code>。</li>
+<li>响应时间优先：选用ParNew搭配CMS，虚拟机参数为<code>-XX:+UseConcMarkSweepGC</code>。</li>
 <li>全功能但不全能：选用G1，虚拟机参数为<code>-XX:+UseG1GC</code>。</li>
 </ul>
 <h3 id="程序发生内存溢出如何排查？">3.4. 程序发生内存溢出如何排查？</h3><ol>
@@ -354,8 +354,8 @@ Heap after GC invocations&#x3D;11 (full 1):
 
 <p>从下面打印的信息中我们可以看到：</p>
 <ul>
-<li>线程<code>Thread-1</code>的状态为<code>BLOCKED</code>，其持有锁<code>0x000000076bcae728</code>，并且正在等待锁<code>0x000000076bcae718</code>；</li>
-<li>线程<code>Thread-2</code>的状态也为<code>BLOCKED</code>，其持有锁<code>0x000000076bcae718</code>，并且正在等待锁<code>0x000000076bcae728</code>；</li>
+<li>线程<code>Thread-1</code>的状态为<code>BLOCKED</code>，其持有锁<code>0x000000076bcae728</code>，并且正在等待锁<code>0x000000076bcae718</code>。</li>
+<li>线程<code>Thread-2</code>的状态也为<code>BLOCKED</code>，其持有锁<code>0x000000076bcae718</code>，并且正在等待锁<code>0x000000076bcae728</code>。</li>
 <li>线程<code>Thread-1</code>和线程<code>Thread-2</code>产生了死锁。</li>
 </ul>
 <pre class="line-numbers language-none"><code class="language-none">$ jstack -l 11840

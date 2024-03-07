@@ -193,8 +193,8 @@
 <a href="\assert\puml\c8438775708c609cf1e9aa46315cc319fe74f50bbde9064554166fc38339c939.svg" class="gallery-item"><img src="\assert\puml\c8438775708c609cf1e9aa46315cc319fe74f50bbde9064554166fc38339c939.svg"></a>
 
 <h3 id="对象的内存分配方式有哪些？">1.2. 对象的内存分配方式有哪些？</h3><ul>
-<li>栈上分配：如果经过逃逸分析后发现该对象是非逃逸的小对象，可以尝试在栈帧中分配内存，以提高内存分配的效率；</li>
-<li>碰撞指针：适合连续的内存空间，如堆中的新生代；</li>
+<li>栈上分配：如果经过逃逸分析后发现该对象是非逃逸的小对象，可以尝试在栈帧中分配内存，以提高内存分配的效率。</li>
+<li>碰撞指针：适合连续的内存空间，如堆中的新生代。</li>
 <li>空闲列表：适合不连续的内存空间，如堆中的老年代。</li>
 </ul>
 <a href="\assert\puml\52571bd6aa9dfb9d223bc8ac7025c6d0dd08c9d0a162b162e74eb850adf1e824.svg" class="gallery-item"><img src="\assert\puml\52571bd6aa9dfb9d223bc8ac7025c6d0dd08c9d0a162b162e74eb850adf1e824.svg"></a>
@@ -202,8 +202,8 @@
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-server</code>：开启服务端模式；</li>
-<li><code>-XX:+DoEscapeAnalysis</code>：开启逃逸分析；</li>
+<li><code>-server</code>：开启服务端模式。</li>
+<li><code>-XX:+DoEscapeAnalysis</code>：开启逃逸分析。</li>
 <li><code>-XX:+EliminateAllocations</code>：开启标量替换。</li>
 </ul>
 </blockquote>
@@ -225,17 +225,17 @@
 </ol>
 <a href="\assert\puml\4f45b661c98ab1974306967417c9a747b49e8bf05f628c3aceea9178646ecdf1.svg" class="gallery-item"><img src="\assert\puml\4f45b661c98ab1974306967417c9a747b49e8bf05f628c3aceea9178646ecdf1.svg"></a>
 
-<h3 id="新生代的对象什么时候进入老年代？">2.2. 新生代的对象什么时候进入老年代？</h3><ol>
-<li>大对象直接进入老年代；</li>
-<li>超过最大年龄阈值的对象会进入老年代；</li>
-<li>如果Survivor区中相同年龄的对象的总大小大于Survivor区总大小的一半，大于等于该年龄的对象会进入老年代；</li>
+<h3 id="新生代的对象什么时候进入老年代？">2.2. 新生代的对象什么时候进入老年代？</h3><ul>
+<li>大对象直接进入老年代。</li>
+<li>超过最大年龄阈值的对象会进入老年代。</li>
+<li>如果Survivor区中相同年龄的对象的总大小大于Survivor区总大小的一半，大于等于该年龄的对象会进入老年代。</li>
 <li>Minor GC后，Survivor区容纳不了新生代存活的对象时会进入老年代。</li>
-</ol>
+</ul>
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-XX:PretenureSizeThreshold</code>：指定大对象的阈值，默认为1MB；</li>
-<li><code>-XX:MaxTenuringThreshold</code>：指定进入老年代的年龄阈值，默认为15；</li>
+<li><code>-XX:PretenureSizeThreshold</code>：指定大对象的阈值，默认为1MB。</li>
+<li><code>-XX:MaxTenuringThreshold</code>：指定进入老年代的年龄阈值，默认为15。</li>
 <li><code>-XX:TargetSurvivorRatio</code>：指定动态年龄判断的比例，默认为50。</li>
 </ul>
 </blockquote>
@@ -244,29 +244,29 @@
 <h3 id="什么时候发生Minor-GC及Full-GC？">2.4. 什么时候发生Minor GC及Full GC？</h3><p>发生GC通常的原因是没有足够的可用内存来存放存活的对象，需要回收死去的对象以释放内存空间。</p>
 <ul>
 <li>新生代空间不足且空间分配担保成功时，会发生Minor GC。</li>
-<li>新生代空间不足且空间分配担保失败时，会发生Full GC；</li>
-<li>老年代空间不足时，会发生Full GC；</li>
+<li>新生代空间不足且空间分配担保失败时，会发生Full GC。</li>
+<li>老年代空间不足时，会发生Full GC。</li>
 <li>调用<code>System#gc</code>方法时，可能会发生Full GC。</li>
 </ul>
 <h3 id="频繁发生Full-GC的原因是什么？">2.5. 频繁发生Full GC的原因是什么？</h3><p>频繁发生Full GC的本质原因是老年代的可用内存不足，可能有以下几种情况：</p>
-<ol>
-<li>程序创建了过多的大对象；</li>
-<li>程序中存在内存泄漏，有大量需要回收但是未被回收的对象；</li>
-<li>程序中存在代码死循环，不断地创建对象；</li>
+<ul>
+<li>程序创建了过多的大对象。</li>
+<li>程序中存在内存泄漏，有大量需要回收但是未被回收的对象。</li>
+<li>程序中存在代码死循环，不断地创建对象。</li>
 <li>调用了<code>System#gc</code>方法。</li>
-</ol>
+</ul>
 <p>可用通过转储堆的内存快照文件来分析堆中对象的信息，以及可以观察GC日志来分析原因。</p>
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-XX:+HeapDumpBeforeFullGC</code>：开启在Full GC前转储堆的内存快照文件；</li>
+<li><code>-XX:+HeapDumpBeforeFullGC</code>：开启在Full GC前转储堆的内存快照文件。</li>
 <li><code>-XX:+PrintGCDetails</code>：开启打印GC详细信息。</li>
 </ul>
 </blockquote>
 <h2 id="对象的内存布局">3. 对象的内存布局</h2><h3 id="对象的内存布局是怎样的？">3.1. 对象的内存布局是怎样的？</h3><ol>
 <li>对象头<ul>
-<li>MarkWord：包括对象的hashcode，GC分代年龄，锁状态等；</li>
-<li>类型指针：指向类的元数据的指针，占8个字节（开启指针压缩的情况下占4个字节）；</li>
+<li>MarkWord：包括对象的hashcode，GC分代年龄，锁状态等。</li>
+<li>类型指针：指向类的元数据的指针，占8个字节（开启指针压缩的情况下占4个字节）。</li>
 <li>数组长度：只有数组对象才有，占4个字节。</li>
 </ul>
 </li>
@@ -276,14 +276,14 @@
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
-<li><code>-XX:+UseCompressedClassPointers</code>：开启类指针压缩；</li>
+<li><code>-XX:+UseCompressedClassPointers</code>：开启类指针压缩。</li>
 <li><code>-XX:+UseCompressedOops</code>：开启普通对象指针压缩。</li>
 </ul>
 </blockquote>
-<h3 id="如何访问一个对象？">3.2. 如何访问一个对象？</h3><ol>
-<li>句柄访问：通过句柄池中的指针访问对象，对象移动时，只需要修改句柄指向的指针；</li>
+<h3 id="如何访问一个对象？">3.2. 如何访问一个对象？</h3><ul>
+<li>句柄访问：通过句柄池中的指针访问对象，对象移动时，只需要修改句柄指向的指针。</li>
 <li>直接指针：通过指针直接访问对象，比句柄访问更快，也是Hotspot访问对象的方式。</li>
-</ol>
+</ul>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'

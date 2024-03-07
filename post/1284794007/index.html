@@ -182,7 +182,11 @@
 </div>
 
 
-<h2 id="List详解">1. List详解</h2><h3 id="List接口有哪些实现？">1.1. List接口有哪些实现？</h3><p>Java平台提供了两种常规用途的<code>List</code>接口的实现，分别是<code>ArrayList</code>和<code>LinkedList</code>。<code>ArrayList</code>在一般场景下有更好性能，<code>LinkedList</code>在特定场景下有更好的性能。</p>
+<h2 id="List详解">1. List详解</h2><h3 id="List接口有哪些实现？">1.1. List接口有哪些实现？</h3><p>Java平台提供了两种常规用途的<code>List</code>接口的实现，分别是<code>ArrayList</code>和<code>LinkedList</code>。</p>
+<ul>
+<li>在一般场景下，<code>ArrayList</code>有着更好的性能。</li>
+<li>在特定场景下，<code>LinkedList</code>有着更好的性能。</li>
+</ul>
 <a href="\assert\puml\d611af3e45c12c674146060e2983d71ff11c9e48f675bdadbee8d622c589f06d.svg" class="gallery-item"><img src="\assert\puml\d611af3e45c12c674146060e2983d71ff11c9e48f675bdadbee8d622c589f06d.svg"></a>
 
 <h3 id="List接口的实现有什么不同？">1.2. List接口的实现有什么不同？</h3><div class="article-table"><table>
@@ -258,23 +262,23 @@
 <h2 id="ArrayList详解">2. ArrayList详解</h2><a href="\assert\puml\d104d88e3b5e917e03e912e0920aa7f2fed0cd0d836437e378a56a48e204e4ad.svg" class="gallery-item"><img src="\assert\puml\d104d88e3b5e917e03e912e0920aa7f2fed0cd0d836437e378a56a48e204e4ad.svg"></a>
 
 <h3 id="ArrayList和数组有什么区别？">2.1. ArrayList和数组有什么区别？</h3><ul>
-<li>大小不同。数组的大小是固定的，在声明的时候就需要指定；<code>ArrayList</code>的大小会按需动态调整；</li>
-<li>存储元素的类型不同。数组可以存储基本类型和引用类型的元素；<code>ArrayList</code>只能存储引用类型的元素；</li>
-<li>操作方法不同。<code>ArrayList</code>提供了一系列封装的方法，比直接操作数组更高效。</li>
+<li>大小不同：数组的大小是固定的，在声明的时候就需要指定；<code>ArrayList</code>的大小会按需动态调整。</li>
+<li>存储元素的类型不同：数组可以存储基本类型和引用类型的元素；<code>ArrayList</code>只能存储引用类型的元素。</li>
+<li>操作方法不同：<code>ArrayList</code>提供了一系列封装的方法，比直接操作数组更易用。</li>
 </ul>
 <h3 id="ArrayList是如何设计的？">2.2. ArrayList是如何设计的？</h3><ul>
-<li>继承关系：<code>ArrayList</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口，支持随机访问；</li>
-<li>底层数据结构：<code>ArrayList</code>基于动态数组，当容量不足时会进行扩容；</li>
-<li>存储元素：<code>ArrayList</code>允许存储<code>null</code>元素，以及存储重复的元素；</li>
-<li>线程安全：<code>ArrayList</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
+<li>从继承关系上看，<code>ArrayList</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口，支持随机访问。</li>
+<li>从底层数据结构上看，<code>ArrayList</code>基于动态数组，当容量不足时会进行扩容。</li>
+<li>从存储元素上看，<code>ArrayList</code>允许存储<code>null</code>元素，以及存储重复的元素。</li>
+<li>从线程安全上看，<code>ArrayList</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
 </ul>
-<h3 id="什么是fast-fail机制？">2.3. 什么是fast-fail机制？</h3><p><code>fast-fail</code>机制是指在列表的迭代器被创建后，如果修改了列表（不包括迭代器本身的<code>remove</code>和<code>add</code>操作），在执行迭代器的操作时会抛出<code>ConcurrentModificationException</code>异常。 设计意图是当存在并发修改时，通过快速失败机制来避免后续的并发风险，起到提醒开发人员的作用。</p>
+<h3 id="什么是fast-fail机制？">2.3. 什么是fast-fail机制？</h3><p><code>fast-fail</code>机制是指在列表的迭代器被创建后，如果修改了列表（不包括迭代器本身的<code>remove</code>和<code>add</code>操作），在执行迭代器的操作时会抛出<code>ConcurrentModificationException</code>异常。设计意图是当存在并发修改时，通过快速失败机制来避免后续的并发风险，起到提醒开发人员的作用。</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">final void checkForComodification() &#123;
 	if (modCount !&#x3D; expectedModCount)
 		throw new ConcurrentModificationException();
 &#125;</code></pre>
 
-<p>实现原理是当每次对列表进行修改时，会递增列表的修改次数<code>modCount</code>；创建迭代器时则会记录当前列表的修改次数<code>expectedModCount</code>；在迭代器的每次操作前都会检查<code>modCount</code>是否和<code>expectedModCount</code>一致，如果不一致则代表创建迭代器后对列表进行了修改，故抛出并发修改异常。</p>
+<p>实现原理是当每次对列表进行修改时，会递增列表的修改次数<code>modCount</code>，创建迭代器时则会记录当前列表的修改次数<code>expectedModCount</code>，在迭代器的每次操作前都会检查<code>modCount</code>是否和<code>expectedModCount</code>一致，如果不一致则代表创建迭代器后对列表进行了修改，故抛出并发修改异常。</p>
 <h3 id="ArrayList是如何扩容的？">2.4. ArrayList是如何扩容的？</h3><ol>
 <li>在添加新元素前，如果所需最小容量大于当前数组的大小则进行扩容，否者直接添加新元素；</li>
 <li>如果是无参构造器创建的<code>ArrayList</code>，首次扩容时，所需最小容量为10；</li>
@@ -339,37 +343,37 @@ private static int hugeCapacity(int minCapacity) &#123;
 <h2 id="LinkedList详解">3. LinkedList详解</h2><a href="\assert\puml\17eff452fba44948226bd68d24eee39b765d46eeb413d71fce9f10e63ec94470.svg" class="gallery-item"><img src="\assert\puml\17eff452fba44948226bd68d24eee39b765d46eeb413d71fce9f10e63ec94470.svg"></a>
 
 <h3 id="LinkedList是如何设计的？">3.1. LinkedList是如何设计的？</h3><ul>
-<li>继承关系：<code>LinkedList</code>实现了<code>List</code>接口和<code>Deque</code>接口；</li>
-<li>底层数据结构：<code>LinkedList</code>基于双向链表，无需扩容；</li>
-<li>存储元素：<code>LinkedList</code>允许存储<code>null</code>元素，以及存储重复的元素；</li>
+<li>继承关系：<code>LinkedList</code>实现了<code>List</code>接口和<code>Deque</code>接口。</li>
+<li>底层数据结构：<code>LinkedList</code>基于双向链表，无需扩容。</li>
+<li>存储元素：<code>LinkedList</code>允许存储<code>null</code>元素，以及存储重复的元素。</li>
 <li>线程安全：<code>LinkedList</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
 </ul>
 <h3 id="ArrayList和LinkedList有什么区别？">3.2. ArrayList和LinkedList有什么区别？</h3><ul>
-<li>底层使用的数据结构不同。<code>ArrayList</code>基于动态数组，而<code>LinkedList</code>基于双向链表；</li>
-<li>占用的内存大小不同。相比于<code>ArrayList</code>，<code>LinkedList</code>需要额外存储链表节点，会消耗更多的内存空间；</li>
-<li>操作的性能不同。<code>ArrayList</code>是常量级访问，线性级修改，<code>LinkedList</code>是线性级访问，常量级修改；</li>
-<li>实现的接口不同。<code>LinkedList</code>额外实现了<code>Deque</code>接口，可以当做双向队列使用。</li>
+<li>底层使用的数据结构不同：<code>ArrayList</code>基于动态数组，而<code>LinkedList</code>基于双向链表。</li>
+<li>占用的内存大小不同：相比于<code>ArrayList</code>，<code>LinkedList</code>需要额外存储链表节点，会消耗更多的内存空间。</li>
+<li>操作的性能不同：<code>ArrayList</code>是常量级访问，线性级修改，<code>LinkedList</code>是线性级访问，常量级修改。</li>
+<li>实现的接口不同：<code>LinkedList</code>额外实现了<code>Deque</code>接口，可以当做双向队列使用。</li>
 </ul>
 <h3 id="什么时候选用LinkedList？">3.3. 什么时候选用LinkedList？</h3><p>官方建议在选择使用<code>LinkedList</code>前，应该同时测试<code>ArrayList</code>和<code>LinkedList</code>的性能，来验证是否真的有必要选用<code>LinkedList</code>，通常来说<code>ArrayList</code>拥有更好的性能。线程不安全的<code>Deque</code>推荐使用<code>ArrayDeque</code>，线程安全的<code>Deque</code>推荐使用<code>ConcurrentLinkedDeque</code>。</p>
 <h2 id="Vector详解">4. Vector详解</h2><a href="\assert\puml\d0d5242203a95b95c2bbf2fea2ea66808d5d6fd30309731e0720731da8398ea5.svg" class="gallery-item"><img src="\assert\puml\d0d5242203a95b95c2bbf2fea2ea66808d5d6fd30309731e0720731da8398ea5.svg"></a>
 
 <h3 id="Vector是如何设计的？">4.1. Vector是如何设计的？</h3><ul>
-<li>继承关系：<code>Vector</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口；</li>
-<li>底层数据结构：<code>Vector</code>基于动态数组，当容量不足时会自动扩容；</li>
-<li>存储元素：<code>Vector</code>允许存储<code>null</code>元素，以及存储重复的元素；</li>
+<li>继承关系：<code>Vector</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口。</li>
+<li>底层数据结构：<code>Vector</code>基于动态数组，当容量不足时会自动扩容。</li>
+<li>存储元素：<code>Vector</code>允许存储<code>null</code>元素，以及存储重复的元素。</li>
 <li>线程安全：<code>Vector</code>是线程安全的，采用<code>synchronized</code>修饰了所有方法。</li>
 </ul>
 <h3 id="ArrayList和Vector有什么区别？">4.2. ArrayList和Vector有什么区别？</h3><p><code>Vector</code>可以理解为线程安全的<code>ArrayList</code>。线程不安全的<code>List</code>推荐使用<code>ArrayList</code>，线程安全的<code>List</code>推荐使用<code>CopyOnWriteArrayList</code>。</p>
 <ul>
-<li>扩容的大小不同。<code>ArrayList</code>扩容为原数组大小的1.5倍，<code>Vector</code>扩容为原数组的2倍；</li>
-<li>线程安全性不同。<code>ArrayList</code>是线程不安全的，采用<code>fast-fail</code>机制，<code>Vector</code>是线程安全的，使用了内置锁；</li>
-<li>操作的性能不同。<code>Vector</code>中的方法需要加锁，性能要比<code>ArrayList</code>差。</li>
+<li>扩容的大小不同：<code>ArrayList</code>扩容为原数组大小的1.5倍，<code>Vector</code>扩容为原数组的2倍。</li>
+<li>线程安全性不同：<code>ArrayList</code>是线程不安全的，采用<code>fast-fail</code>机制，<code>Vector</code>是线程安全的，使用了内置锁。</li>
+<li>操作的性能不同：<code>Vector</code>中的方法需要加锁，性能要比<code>ArrayList</code>差。</li>
 </ul>
 <h3 id="Stack底层是如何实现的？">4.3. Stack底层是如何实现的？</h3><p><code>Stack</code>继承了<code>Vector</code>，是线程安全的，可以当做堆栈使用。</p>
 <h2 id="ArrayList和LinkedList的操作时间复杂度">5. ArrayList和LinkedList的操作时间复杂度</h2><h3 id="添加新元素">5.1. 添加新元素</h3><p><strong>ArrayList#add(E)</strong></p>
 <ul>
-<li>当需要扩容时，由于需要复制数组，时间复杂度为O(n)；</li>
-<li>当不需要扩容时，直接通过下标修改数组，时间复杂度为O(1)；</li>
+<li>当需要扩容时，由于需要复制数组，时间复杂度为O(n)。</li>
+<li>当不需要扩容时，直接通过下标修改数组，时间复杂度为O(1)。</li>
 <li>平均时间复杂度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public boolean add(E e) &#123;
@@ -381,7 +385,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <p><strong>LinkedList#add(E)</strong></p>
 <ul>
-<li>直接在尾结点后添加新元素，时间复杂度为O(1)；</li>
+<li>直接在尾结点后添加新元素，时间复杂度为O(1)。</li>
 <li>平均时间复杂度为O(1)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public boolean add(E e) &#123;
@@ -391,7 +395,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <h3 id="指定下标添加新元素">5.2. 指定下标添加新元素</h3><p><strong>ArrayList#add(int, E)</strong></p>
 <ul>
-<li>由于数组移动的存在，时间复杂度为O(n)；</li>
+<li>由于数组移动的存在，时间复杂度为O(n)。</li>
 <li>平均复制度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public void add(int index, E element) &#123;
@@ -406,8 +410,8 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <p><strong>LinkedList#add(int, E)</strong></p>
 <ul>
-<li>当添加的新元素在头尾节点时，时间复杂度为O(1)；</li>
-<li>当添加的新元素不在头尾节点时，由于需要遍历链表找到插入位置，时间复杂度为O(n)；</li>
+<li>当添加的新元素在头尾节点时，时间复杂度为O(1)。</li>
+<li>当添加的新元素不在头尾节点时，由于需要遍历链表找到插入位置，时间复杂度为O(n)。</li>
 <li>平均时间复杂度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public void add(int index, E element) &#123;
@@ -423,8 +427,8 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <h3 id="删除指定下标的元素">5.3. 删除指定下标的元素</h3><p><strong>ArrayList#remove(int)</strong></p>
 <ul>
-<li>当删除的是最后一个元素时，时间复杂度为O(1)；</li>
-<li>当删除的不是最后一个元素时，由于需要移动数组，时间复杂度为O(n);</li>
+<li>当删除的是最后一个元素时，时间复杂度为O(1)。</li>
+<li>当删除的不是最后一个元素时，由于需要移动数组，时间复杂度为O(n)。</li>
 <li>平均时间复杂度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public E remove(int index) &#123;
@@ -445,8 +449,8 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <p><strong>LinkedList#remove(int)</strong></p>
 <ul>
-<li>当删除的元素在头节点时，时间复杂度为O(1)；</li>
-<li>当删除的元素不在头节点时，由于需要遍历链表找到删除位置，时间复杂度为O(n);</li>
+<li>当删除的元素在头节点时，时间复杂度为O(1)。</li>
+<li>当删除的元素不在头节点时，由于需要遍历链表找到删除位置，时间复杂度为O(n)。</li>
 <li>平均时间复杂度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public E remove(int index) &#123;
@@ -456,7 +460,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <h3 id="修改指定下标的元素">5.4. 修改指定下标的元素</h3><p><strong>ArrayList#set(int, E)</strong></p>
 <ul>
-<li>通过指定下标修改数组中的元素，是随机访问，时间复杂度为O(1)；</li>
+<li>通过指定下标修改数组中的元素，是随机访问，时间复杂度为O(1)。</li>
 <li>平均时间复杂度为O(n)；</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public E set(int index, E element) &#123;
@@ -469,8 +473,8 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <p><strong>LinkedList#set(int, E)</strong></p>
 <ul>
-<li>当要修改的元素在头尾节点时，时间复杂度为O(1)；</li>
-<li>当要修改的元素不在头尾节点时，由于需要遍历链表，时间复杂度为O(n)；</li>
+<li>当要修改的元素在头尾节点时，时间复杂度为O(1)。</li>
+<li>当要修改的元素不在头尾节点时，由于需要遍历链表，时间复杂度为O(n)。</li>
 <li>平均时间复杂度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public E set(int index, E element) &#123;
@@ -483,7 +487,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <h3 id="访问指定下标的元素">5.5. 访问指定下标的元素</h3><p><strong>ArrayList#get</strong></p>
 <ul>
-<li>通过指定下标访问数组中的元素，是随机访问，时间复杂度为O(1)；</li>
+<li>通过指定下标访问数组中的元素，是随机访问，时间复杂度为O(1)。</li>
 <li>平均时间复杂度为O(1)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public E get(int index) &#123;
@@ -494,8 +498,8 @@ private static int hugeCapacity(int minCapacity) &#123;
 
 <p><strong>LinkedList#get</strong></p>
 <ul>
-<li>当要访问的元素在头尾节点时，时间复杂度为O(1)；</li>
-<li>当要访问的元素不在头尾节点时，由于需要遍历链表，时间复杂度为O(n)；</li>
+<li>当要访问的元素在头尾节点时，时间复杂度为O(1)。</li>
+<li>当要访问的元素不在头尾节点时，由于需要遍历链表，时间复杂度为O(n)。</li>
 <li>平均时间复杂度为O(n)。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public E get(int index) &#123;

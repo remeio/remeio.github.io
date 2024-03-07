@@ -184,10 +184,10 @@
 
 <h2 id="堆">1. 堆</h2><h3 id="堆中存放的是什么？">1.1. 堆中存放的是什么？</h3><p>对象实例存放在Java堆（Java Heap）中。堆是线程共享的。</p>
 <h3 id="堆内存是如何划分的？">1.2. 堆内存是如何划分的？</h3><p>堆内存被划分为新生代和老年代两部分，新生代又被划分为一个<code>Eden</code>区和两个大小相同的<code>Survior</code>区。将堆内存划分为新生代和老年代主要是为了提高垃圾收集的效率，基于以下两个假说：</p>
-<ol>
-<li>弱分代假说：大部分对象都是朝生夕灭的；</li>
+<ul>
+<li>弱分代假说：大部分对象都是朝生夕灭的。</li>
 <li>强分代假说：熬过越多次垃圾收集的对象越难消亡。</li>
-</ol>
+</ul>
 <blockquote>
 <p>虚拟机参数：</p>
 <ul>
@@ -195,7 +195,11 @@
 <li><code>-Xmx</code>：指定虚拟机堆内存的最大大小。</li>
 </ul>
 </blockquote>
-<h3 id="什么是内存泄漏和内存溢出？">1.3. 什么是内存泄漏和内存溢出？</h3><p>内存泄漏（Memory Leak）是指应该被回收的对象没有被回收，内存泄漏会导致内存溢出；内存溢出（Memory Overflow）是指堆内存空间不足以容纳创建的对象实例。可以通过转储并分析堆的内存快照文件来排查内存泄漏或内存溢出的原因。</p>
+<h3 id="什么是内存泄漏和内存溢出？">1.3. 什么是内存泄漏和内存溢出？</h3><ul>
+<li>内存泄漏（Memory Leak）是指应该被回收的对象没有被回收，内存泄漏会导致内存溢出。</li>
+<li>内存溢出（Memory Overflow）是指堆内存空间不足，无法创建新的对象实例。</li>
+</ul>
+<p>可以通过转储并分析堆的内存快照文件来排查内存泄漏和内存溢出产生的原因。</p>
 <h3 id="堆可能会发生的异常？">1.4. 堆可能会发生的异常？</h3><p>当创建的对象实例占用的内存大小大于堆的内存大小时，会抛出<code>OutOfMemoryError: Java heap space</code>。</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.extern.slf4j.Slf4j;
 
@@ -220,14 +224,14 @@ Assigned: 5MB
 Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space
 	at com.remeio.upsnippet.jvm.runarea.heap.OOMJavaHeapSpaceTest.main(OOMJavaHeapSpaceTest.java:13)</code></pre>
 
-<h2 id="方法区">2. 方法区</h2><h3 id="方法区中存放的是什么？">2.1. 方法区中存放的是什么？</h3><p>类的元数据信息，静态变量，运行时常量池，编译后的代码存放在方法区（Method Area）中。方法区是线程共享的。</p>
-<h3 id="永久代和元空间有什么区别？">2.2. 永久代和元空间有什么区别？</h3><p>在JDK1.7及之前的版本中，方法区的实现是永久代；在JDK1.8及之后的版本中，方法区的实现是元空间。两者有以下区别：</p>
+<h2 id="方法区">2. 方法区</h2><h3 id="方法区中存放的是什么？">2.1. 方法区中存放的是什么？</h3><p>类的元数据信息、编译后的代码、静态变量、运行时常量池存放在方法区（Method Area）中。方法区是线程共享的。</p>
+<h3 id="永久代和元空间有什么区别？">2.2. 永久代和元空间有什么区别？</h3><p>在JDK1.7及之前的版本中，方法区的实现是永久代（PermGen）；在JDK1.8及之后的版本中，方法区的实现是元空间（Metaspace）。两者有以下区别：</p>
 <ol>
-<li>存储区域不同。永久代占用的是堆内存，而元空间占用的是本地内存，不受堆内存大小的限制；</li>
-<li>存储内容不同。相比于JDK1.6的永久代，JDK1.7的永久代将运行时常量池和静态变量移到了堆中；而JDK1.8则去除了永久代，使用元空间代替。</li>
+<li>存储区域不同：永久代占用的是堆内存；元空间占用的是本地内存，不受堆内存大小的限制。</li>
+<li>存储内容不同：相比于JDK1.6的永久代，JDK1.7的永久代将运行时常量池和静态变量移到了堆中；而JDK1.8则去除了永久代，使用元空间代替。</li>
 </ol>
 <h3 id="方法区可能会发生的异常？">2.3. 方法区可能会发生的异常？</h3><ul>
-<li>在JDK1.8之前的版本中，当永久代内存不足时，会抛出<code>OutOfMemoryError: PermGen space</code>；</li>
+<li>在JDK1.8之前的版本中，当永久代内存不足时，会抛出<code>OutOfMemoryError: PermGen space</code>。</li>
 <li>在JDK1.8及之后的版本中，当元空间内存不足时，会抛出<code>OutOfMemoryError: Metaspace</code>。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">import net.sf.cglib.proxy.Enhancer;
@@ -265,16 +269,16 @@ Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Metaspace</code
 <li><code>-XX:MaxMetaspaceSize</code>：在JDK1.8及之后的版本中，指定元空间的最大大小。</li>
 </ul>
 </blockquote>
-<h3 id="运行时常量池和字符串常量池有什么区别？">2.4. 运行时常量池和字符串常量池有什么区别？</h3><p>在JDK1.8及之后的版本中，运行时常量池和字符串常量池存放在堆中；每个类都会有一个运行时常量池，整个虚拟机只有一个字符串常量池。</p>
-<h2 id="Java虚拟机栈">3. Java虚拟机栈</h2><h3 id="Java虚拟机栈中存放的是什么？">3.1. Java虚拟机栈中存放的是什么？</h3><p>每个线程都有一个Java虚拟机栈（Java Stack），调用方法时会压入栈帧，方法执行完毕会弹出栈帧，Java虚拟机栈是线程私有的。每个栈帧包括以下内容：</p>
-<ol>
-<li>局部变量表；</li>
-<li>操作数栈；</li>
-<li>动态连接；</li>
+<h3 id="运行时常量池和字符串常量池有什么区别？">2.4. 运行时常量池和字符串常量池有什么区别？</h3><p>在JDK1.8及之后的版本中，运行时常量池和字符串常量池存放在堆中；每个类都会有一个运行时常量池，而整个虚拟机只有一个字符串常量池。</p>
+<h2 id="Java虚拟机栈">3. Java虚拟机栈</h2><h3 id="Java虚拟机栈中存放的是什么？">3.1. Java虚拟机栈中存放的是什么？</h3><p>每个线程都有一个Java虚拟机栈（Java Stack），调用方法时会压入栈帧，方法执行完毕时会弹出栈帧，Java虚拟机栈是线程私有的。每个栈帧包括以下内容：</p>
+<ul>
+<li>局部变量表。</li>
+<li>操作数栈。</li>
+<li>动态连接。</li>
 <li>方法返回地址等。</li>
-</ol>
+</ul>
 <h3 id="Java虚拟机栈可能会发生的异常？">3.2. Java虚拟机栈可能会发生的异常？</h3><ul>
-<li>当创建过多线程不能创建新的线程时，会抛出<code>OutOfMemoryError: unable to create native thread</code>；</li>
+<li>当创建过多线程不能创建新的线程时，会抛出<code>OutOfMemoryError: unable to create native thread</code>。</li>
 <li>当Java虚拟机栈内存不足时，会抛出<code>StackOverflowError</code>。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">public class StackOverflowTest &#123;
@@ -316,10 +320,10 @@ Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Metaspace</code
 <h2 id="本地方法栈">4. 本地方法栈</h2><p>本地方法栈和Java虚拟机栈类似，在调用本地方法时，会向本地方法栈中压入栈帧。本地方法栈是线程私有的。</p>
 <h2 id="程序计数器">5. 程序计数器</h2><p>程序计数器用来记录当前线程执行方法的位置，用于线程切换回当前线程时，继续执行方法。程序计数器是线程私有的。</p>
 <h2 id="直接内存">6. 直接内存</h2><h3 id="什么是直接内存？">6.1. 什么是直接内存？</h3><p>直接内存不属于堆内内存，是直接向操作系统申请的内存，用于NIO。</p>
-<h3 id="直接内存和堆内存有什么区别？">6.2. 直接内存和堆内存有什么区别？</h3><ol>
+<h3 id="直接内存和堆内存有什么区别？">6.2. 直接内存和堆内存有什么区别？</h3><ul>
 <li>在内存分配方面，由于堆内存是提前分配，所以比操作直接内存快。</li>
 <li>在内存读写方面，操作堆内存，需要将本地内存转为堆内存，再将堆内存转为本地内存；而直接内存是直接操作本地内存，比堆内存高效。</li>
-</ol>
+</ul>
 <h2 id="JDK工具">7. JDK工具</h2><h3 id="如何查看当前系统中有哪些正在运行的Java进程？">7.1. 如何查看当前系统中有哪些正在运行的Java进程？</h3><p>通过<code>jps -mlvV</code>命令可以打印当前系统中正在运行的Java进程。</p>
 <pre class="line-numbers language-none"><code class="language-none">$ jps -lvVm
 2195793 sun.tools.jps.Jps -lvVm -Dapplication.home&#x3D;&#x2F;usr&#x2F;lib&#x2F;jvm&#x2F;java-8-openjdk-amd64 -Xms8m
@@ -441,7 +445,7 @@ JNI global references: 12
 10752.0 10752.0  0.0    0.0   65024.0   6502.6   173568.0     0.0     4480.0 775.7  384.0   76.0       0    0.000   0      0.000    0.000
 10752.0 10752.0  0.0    0.0   65024.0   6502.6   173568.0     0.0     4480.0 775.7  384.0   76.0       0    0.000   0      0.000    0.000</code></pre>
 
-<h3 id="可视化工具有哪些？">7.7. 可视化工具有哪些？</h3><p>可视化工具有jconsole，visualvm，Jprofiler，Arthas等。</p>
+<h3 id="可视化工具有哪些？">7.7. 可视化工具有哪些？</h3><p>可视化工具有jconsole、visualvm、Jprofiler、Arthas等。</p>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
