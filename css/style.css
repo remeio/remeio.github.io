@@ -9,7 +9,7 @@
 .light {
   --bgColor: #fff;
   --fontColor: #000;
-  --bgColor2: #fafafa;
+  --bgColor2: #fcfcfc;
   --spColor: #3999ff;
   --tbborder: #ebebeb;
   --codebgColor: #eff1f3;
@@ -313,7 +313,7 @@ p {
 code {
   background-color: var(--codebgColor);
   color: var(--fontColor);
-  font-family: var(--global-font-family);
+  font-family: var(--global-code-font-family);
   font-size: 13px;
   line-height: 2.4rem;
   transition-property: background-color, color;
@@ -440,13 +440,13 @@ hr {
   margin: 1.5rem 0;
 }
 .article img {
-  max-width: 100%;
+  max-width: 80%;
   border-radius: 4px;
   display: block;
   object-fit: cover;
 }
 .article svg {
-  max-width: 100%;
+  max-width: 80%;
   min-width: 50%;
   border-radius: 4px;
   display: block;

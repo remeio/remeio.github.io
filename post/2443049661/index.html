@@ -178,13 +178,18 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="数据库调优">1. 数据库调优</h2><h3 id="为什么需要数据库调优？">1.1. 为什么需要数据库调优？</h3><p>数据库调优是本质上为了提供更好的服务，体现在以下几个指标：</p>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="数据库调优">1. 数据库调优</h2><h3 id="为什么需要数据库调优？">1.1. 为什么需要数据库调优？</h3><p>数据库调优是为了提高数据库的性能、降低接口的响应时间等。体现在以下几个指标：</p>
 <ul>
 <li>响应时间（Response Time，RT）</li>
 <li>每秒事务处理量（Transaction Per Second，TPS）</li>
 <li>每秒查询处理量（Query Per Second，QPS）</li>
 </ul>
-<h3 id="如何进行数据库压力测试？">1.2. 如何进行数据库压力测试？</h3><p>可以使用JMeter工具进行数据库压力测试。下图是执行主键扫描和全表扫描的响应时间和每秒事务处理量的对比：</p>
+<h3 id="如何进行数据库压力测试？">1.2. 如何进行数据库压力测试？</h3><p>可以使用JMeter工具进行数据库压力测试。下图是使用主键查询和使用全表扫描查询的响应时间（RT）对比，可以看到使用主键查询有更短的响应时间。</p>
+<a href="RT.png" class="gallery-item"><img src="RT.png" style="width: 70%"></a>
+
+<p>下图是使用主键查询和使用全表扫描查询的每秒事务处理量（TPS）对比，可以看到使用主键查询有更高的每秒事务处理量。</p>
+<a href="TPS.png" class="gallery-item"><img src="TPS.png" style="width: 70%"></a>
+
 <h3 id="数据库调优的手段有哪些？">1.3. 数据库调优的手段有哪些？</h3><p>数据库调优有以下几种手段：</p>
 <ul>
 <li>数据库层面：<ul>
