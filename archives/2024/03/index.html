@@ -134,64 +134,56 @@
 </script>
 </header>
     <main class="main-body">
-  <h2 class="page-title">标签: 源码</h2>
+  <h2 class="blog-title">🎨叫我小旗好了</h2>
+  <p class="blog-desc"></p>
+  <p class="blog-info"></p>
+  <h3 class="posts-header">全部文章（26篇）：</h3>
   <ul class="post-list">
   
   <li class="post-list-child">
     <div class="post-list-left">
       <div class="post-list-symbol">✦</div>
-      <a href="/post/2756090231/" title="Bean在Spring中是如何完成依赖注入的？">
+      <a href="/post/2443049661/" title="MySQL数据库如何调优及案例分析？">
 		
-		  『SpringFramework』
+		  『MySQL』
 		
-		Bean在Spring中是如何完成依赖注入的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023年07月25日
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-      <a href="/post/3238870166/" title="Bean在Spring中是如何被加载的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何被加载的？
+		MySQL数据库如何调优及案例分析？
 		
 	  </a>
     </div>
     <span class="post-list-date">
-      2023年07月05日
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-      <a href="/post/3448844314/" title="Bean在Spring中是如何表示的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何表示的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023年07月05日
+      2024年03月08日
     </span>
   </li>
   
 </ul>
 
-<div class="paginator">
-    <a class="extend prev" rel="prev" href="/tags/%E6%BA%90%E7%A0%81/">上一页</a><a class="page-number" href="/tags/%E6%BA%90%E7%A0%81/">1</a><span class="page-number current">2</span>
-</div>
-
 </main>
+<script>
+function getHitokoto() {
+	// 获取一言
+	let hitokoto =
+	  "The best time to plant a tree is 20 years ago. The second-best time is now.";
+	var xhr = new XMLHttpRequest();
+	xhr.open("get", "https://v1.hitokoto.cn?c=i", false);
+	xhr.onreadystatechange = function () {
+	  try {
+		if (xhr.readyState === 4) {
+		  var data = JSON.parse(xhr.responseText);
+		  hitokoto =
+			data.hitokoto +
+			(data.from_who == "null" || data.from_who == null ? "" : "——" + data.from_who);
+		  console.log(hitokoto);
+		  document.getElementsByClassName('blog-info')[0].textContent = hitokoto
+		}
+	  } catch (e) {
+		console.log(e);
+	  }
+	};
+	xhr.send();
+}
+getHitokoto();
+</script>
     <footer>
   <div class="footer-info">
   <a style="margin: 0 0.4rem 0 0.4rem">© 2024 徐梦旗</a> 

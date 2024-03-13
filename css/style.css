@@ -17,7 +17,8 @@
 html {
   font-size: 62.5%;
   -webkit-text-size-adjust: none;
-  --global-font-family: 'Noto Serif SC', sans-serif;
+  --global-font-family: 'Noto Serif SC', 'Lora';
+  --global-code-font-family: 'Noto Serif SC', 'JetBrains Mono';
 }
 body {
   background-color: var(--bgColor);
@@ -312,14 +313,14 @@ p {
 code {
   background-color: var(--codebgColor);
   color: var(--fontColor);
-  font-family: Consolas, monospace !important;
+  font-family: var(--global-font-family);
   font-size: 13px;
   line-height: 2.4rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  margin: 0rem 0.2rem;
+  margin: 0rem 0.4rem;
   padding: 0.2rem 0.4rem;
-  border-radius: 0.4rem;
+  border-radius: 0.2rem;
 }
 h1,
 h2,
@@ -339,7 +340,7 @@ pre {
   transition-duration: 0.5s;
 }
 pre code {
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--global-code-font-family);
   padding: 0;
 }
 .article>ul {
