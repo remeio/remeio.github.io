@@ -5,7 +5,7 @@
   
   <title>
     
-    MySQL数据库如何调优及案例分析？
+    SQL语句如何优化及案例分析？
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -138,7 +138,7 @@
     <div class="toc-toggle">
       <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
     </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98"><span class="toc-text">1. 数据库调优</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要数据库调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95%EF%BC%9F"><span class="toc-text">1.2. 如何进行数据库压力测试？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98%E7%9A%84%E6%89%8B%E6%AE%B5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.3. 数据库调优的手段有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%BA%E7%8E%B0%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%97%B6%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">1.4. 数据库出现性能问题时如何排查？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="toc-text">2. 执行计划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BSQL%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%EF%BC%9F"><span class="toc-text">2.1. 如何查看SQL语句的执行计划？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#select-type"><span class="toc-text">2.2. select_type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-text">2.3. type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Extra"><span class="toc-text">2.4. Extra</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-text">3. 主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F"><span class="toc-text">3.1. 为什么需要主从复制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.2. 主从复制的原理是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E7%AD%96%E7%95%A5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">3.3. 主从复制的策略有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%BB%B6%E8%BF%9F%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">3.4. 如何解决主从复制延迟的问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="toc-text">4. 读写分离</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%EF%BC%9F"><span class="toc-text">4.1. 为什么需要读写分离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%9A%84%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.2. 实现读写分离的工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="toc-text">5. 分库分表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BD%95%E9%9C%80%E8%A6%81%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%EF%BC%9F"><span class="toc-text">5.1. 为何需要分库分表？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E7%AD%96%E7%95%A5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">5.2. 分库分表的策略有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%87%E7%89%87%E6%9C%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="toc-text">5.3. 数据切片有哪些方法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E7%BC%BA%E7%82%B9%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">5.4. 分库分表的缺点有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">5.5. 实现分库分表的工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4"><span class="toc-text">6. 高可用集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%EF%BC%9F"><span class="toc-text">6.1. 为什么需要高可用集群？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">6.2. 高可用集群方案有哪些问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%9F"><span class="toc-text">6.3. 如何实现自动故障转移？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">7. 参考文档</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96"><span class="toc-text">1. SQL语句优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BC%98%E5%8C%96SQL%E8%AF%AD%E5%8F%A5%EF%BC%9F"><span class="toc-text">1.1. 为什么需要优化SQL语句？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E5%B9%B6%E4%BC%98%E5%8C%96%E6%85%A2%E7%9A%84SQL%E8%AF%AD%E5%8F%A5%EF%BC%9F"><span class="toc-text">1.2. 如何定位并优化慢的SQL语句？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96%E7%9A%84%E6%89%8B%E6%AE%B5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.3. SQL语句优化的手段有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="toc-text">2. 执行计划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BSQL%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%EF%BC%9F"><span class="toc-text">2.1. 如何查看SQL语句的执行计划？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#select-type"><span class="toc-text">2.2. select_type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-text">2.3. type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Extra"><span class="toc-text">2.4. Extra</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-text">3. 案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88"><span class="toc-text">3.1. 索引失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B1%E5%88%86%E9%A1%B5"><span class="toc-text">3.2. 深分页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="toc-text">3.3. 连接查询建立索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">4. 参考文档</span></a></li></ol>
   </div>
   
   <script>
@@ -157,15 +157,15 @@
   </script>
   
   <div class="article-header">
-    <h1 class="article-title">MySQL数据库如何调优及案例分析？</h1>
+    <h1 class="article-title">SQL语句如何优化及案例分析？</h1>
     <div class="article-details">
       <div class="article-post-date">
 	  	
 		  <span>分类：</span><a href="/categories/MySQL">MySQL</a><span>，</span>
 		
 		<span>作者：</span> 徐梦旗，
-	  	<span>发布于：</span> 2024-03-08 20:00，
-		<span class="post-count">字数：2.7k，预计阅读：13分钟</span>
+	  	<span>发布于：</span> 2024-03-19 20:00，
+		<span class="post-count">字数：1.8k，预计阅读：10分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -178,43 +178,8 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="数据库调优">1. 数据库调优</h2><h3 id="为什么需要数据库调优？">1.1. 为什么需要数据库调优？</h3><p>数据库调优是为了提高数据库的性能、降低接口的响应时间等。体现在以下几个指标：</p>
-<ul>
-<li>响应时间（Response Time，RT）</li>
-<li>每秒事务处理量（Transaction Per Second，TPS）</li>
-<li>每秒查询处理量（Query Per Second，QPS）</li>
-</ul>
-<h3 id="如何进行数据库压力测试？">1.2. 如何进行数据库压力测试？</h3><p>可以使用JMeter工具进行数据库压力测试。下图是使用主键查询和使用全表扫描查询的响应时间（RT）对比，可以看到使用主键查询有更短的响应时间。</p>
-<a href="RT.png" class="gallery-item"><img src="RT.png" style="width: 70%"></a>
-
-<p>下图是使用主键查询和使用全表扫描查询的每秒事务处理量（TPS）对比，可以看到使用主键查询有更高的每秒事务处理量。</p>
-<a href="TPS.png" class="gallery-item"><img src="TPS.png" style="width: 70%"></a>
-
-<h3 id="数据库调优的手段有哪些？">1.3. 数据库调优的手段有哪些？</h3><p>数据库调优有以下几种手段：</p>
-<ul>
-<li>数据库层面：<ul>
-<li>修改数据库的配置，如设置合适的连接数、提高缓冲区的大小、开启慢查询日志等。</li>
-<li>采用高可用方案、提升硬件配置。</li>
-</ul>
-</li>
-<li>表层面：<ul>
-<li>为表字段选择合适的类型。</li>
-<li>创建合适的索引。</li>
-<li>适当冗余字段，减少连接查询。</li>
-</ul>
-</li>
-<li>SQL语句层面：<ul>
-<li>查看SQL语句的执行计划，优化SQL语句，避免全表扫描和索引失效。</li>
-<li>优化SQL语句，如LIMIT优化、子查询优化、小表驱动大表等。</li>
-</ul>
-</li>
-</ul>
-<h3 id="数据库出现性能问题时如何排查？">1.4. 数据库出现性能问题时如何排查？</h3><ol>
-<li>开启慢查询日志，定位查询慢的SQL语句；</li>
-<li>使用<code>EXPLAIN</code>命令看SQL语句的执行计划；</li>
-<li>优化SQL语句或者创建合适的索引。</li>
-</ol>
-<h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，如下图：</p>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="SQL语句优化">1. SQL语句优化</h2><h3 id="为什么需要优化SQL语句？">1.1. 为什么需要优化SQL语句？</h3><p>当表中数据量较少时，无论写出怎样的SQL语句都能</p>
+<h3 id="如何定位并优化慢的SQL语句？">1.2. 如何定位并优化慢的SQL语句？</h3><h3 id="SQL语句优化的手段有哪些？">1.3. SQL语句优化的手段有哪些？</h3><h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，如下图：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
@@ -240,16 +205,22 @@
 </ul>
 <h3 id="select-type">2.2. select_type</h3><p>查询类型<code>select_type</code>有以下几种：</p>
 <ul>
-<li><code>SIMPLE</code>：简单查询（不包括联合查询或子查询）。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
+<li><code>SIMPLE</code>：简单查询（不包括联合查询或子查询）。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
 |  1 | SIMPLE      | user  | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL  |
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
-1 row in set, 1 warning (0.00 sec)</code></pre></li>
+1 row in set, 1 warning (0.00 sec)</code></pre>
+
+<ul>
 <li><code>PRIMARY</code>：复杂查询最外层的查询。</li>
 <li><code>UNION</code>：联合查询。</li>
-<li><code>UNION RESULT</code>：联合查询的结果。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user a where id &#x3D; 1 union select * from user b where balance &gt; 10;
+<li><code>UNION RESULT</code>：联合查询的结果。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user a where id &#x3D; 1 union select * from user b where balance &gt; 10;
 +----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
 | id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
 +----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
@@ -257,16 +228,24 @@
 |  2 | UNION        | b          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
 |  3 | UNION RESULT | &lt;union1,2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
 +----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-3 rows in set, 1 warning (0.00 sec)</code></pre></li>
-<li><code>SUBQUERY</code>：简单子查询。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.balance, (select max(balance) as max_balance from user) from user a where id &#x3D; 1;
+3 rows in set, 1 warning (0.00 sec)</code></pre>
+
+<ul>
+<li><code>SUBQUERY</code>：简单子查询。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.balance, (select max(balance) as max_balance from user) from user a where id &#x3D; 1;
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra |
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
 |  1 | PRIMARY     | a     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL  |
 |  2 | SUBQUERY    | user  | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |   100.00 | NULL  |
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
-2 rows in set, 1 warning (0.00 sec)</code></pre></li>
-<li><code>DERIVED</code>：派生表。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select t.id from (select * from user where id &#x3D; 1 union select * from user where balance &gt; 10) t;
+2 rows in set, 1 warning (0.00 sec)</code></pre>
+
+<ul>
+<li><code>DERIVED</code>：派生表。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select t.id from (select * from user where id &#x3D; 1 union select * from user where balance &gt; 10) t;
 +----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
 | id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
 +----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
@@ -275,8 +254,12 @@
 |  3 | UNION        | user       | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
 |  4 | UNION RESULT | &lt;union2,3&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
 +----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-4 rows in set, 1 warning (0.01 sec)</code></pre></li>
-<li><code>DEPENDENT UNION</code>：依赖联合查询。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user t where t.id in (select a.id from user a where a.id &#x3D; 1 union select min(b.id) from user b where b.balance &gt; t.balance);
+4 rows in set, 1 warning (0.01 sec)</code></pre>
+
+<ul>
+<li><code>DEPENDENT UNION</code>：依赖联合查询。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user t where t.id in (select a.id from user a where a.id &#x3D; 1 union select min(b.id) from user b where b.balance &gt; t.balance);
 +----+--------------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
 | id | select_type        | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
 +----+--------------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
@@ -285,19 +268,23 @@
 |  3 | DEPENDENT UNION    | b          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
 |  4 | UNION RESULT       | &lt;union2,3&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
 +----+--------------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-4 rows in set, 2 warnings (0.00 sec)</code></pre></li>
-<li><code>DEPENDENT SUBQUERY</code>：依赖子查询。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.id, (select count(b.id) from user b where b.balance &gt; a.balance) from user a where id &#x3D; 1;
+4 rows in set, 2 warnings (0.00 sec)</code></pre>
+
+<ul>
+<li><code>DEPENDENT SUBQUERY</code>：依赖子查询。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.id, (select count(b.id) from user b where b.balance &gt; a.balance) from user a where id &#x3D; 1;
 +----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
 | id | select_type        | table | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra       |
 +----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
 |  1 | PRIMARY            | a     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL        |
 |  2 | DEPENDENT SUBQUERY | b     | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where |
 +----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
-2 rows in set, 2 warnings (0.00 sec)</code></pre></li>
-</ul>
+2 rows in set, 2 warnings (0.00 sec)</code></pre>
+
 <h3 id="type">2.3. type</h3><p>连接类型<code>type</code>有以下几种类型：</p>
 <ul>
-<li><code>system</code>：</li>
+<li><code>system</code>：表中只有一行。</li>
 <li><code>const</code>：使用唯一索引或主键索引等值查询。</li>
 </ul>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
@@ -323,7 +310,7 @@
 <ul>
 <li><code>ref</code>：使用非唯一索引等值查询。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job &#x3D; &#39;&#39;;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job &#x3D; &#39;工程师&#39;;
 +----+-------------+-------+------------+------+---------------+---------+---------+-------+------+----------+-------+
 | id | select_type | table | partitions | type | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
 +----+-------------+-------+------------+------+---------------+---------+---------+-------+------+----------+-------+
@@ -334,7 +321,7 @@
 <ul>
 <li><code>ref_or_null</code>：使用唯一索引等值查询，且允许列为空。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job &#x3D; &#39;&#39; or job is null;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job &#x3D; &#39;工程师&#39; or job is null;
 +----+-------------+-------+------------+-------------+---------------+---------+---------+-------+------+----------+-----------------------+
 | id | select_type | table | partitions | type        | possible_keys | key     | key_len | ref   | rows | filtered | Extra                 |
 +----+-------------+-------+------------+-------------+---------------+---------+---------+-------+------+----------+-----------------------+
@@ -458,72 +445,14 @@ mysql&gt; explain select * from user where job like &#39;工%&#39;;
 +----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
 1 row in set, 1 warning (0.00 sec)</code></pre>
 
-<h2 id="主从复制">3. 主从复制</h2><h3 id="为什么需要主从复制？">3.1. 为什么需要主从复制？</h3><ul>
-<li>用来备份主库，保证数据的安全。</li>
-<li>支撑读写分离，提高性能。</li>
-<li>支撑故障转移，提高可用性。</li>
-</ul>
-<h3 id="主从复制的原理是什么？">3.2. 主从复制的原理是什么？</h3><p>由主库的IO线程生成binlog；由从库的IO线程生成中继日志relay log；最后由SQL线程重放SQL。</p>
-<h3 id="主从复制的策略有哪些？">3.3. 主从复制的策略有哪些？</h3><ul>
-<li>基于Pos主从复制。</li>
-<li>基于GTID主从复制。</li>
-<li>一主多从，一主多级从，互为主从。</li>
-<li>半同步复制机制。</li>
-</ul>
-<h3 id="如何解决主从复制延迟的问题？">3.4. 如何解决主从复制延迟的问题？</h3><p>主从复制延迟瓶颈在于磁盘IO和网络IO。</p>
-<ul>
-<li>修改从数据库的刷盘策略提高性能，降低安全性。</li>
-<li>多个从数据库，分散从库的读压力。</li>
-<li>从库使用多线程重放SQL。</li>
-</ul>
-<h2 id="读写分离">4. 读写分离</h2><h3 id="为什么需要读写分离？">4.1. 为什么需要读写分离？</h3><p>提高读的能力，分摊读压力。</p>
-<h3 id="实现读写分离的工具有哪些？">4.2. 实现读写分离的工具有哪些？</h3><ul>
-<li>atlas。</li>
-<li>MyCat。</li>
-<li>MySQL Proxy。</li>
-<li>MySQL Router。</li>
-<li>Sharding Sphere。</li>
-</ul>
-<h2 id="分库分表">5. 分库分表</h2><h3 id="为何需要分库分表？">5.1. 为何需要分库分表？</h3><p>突破MySQL单库单表的瓶颈，提高数据库的性能。</p>
-<h3 id="分库分表的策略有哪些？">5.2. 分库分表的策略有哪些？</h3><p>切分与聚合。</p>
-<ul>
-<li>垂直切分<ul>
-<li>垂直分库，按业务分库。</li>
-<li>垂直分表，大表拆小表。</li>
-</ul>
-</li>
-<li>水平切分<ul>
-<li>水平分库。</li>
-<li>水平分表。</li>
-</ul>
-</li>
-</ul>
-<h3 id="数据切片有哪些方法？">5.3. 数据切片有哪些方法？</h3><ul>
-<li>取模分片。</li>
-<li>按范围分片。</li>
-<li>按时间分片。</li>
-<li>按枚举值分片。</li>
-<li>自定义分片。</li>
-</ul>
-<h3 id="分库分表的缺点有哪些？">5.4. 分库分表的缺点有哪些？</h3><ul>
-<li>分库，业务间需要通过接口交互。</li>
-<li>整加事务管理难度。</li>
-</ul>
-<h3 id="实现分库分表的工具有哪些？">5.5. 实现分库分表的工具有哪些？</h3><ul>
-<li>Sharding Sphere。</li>
-<li>MyCat。</li>
-</ul>
-<h2 id="高可用集群">6. 高可用集群</h2><h3 id="为什么需要高可用集群？">6.1. 为什么需要高可用集群？</h3><p>完成自动的故障转移，提高系统的可用性。</p>
-<h3 id="高可用集群方案有哪些问题？">6.2. 高可用集群方案有哪些问题？</h3><ul>
-<li>主键冲突。</li>
-<li>热备节点。</li>
-<li>检查机制完善。</li>
-<li>数据一致性保证。</li>
-</ul>
-<h3 id="如何实现自动故障转移？">6.3. 如何实现自动故障转移？</h3><p><code>keepalived</code></p>
-<h2 id="参考文档">7. 参考文档</h2><ul>
+
+
+
+
+<h2 id="案例分析">3. 案例分析</h2><h3 id="索引失效">3.1. 索引失效</h3><h3 id="深分页">3.2. 深分页</h3><h3 id="连接查询建立索引">3.3. 连接查询建立索引</h3><h2 id="参考文档">4. 参考文档</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/optimize-overview.html">MySQL :: MySQL 8.0 Reference Manual :: 10.1 Optimization Overview</a></li>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format</a></li>
+<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/statement-optimization.html">MySQL :: MySQL 8.0 Reference Manual :: 10.2 Optimizing SQL Statements</a></li>
 </ul>
 </div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
@@ -534,7 +463,7 @@ mysql&gt; explain select * from user where job like &#39;工%&#39;;
 </div>
   <div class="article-footer">
     <a href="/"></a>
-    <a href="/post/104890545/">下一篇：MySQL数据库中有哪些锁？</a>
+    <a href="/post/4092758909/">下一篇：MySQL数据库如何调优？</a>
   </div>
 </main>
     <footer>
