@@ -165,7 +165,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2024-03-08 20:00，
-		<span class="post-count">字数：1.7k，预计阅读：7分钟</span>
+		<span class="post-count">字数：2.7k，预计阅读：13分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -198,7 +198,8 @@
 </ul>
 </li>
 <li>表层面：<ul>
-<li>为表字段选择合适的类型，创建合适的索引。</li>
+<li>为表字段选择合适的类型。</li>
+<li>创建合适的索引。</li>
 <li>适当冗余字段，减少连接查询。</li>
 </ul>
 </li>
@@ -213,185 +214,313 @@
 <li>使用<code>EXPLAIN</code>命令看SQL语句的执行计划；</li>
 <li>优化SQL语句或者创建合适的索引。</li>
 </ol>
-<h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，输出结果中包含以下几个要素：</p>
+<h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，如下图：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL  |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
+
+<p>输出结果中包含以下要素。</p>
 <ul>
-<li><code>id</code>：查询标识号</li>
-<li><code>select_type</code>：查询类型</li>
-<li><code>table</code>：表</li>
-<li><code>partitions</code>：分区信息</li>
-<li><code>type</code>：连接类型</li>
-<li><code>possible_keys</code>：可能用到到索引</li>
-<li><code>key</code>：使用的索引</li>
-<li><code>key_len</code>：使用的索引的长度</li>
-<li><code>ref</code>：关联的索引列</li>
-<li><code>rows</code>：预估扫描行数</li>
-<li><code>filtered</code>：过滤百分比</li>
-<li><code>Extra</code>：额外信息</li>
+<li><code>id</code>：查询标识号。</li>
+<li><code>select_type</code>：查询类型。</li>
+<li><code>table</code>：表。</li>
+<li><code>partitions</code>：分区信息。</li>
+<li><code>type</code>：连接类型。</li>
+<li><code>possible_keys</code>：可能用到的索引。</li>
+<li><code>key</code>：使用的索引。</li>
+<li><code>key_len</code>：使用的索引的长度。</li>
+<li><code>ref</code>：关联的索引列。</li>
+<li><code>rows</code>：预估扫描行数。</li>
+<li><code>filtered</code>：过滤百分比。</li>
+<li><code>Extra</code>：额外信息。</li>
 </ul>
-<h3 id="select-type">2.2. select_type</h3><ul>
-<li>普通查询<ul>
-<li><code>SIMPLE</code></li>
-<li><code>PRIMARY</code></li>
+<h3 id="select-type">2.2. select_type</h3><p>查询类型<code>select_type</code>有以下几种：</p>
+<ul>
+<li><code>SIMPLE</code>：简单查询（不包括联合查询或子查询）。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL  |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)</code></pre></li>
+<li><code>PRIMARY</code>：复杂查询最外层的查询。</li>
+<li><code>UNION</code>：联合查询。</li>
+<li><code>UNION RESULT</code>：联合查询的结果。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user a where id &#x3D; 1 union select * from user b where balance &gt; 10;
++----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+| id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
++----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+|  1 | PRIMARY      | a          | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL            |
+|  2 | UNION        | b          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
+|  3 | UNION RESULT | &lt;union1,2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
++----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+3 rows in set, 1 warning (0.00 sec)</code></pre></li>
+<li><code>SUBQUERY</code>：简单子查询。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.balance, (select max(balance) as max_balance from user) from user a where id &#x3D; 1;
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
+|  1 | PRIMARY     | a     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL  |
+|  2 | SUBQUERY    | user  | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |   100.00 | NULL  |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
+2 rows in set, 1 warning (0.00 sec)</code></pre></li>
+<li><code>DERIVED</code>：派生表。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select t.id from (select * from user where id &#x3D; 1 union select * from user where balance &gt; 10) t;
++----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+| id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
++----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+|  1 | PRIMARY      | &lt;derived2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 328597 |   100.00 | NULL            |
+|  2 | DERIVED      | user       | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL            |
+|  3 | UNION        | user       | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
+|  4 | UNION RESULT | &lt;union2,3&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
++----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+4 rows in set, 1 warning (0.01 sec)</code></pre></li>
+<li><code>DEPENDENT UNION</code>：依赖联合查询。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user t where t.id in (select a.id from user a where a.id &#x3D; 1 union select min(b.id) from user b where b.balance &gt; t.balance);
++----+--------------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+| id | select_type        | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
++----+--------------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+|  1 | PRIMARY            | t          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |   100.00 | Using where     |
+|  2 | DEPENDENT SUBQUERY | a          | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | Using index     |
+|  3 | DEPENDENT UNION    | b          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
+|  4 | UNION RESULT       | &lt;union2,3&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
++----+--------------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
+4 rows in set, 2 warnings (0.00 sec)</code></pre></li>
+<li><code>DEPENDENT SUBQUERY</code>：依赖子查询。<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.id, (select count(b.id) from user b where b.balance &gt; a.balance) from user a where id &#x3D; 1;
++----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
+| id | select_type        | table | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra       |
++----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
+|  1 | PRIMARY            | a     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL        |
+|  2 | DEPENDENT SUBQUERY | b     | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where |
++----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
+2 rows in set, 2 warnings (0.00 sec)</code></pre></li>
 </ul>
-</li>
-<li>子查询<ul>
-<li><code>SUBQUERY</code></li>
-<li><code>DEPENDENT SUBQUERY</code></li>
+<h3 id="type">2.3. type</h3><p>连接类型<code>type</code>有以下几种类型：</p>
+<ul>
+<li><code>system</code>：</li>
+<li><code>const</code>：使用唯一索引或主键索引等值查询。</li>
 </ul>
-</li>
-<li>联合查询<ul>
-<li><code>UNION</code></li>
-<li><code>UNION RESULT</code></li>
-<li><code>DEPENDENT UNION</code></li>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL  |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
+
+<ul>
+<li><code>eq_ref</code>：使用唯一索引或主键索引作为连接查询的条件。</li>
 </ul>
-</li>
-<li>其它<ul>
-<li><code>DERIVED</code></li>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.* from user a, user b where a.id &#x3D; b.id;
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+| id | select_type | table | partitions | type   | possible_keys | key     | key_len | ref       | rows   | filtered | Extra       |
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+|  1 | SIMPLE      | a     | NULL       | ALL    | PRIMARY       | NULL    | NULL    | NULL      | 985889 |   100.00 | NULL        |
+|  1 | SIMPLE      | b     | NULL       | eq_ref | PRIMARY       | PRIMARY | 8       | test.a.id |      1 |   100.00 | Using index |
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+2 rows in set, 1 warning (0.00 sec)</code></pre>
+
+<ul>
+<li><code>ref</code>：使用非唯一索引等值查询。</li>
 </ul>
-</li>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job &#x3D; &#39;&#39;;
++----+-------------+-------+------------+------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | ref  | idx_job       | idx_job | 403     | const |    1 |   100.00 | NULL  |
++----+-------------+-------+------------+------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.03 sec)</code></pre>
+
+<ul>
+<li><code>ref_or_null</code>：使用唯一索引等值查询，且允许列为空。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">-- SIMPLE 简单查询（不存在子查询或联合查询）
-explain select * from user where id &#x3D; 1;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job &#x3D; &#39;&#39; or job is null;
++----+-------------+-------+------------+-------------+---------------+---------+---------+-------+------+----------+-----------------------+
+| id | select_type | table | partitions | type        | possible_keys | key     | key_len | ref   | rows | filtered | Extra                 |
++----+-------------+-------+------------+-------------+---------------+---------+---------+-------+------+----------+-----------------------+
+|  1 | SIMPLE      | user  | NULL       | ref_or_null | idx_job       | idx_job | 403     | const |    2 |   100.00 | Using index condition |
++----+-------------+-------+------------+-------------+---------------+---------+---------+-------+------+----------+-----------------------+
+1 row in set, 1 warning (0.01 sec)
+</code></pre>
 
--- PRIMARY, UNION, UNION RESULT 联合查询
-explain select * from user a where id &#x3D; 1 union select * from user b where id &#x3D; 2;
-
--- PRIMARY, DERIVED, UNION, UNION RESULT 带有派生表的联合查询
-explain select * from (select * from user a where id &#x3D; 1 union select * from user b where id &#x3D; 2) c;
-
--- PRIMARY, DEPENDENT SUBQUERY, DEPENDENT UNION, UNION RESULT 依赖子查询和依赖联合查询
-explain select * from user a where id in (select id from user b where balance &gt; 100 union select id from user c where balance &lt; 200);
-
--- PRIMARY, SUBQUERY 子查询
-explain select a.id, (select max(balance) as max_balance from user) from user a;
-
--- PRIMARY, DEPENDENT SUBQUERY 依赖子查询
-explain select a.id, (select min(b.balance) as max_balance from user b where b.balance &gt; a.balance) from user a;</code></pre>
-
-<h3 id="type">2.3. type</h3><ul>
-<li><code>system</code></li>
-<li><code>const</code></li>
-<li><code>eq_ref</code></li>
-<li><code>ref</code></li>
-<li><code>ref_or_null</code></li>
-<li><code>range</code></li>
-<li><code>index_merge</code></li>
-<li><code>index</code></li>
-<li><code>all</code></li>
+<ul>
+<li><code>range</code>：使用索引范围查询。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">-- system
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 80;
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 492944 |   100.00 | Using where |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
 
--- const 唯一索引或主键等值查询，常量级别；在索引树上找到第一个满足条件的便停止查找
-explain select * from user where id &#x3D; 23;
+mysql&gt; explain select * from user where id in (1, 2, 3);
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL |    3 |   100.00 | Using where |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
 
--- eq_ref 唯一索引或主键作为连接查询的条件
-explain select a.* from user a, user b where a.id &#x3D; b.id;
+mysql&gt; explain select * from user where job like &#39;工%&#39;;
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-----------------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra                 |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-----------------------+
+|  1 | SIMPLE      | user  | NULL       | range | idx_job       | idx_job | 403     | NULL | 2016 |   100.00 | Using index condition |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-----------------------+
+1 row in set, 1 warning (0.04 sec)</code></pre>
 
--- ref 非唯一索引等值查询；在索引树上找到第一个不满住条件的便停止查找
-explain select * from user where job &#x3D; &#39;工程师&#39;;
+<ul>
+<li><code>index_merge</code>：使用索引合并，同时使用多个索引。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 or job &#x3D; &#39;工程师&#39;;
++----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
+| id | select_type | table | partitions | type        | possible_keys   | key             | key_len | ref  | rows   | filtered | Extra                                     |
++----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
+|  1 | SIMPLE      | user  | NULL       | index_merge | PRIMARY,idx_job | PRIMARY,idx_job | 8,403   | NULL | 492945 |   100.00 | Using union(PRIMARY,idx_job); Using where |
++----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
+1 row in set, 1 warning (0.03 sec)</code></pre>
 
--- ref_or_null 非唯一索引等值查询且允许列为空
-explain select * from user where job &#x3D; &#39;工程师&#39; or job is null;
+<ul>
+<li><code>index</code>：对二级索引树进行扫描。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select job from user;
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | index | NULL          | idx_job | 403     | NULL | 985889 |   100.00 | Using index |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
 
--- range 范围查询；范围扫描区间
-explain select * from user where id &gt; 80;
-explain select * from user where id in (3, 4);
-explain select * from user where job like &#39;工%&#39;;
-
--- index_merge 索引合并，同时使用两个索引
-explain select * from user where id &gt; 10 or job &#x3D; &#39;工程师&#39;;
-
--- index 扫描整个索引树
-explain select job from user;
-
--- ALL 全表扫描
-explain select * from user where email &#x3D; &#39;test@google.com&#39;;</code></pre>
+<ul>
+<li><code>all</code>：对主键索引树进行全表扫描。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where job like &#39;%人&#39;;
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 985889 |    11.11 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+1 row in set, 1 warning (0.01 sec)</code></pre>
 
 <h3 id="Extra">2.4. Extra</h3><ul>
-<li><code>Using filesort</code>：使用文件排序</li>
-<li><code>Using where</code>：在服务层进行过滤</li>
-<li><code>Using index</code>：使用覆盖索引</li>
-<li><code>Using index condition</code>：使用索引条件下推</li>
-<li><code>Using union</code>：使用索引合并</li>
+<li><code>Using filesort</code>：使用文件排序。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">-- Using filesort 使用文件排序
-explain select * from user where id &gt; 10 order by id_no desc limit 0, 10;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 order by balance desc limit 0, 10;
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-----------------------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra                       |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-----------------------------+
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 492944 |   100.00 | Using where; Using filesort |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-----------------------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
 
--- Using index 使用覆盖索引
-explain select id_no from user where id_no &#x3D; &#39;123&#39;;
+<ul>
+<li><code>Using where</code>：在服务层进行过滤。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 and balance &gt; 2;
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 492944 |    33.33 | Using where |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
 
--- Using where 使用服务层过滤
-explain select * from user where id &gt; 10 and balance &gt; 10;
+<ul>
+<li><code>Using index</code>：使用覆盖索引</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select id_no from user where id_no &#x3D; &#39;123&#39;;
++----+-------------+-------+------------+-------+---------------+-----------+---------+------+--------+----------+--------------------------+
+| id | select_type | table | partitions | type  | possible_keys | key       | key_len | ref  | rows   | filtered | Extra                    |
++----+-------------+-------+------------+-------+---------------+-----------+---------+------+--------+----------+--------------------------+
+|  1 | SIMPLE      | user  | NULL       | index | idx_id_no     | idx_id_no | 286     | NULL | 985889 |    10.00 | Using where; Using index |
++----+-------------+-------+------------+-------+---------------+-----------+---------+------+--------+----------+--------------------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
 
--- Using union 使用索引合并
-explain select * from user where id &gt; 10 or job &#x3D; &#39;工程师&#39;;
+<ul>
+<li><code>Using index condition</code>：使用索引条件下推。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where country like &#39;中国%&#39; and city &#x3D; &#39;贵州省&#39;;
++----+-------------+-------+------------+-------+------------------+------------------+---------+------+------+----------+-----------------------+
+| id | select_type | table | partitions | type  | possible_keys    | key              | key_len | ref  | rows | filtered | Extra                 |
++----+-------------+-------+------------+-------+------------------+------------------+---------+------+------+----------+-----------------------+
+|  1 | SIMPLE      | user  | NULL       | range | idx_country_city | idx_country_city | 806     | NULL | 4270 |    10.00 | Using index condition |
++----+-------------+-------+------------+-------+------------------+------------------+---------+------+------+----------+-----------------------+
+1 row in set (0.12 sec)</code></pre>
 
--- Using index condition 使用索引条件下推，减少回表的次数
-explain select * from user where country like &#39;朝鲜%&#39; and city &#x3D; &#39;贵州省&#39;;</code></pre>
+<ul>
+<li><code>Using union</code>：使用索引合并。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 or job &#x3D; &#39;&#39;;
++----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
+| id | select_type | table | partitions | type        | possible_keys   | key             | key_len | ref  | rows   | filtered | Extra                                     |
++----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
+|  1 | SIMPLE      | user  | NULL       | index_merge | PRIMARY,idx_job | PRIMARY,idx_job | 8,403   | NULL | 492945 |   100.00 | Using union(PRIMARY,idx_job); Using where |
++----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
 
 <h2 id="主从复制">3. 主从复制</h2><h3 id="为什么需要主从复制？">3.1. 为什么需要主从复制？</h3><ul>
 <li>用来备份主库，保证数据的安全。</li>
 <li>支撑读写分离，提高性能。</li>
 <li>支撑故障转移，提高可用性。</li>
 </ul>
-<h3 id="主从复制的原理是什么？">3.2. 主从复制的原理是什么？</h3><p>由主库的IO线程生成binlog，由从库的IO线程生成中继日志relay log，而后SQL线程重放SQL。</p>
+<h3 id="主从复制的原理是什么？">3.2. 主从复制的原理是什么？</h3><p>由主库的IO线程生成binlog；由从库的IO线程生成中继日志relay log；最后由SQL线程重放SQL。</p>
 <h3 id="主从复制的策略有哪些？">3.3. 主从复制的策略有哪些？</h3><ul>
-<li>基于Pos主从复制</li>
-<li>基于GTID主从复制</li>
-<li>一主多从，一主多级从，互为主从</li>
-<li>半同步复制机制</li>
+<li>基于Pos主从复制。</li>
+<li>基于GTID主从复制。</li>
+<li>一主多从，一主多级从，互为主从。</li>
+<li>半同步复制机制。</li>
 </ul>
 <h3 id="如何解决主从复制延迟的问题？">3.4. 如何解决主从复制延迟的问题？</h3><p>主从复制延迟瓶颈在于磁盘IO和网络IO。</p>
 <ul>
-<li>修改从数据库的刷盘策略提高性能，降低安全性</li>
-<li>多个从数据库，分散从库的读压力</li>
-<li>从库使用多线程</li>
+<li>修改从数据库的刷盘策略提高性能，降低安全性。</li>
+<li>多个从数据库，分散从库的读压力。</li>
+<li>从库使用多线程重放SQL。</li>
 </ul>
-<h2 id="读写分离">4. 读写分离</h2><h3 id="为什么需要读写分离？">4.1. 为什么需要读写分离？</h3><p>提高读的能力，分摊读压力</p>
+<h2 id="读写分离">4. 读写分离</h2><h3 id="为什么需要读写分离？">4.1. 为什么需要读写分离？</h3><p>提高读的能力，分摊读压力。</p>
 <h3 id="实现读写分离的工具有哪些？">4.2. 实现读写分离的工具有哪些？</h3><ul>
-<li>atlas</li>
-<li>MyCat</li>
-<li>MySQL Proxy</li>
-<li>MySQL Router</li>
-<li>Sharding Sphere</li>
+<li>atlas。</li>
+<li>MyCat。</li>
+<li>MySQL Proxy。</li>
+<li>MySQL Router。</li>
+<li>Sharding Sphere。</li>
 </ul>
-<h2 id="分库分表">5. 分库分表</h2><h3 id="为何需要分库分表？">5.1. 为何需要分库分表？</h3><p>突破MySQL单库单表的瓶颈，提高数据库的性能</p>
+<h2 id="分库分表">5. 分库分表</h2><h3 id="为何需要分库分表？">5.1. 为何需要分库分表？</h3><p>突破MySQL单库单表的瓶颈，提高数据库的性能。</p>
 <h3 id="分库分表的策略有哪些？">5.2. 分库分表的策略有哪些？</h3><p>切分与聚合。</p>
 <ul>
 <li>垂直切分<ul>
-<li>垂直分库，按业务分库</li>
-<li>垂直分表，大表拆小表</li>
+<li>垂直分库，按业务分库。</li>
+<li>垂直分表，大表拆小表。</li>
 </ul>
 </li>
 <li>水平切分<ul>
-<li>水平分库</li>
-<li>水平分表</li>
+<li>水平分库。</li>
+<li>水平分表。</li>
 </ul>
 </li>
 </ul>
 <h3 id="数据切片有哪些方法？">5.3. 数据切片有哪些方法？</h3><ul>
-<li>取模分片</li>
-<li>按范围分片</li>
-<li>按时间分片</li>
-<li>按枚举值分片</li>
-<li>自定义分片</li>
+<li>取模分片。</li>
+<li>按范围分片。</li>
+<li>按时间分片。</li>
+<li>按枚举值分片。</li>
+<li>自定义分片。</li>
 </ul>
 <h3 id="分库分表的缺点有哪些？">5.4. 分库分表的缺点有哪些？</h3><ul>
-<li>分库，业务间需要通过接口交互</li>
-<li>整加事务管理难度</li>
+<li>分库，业务间需要通过接口交互。</li>
+<li>整加事务管理难度。</li>
 </ul>
 <h3 id="实现分库分表的工具有哪些？">5.5. 实现分库分表的工具有哪些？</h3><ul>
-<li>Sharding Sphere</li>
-<li>MyCat</li>
+<li>Sharding Sphere。</li>
+<li>MyCat。</li>
 </ul>
-<h2 id="高可用集群">6. 高可用集群</h2><h3 id="为什么需要高可用集群？">6.1. 为什么需要高可用集群？</h3><p>完成自动的故障转移，提高系统的可用性</p>
+<h2 id="高可用集群">6. 高可用集群</h2><h3 id="为什么需要高可用集群？">6.1. 为什么需要高可用集群？</h3><p>完成自动的故障转移，提高系统的可用性。</p>
 <h3 id="高可用集群方案有哪些问题？">6.2. 高可用集群方案有哪些问题？</h3><ul>
-<li>主键冲突</li>
-<li>热备节点</li>
-<li>检查机制完善</li>
-<li>数据一致性保证</li>
+<li>主键冲突。</li>
+<li>热备节点。</li>
+<li>检查机制完善。</li>
+<li>数据一致性保证。</li>
 </ul>
-<h3 id="如何实现自动故障转移？">6.3. 如何实现自动故障转移？</h3><p>keepalived</p>
+<h3 id="如何实现自动故障转移？">6.3. 如何实现自动故障转移？</h3><p><code>keepalived</code></p>
 <h2 id="参考文档">7. 参考文档</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/optimize-overview.html">MySQL :: MySQL 8.0 Reference Manual :: 10.1 Optimization Overview</a></li>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format</a></li>

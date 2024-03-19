@@ -313,7 +313,7 @@ p {
 code {
   background-color: var(--codebgColor);
   color: var(--fontColor);
-  font-family: var(--global-code-font-family);
+  font-family: var(--global-font-family);
   font-size: 13px;
   line-height: 2.4rem;
   transition-property: background-color, color;
