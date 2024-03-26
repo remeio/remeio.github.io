@@ -138,7 +138,7 @@
     <div class="toc-toggle">
       <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
     </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96"><span class="toc-text">1. SQL语句优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BC%98%E5%8C%96SQL%E8%AF%AD%E5%8F%A5%EF%BC%9F"><span class="toc-text">1.1. 为什么需要优化SQL语句？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E5%B9%B6%E4%BC%98%E5%8C%96%E6%85%A2%E7%9A%84SQL%E8%AF%AD%E5%8F%A5%EF%BC%9F"><span class="toc-text">1.2. 如何定位并优化慢的SQL语句？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96%E7%9A%84%E6%89%8B%E6%AE%B5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.3. SQL语句优化的手段有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="toc-text">2. 执行计划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BSQL%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%EF%BC%9F"><span class="toc-text">2.1. 如何查看SQL语句的执行计划？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#select-type"><span class="toc-text">2.2. select_type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-text">2.3. type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Extra"><span class="toc-text">2.4. Extra</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-text">3. 案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88"><span class="toc-text">3.1. 索引失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B1%E5%88%86%E9%A1%B5"><span class="toc-text">3.2. 深分页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="toc-text">3.3. 连接查询建立索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">4. 参考文档</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BC%98%E5%8C%96SQL%E8%AF%AD%E5%8F%A5%EF%BC%9F"><span class="toc-text">1.1. 为什么需要优化SQL语句？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E5%B9%B6%E4%BC%98%E5%8C%96%E6%85%A2%E7%9A%84SQL%E8%AF%AD%E5%8F%A5%EF%BC%9F"><span class="toc-text">1.2. 如何定位并优化慢的SQL语句？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E8%A1%A8"><span class="toc-text">1.3. 测试表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="toc-text">2. 执行计划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BSQL%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%EF%BC%9F"><span class="toc-text">2.1. 如何查看SQL语句的执行计划？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#select-type"><span class="toc-text">2.2. select_type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-text">2.3. type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#filtered"><span class="toc-text">2.4. filtered</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Extra"><span class="toc-text">2.5. Extra</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E8%AF%AD%E5%8F%A5%E4%BC%98%E5%8C%96%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-text">3. SQL语句优化案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96"><span class="toc-text">3.1. 查询优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B7%E4%BD%93%E5%AD%97%E6%AE%B5%E4%BB%A3%E6%9B%BFselect"><span class="toc-text">3.1.1. 使用具体字段代替select *</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8union-all%E4%BB%A3%E6%9B%BFunion"><span class="toc-text">3.1.2. 使用union all代替union</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%81%BF%E5%85%8D%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88"><span class="toc-text">3.1.3. 避免索引失效</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E6%8F%90%E9%AB%98order-by%E7%9A%84%E6%95%88%E7%8E%87"><span class="toc-text">3.1.4. 使用索引提高order by的效率</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E6%8F%90%E9%AB%98group-by%E7%9A%84%E6%95%88%E7%8E%87"><span class="toc-text">3.1.5. 使用索引提高group by的效率</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E4%BC%98%E5%8C%96"><span class="toc-text">3.2. 连接优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#join%E4%BD%BF%E7%94%A8%E5%B0%8F%E8%A1%A8%E9%A9%B1%E5%8A%A8%E5%A4%A7%E8%A1%A8"><span class="toc-text">3.2.1. join使用小表驱动大表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#join%E7%9A%84%E8%A1%A8%E4%B8%8D%E5%AE%9C%E8%BF%87%E5%A4%9A"><span class="toc-text">3.2.2. join的表不宜过多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BAjoin%E7%9A%84%E5%85%B3%E8%81%94%E6%9D%A1%E4%BB%B6%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="toc-text">3.2.3. 为join的关联条件建立索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E4%BC%98%E5%8C%96"><span class="toc-text">3.3. 业务优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%B1%E5%88%86%E9%A1%B5%E4%BC%98%E5%8C%96"><span class="toc-text">3.3.1. 深分页优化</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">4. 参考文档</span></a></li></ol>
   </div>
   
   <script>
@@ -165,7 +165,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2024-03-19 20:00，
-		<span class="post-count">字数：1.8k，预计阅读：10分钟</span>
+		<span class="post-count">字数：3.7k，预计阅读：19分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -178,8 +178,50 @@
   </div>
   <div class="article">
   
-  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="SQL语句优化">1. SQL语句优化</h2><h3 id="为什么需要优化SQL语句？">1.1. 为什么需要优化SQL语句？</h3><p>当表中数据量较少时，无论写出怎样的SQL语句都能</p>
-<h3 id="如何定位并优化慢的SQL语句？">1.2. 如何定位并优化慢的SQL语句？</h3><h3 id="SQL语句优化的手段有哪些？">1.3. SQL语句优化的手段有哪些？</h3><h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，如下图：</p>
+  <link rel="stylesheet" type="text/css" href><div class=".article-gallery"><blockquote>
+<p>数据库调优的手段有数据库层面、数据表层面以及SQL语句层面，本文主要探究在SQL语句层面如何进行调优。本文的测试环境为MySQL8.0.34。</p>
+</blockquote>
+<h2 id="背景">1. 背景</h2><h3 id="为什么需要优化SQL语句？">1.1. 为什么需要优化SQL语句？</h3><ul>
+<li><p>从用户的角度来说，优化SQL语句是为了给用户提供更好的服务，如更低的响应时间（RT）和更高的每秒事务处理数（TPS）。</p>
+</li>
+<li><p>从开发人员的角度来说，优化SQL语句是为了能够支撑更大的数据量，提供更快性能更好的业务接口。</p>
+</li>
+</ul>
+<h3 id="如何定位并优化慢的SQL语句？">1.2. 如何定位并优化慢的SQL语句？</h3><ol>
+<li>一方面，建议保持良好的习惯，在每编写完一条SQL语句后都分析一下该语句的执行计划，以便评估该语句的查询速度，排查潜在的性能问题。</li>
+<li>另一方面，可以打开MySQL数据的慢查询日志，以便记录在生产环境中执行较慢的SQL语句，方便排查问题。</li>
+</ol>
+<blockquote>
+<p>慢查询日志参数：</p>
+<ul>
+<li>可以通过<code>slow_query_log</code>参数开启慢查询日志。</li>
+<li>可以通过<code>slow_query_log_file</code>参数指定慢查询日志的路径。</li>
+<li>可以通过<code>long_query_time</code>参数指定慢查询的查询时间阈值。</li>
+<li>可以通过<code>log_queries_not_using_indexes</code>参数开启记录未使用到索引的查询。</li>
+</ul>
+</blockquote>
+<h3 id="测试表">1.3. 测试表</h3><p>测试表<code>user</code>的表结构如下：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">CREATE TABLE &#96;user&#96; (
+  &#96;id&#96; bigint NOT NULL,
+  &#96;name&#96; varchar(100) DEFAULT NULL,
+  &#96;id_no&#96; varchar(50) DEFAULT NULL,
+  &#96;mobile&#96; varchar(20) DEFAULT NULL,
+  &#96;job&#96; varchar(100) DEFAULT NULL,
+  &#96;country&#96; varchar(100) DEFAULT NULL,
+  &#96;city&#96; varchar(100) DEFAULT NULL,
+  &#96;address&#96; varchar(255) DEFAULT NULL,
+  &#96;email&#96; varchar(100) DEFAULT NULL,
+  &#96;salary&#96; bigint DEFAULT NULL,
+  &#96;create_time&#96; datetime DEFAULT NULL,
+  PRIMARY KEY (&#96;id&#96;),
+  UNIQUE KEY &#96;uk_id_no&#96; (&#96;id_no&#96;),
+  KEY &#96;idx_job&#96; (&#96;job&#96;),
+  KEY &#96;idx_country_city&#96; (&#96;country&#96;,&#96;city&#96;),
+  KEY &#96;idx_create_time&#96; (&#96;create_time&#96;)
+) ENGINE&#x3D;InnoDB DEFAULT CHARSET&#x3D;utf8mb4 COLLATE&#x3D;utf8mb4_general_ci</code></pre>
+
+
+<h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，如下图：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
@@ -220,41 +262,42 @@
 <li><code>UNION</code>：联合查询。</li>
 <li><code>UNION RESULT</code>：联合查询的结果。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user a where id &#x3D; 1 union select * from user b where balance &gt; 10;
-+----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-| id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
-+----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-|  1 | PRIMARY      | a          | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL            |
-|  2 | UNION        | b          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
-|  3 | UNION RESULT | &lt;union1,2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
-+----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-3 rows in set, 1 warning (0.00 sec)</code></pre>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user t where t.id in (select a.id from user a where id &#x3D; 1 union select b.id from user b where salary &gt; 100);
++----+--------------------+------------+------------+--------+---------------+---------+---------+-------+--------+----------+-----------------+
+| id | select_type        | table      | partitions | type   | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
++----+--------------------+------------+------------+--------+---------------+---------+---------+-------+--------+----------+-----------------+
+|  1 | PRIMARY            | t          | NULL       | ALL    | NULL          | NULL    | NULL    | NULL  | 989600 |   100.00 | Using where     |
+|  2 | DEPENDENT SUBQUERY | a          | NULL       | const  | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | Using index     |
+|  3 | DEPENDENT UNION    | b          | NULL       | eq_ref | PRIMARY       | PRIMARY | 8       | func  |      1 |    33.33 | Using where     |
+|  4 | UNION RESULT       | &lt;union2,3&gt; | NULL       | ALL    | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
++----+--------------------+------------+------------+--------+---------------+---------+---------+-------+--------+----------+-----------------+
+4 rows in set, 1 warning (0.00 sec)</code></pre>
 
 <ul>
 <li><code>SUBQUERY</code>：简单子查询。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.balance, (select max(balance) as max_balance from user) from user a where id &#x3D; 1;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select t.salary - (select avg(salary) from user) from user t where t.id &#x3D; 1;
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra |
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
-|  1 | PRIMARY     | a     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL  |
-|  2 | SUBQUERY    | user  | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |   100.00 | NULL  |
+|  1 | PRIMARY     | t     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL  |
+|  2 | SUBQUERY    | user  | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 989600 |   100.00 | NULL  |
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------+
 2 rows in set, 1 warning (0.00 sec)</code></pre>
 
 <ul>
 <li><code>DERIVED</code>：派生表。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select t.id from (select * from user where id &#x3D; 1 union select * from user where balance &gt; 10) t;
-+----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-| id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra           |
-+----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-|  1 | PRIMARY      | &lt;derived2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 328597 |   100.00 | NULL            |
-|  2 | DERIVED      | user       | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL            |
-|  3 | UNION        | user       | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where     |
-|  4 | UNION RESULT | &lt;union2,3&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  |   NULL |     NULL | Using temporary |
-+----+--------------+------------+------------+-------+---------------+---------+---------+-------+--------+----------+-----------------+
-4 rows in set, 1 warning (0.01 sec)</code></pre>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select b.id, b.salary - a.salary from (select t.job, avg(t.salary) as salary from user t group by t.job) a, user b where a.job &#x3D;
+b.job;
++----+-------------+------------+------------+-------+---------------+-------------+---------+------------+--------+----------+-------------+
+| id | select_type | table      | partitions | type  | possible_keys | key         | key_len | ref        | rows   | filtered | Extra       |
++----+-------------+------------+------------+-------+---------------+-------------+---------+------------+--------+----------+-------------+
+|  1 | PRIMARY     | b          | NULL       | ALL   | idx_job       | NULL        | NULL    | NULL       | 989600 |   100.00 | Using where |
+|  1 | PRIMARY     | &lt;derived2&gt; | NULL       | ref   | &lt;auto_key0&gt;   | &lt;auto_key0&gt; | 403     | test.b.job |     10 |   100.00 | NULL        |
+|  2 | DERIVED     | t          | NULL       | index | idx_job       | idx_job     | 403     | NULL       | 989600 |   100.00 | NULL        |
++----+-------------+------------+------------+-------+---------------+-------------+---------+------------+--------+----------+-------------+
+3 rows in set, 1 warning (0.00 sec)</code></pre>
 
 <ul>
 <li><code>DEPENDENT UNION</code>：依赖联合查询。</li>
@@ -273,12 +316,12 @@
 <ul>
 <li><code>DEPENDENT SUBQUERY</code>：依赖子查询。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.id, (select count(b.id) from user b where b.balance &gt; a.balance) from user a where id &#x3D; 1;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select a.id, (select count(b.id) from user b where b.salary &gt; a.salary) from user a where id &#x3D; 1;
 +----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
 | id | select_type        | table | partitions | type  | possible_keys | key     | key_len | ref   | rows   | filtered | Extra       |
 +----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
 |  1 | PRIMARY            | a     | NULL       | const | PRIMARY       | PRIMARY | 8       | const |      1 |   100.00 | NULL        |
-|  2 | DEPENDENT SUBQUERY | b     | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 985889 |    33.33 | Using where |
+|  2 | DEPENDENT SUBQUERY | b     | NULL       | ALL   | NULL          | NULL    | NULL    | NULL  | 989600 |    33.33 | Using where |
 +----+--------------------+-------+------------+-------+---------------+---------+---------+-------+--------+----------+-------------+
 2 rows in set, 2 warnings (0.00 sec)</code></pre>
 
@@ -390,66 +433,183 @@ mysql&gt; explain select * from user where job like &#39;工%&#39;;
 +----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
 1 row in set, 1 warning (0.01 sec)</code></pre>
 
-<h3 id="Extra">2.4. Extra</h3><ul>
+<h3 id="filtered">2.4. filtered</h3><h3 id="Extra">2.5. Extra</h3><ul>
 <li><code>Using filesort</code>：使用文件排序。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 order by balance desc limit 0, 10;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 order by salary desc limit 0, 10;
 +----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-----------------------------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra                       |
 +----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-----------------------------+
-|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 492944 |   100.00 | Using where; Using filesort |
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 494800 |   100.00 | Using where; Using filesort |
 +----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-----------------------------+
 1 row in set, 1 warning (0.00 sec)</code></pre>
 
 <ul>
 <li><code>Using where</code>：在服务层进行过滤。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 and balance &gt; 2;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 and salary &gt; 2000;
 +----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra       |
 +----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
-|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 492944 |    33.33 | Using where |
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 494800 |    33.33 | Using where |
 +----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
 1 row in set, 1 warning (0.00 sec)</code></pre>
 
 <ul>
 <li><code>Using index</code>：使用覆盖索引</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select id_no from user where id_no &#x3D; &#39;123&#39;;
-+----+-------------+-------+------------+-------+---------------+-----------+---------+------+--------+----------+--------------------------+
-| id | select_type | table | partitions | type  | possible_keys | key       | key_len | ref  | rows   | filtered | Extra                    |
-+----+-------------+-------+------------+-------+---------------+-----------+---------+------+--------+----------+--------------------------+
-|  1 | SIMPLE      | user  | NULL       | index | idx_id_no     | idx_id_no | 286     | NULL | 985889 |    10.00 | Using where; Using index |
-+----+-------------+-------+------------+-------+---------------+-----------+---------+------+--------+----------+--------------------------+
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select country, city from user where country &#x3D; &#39;中华人民共和国&#39;;
++----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys    | key              | key_len | ref   | rows | filtered | Extra       |
++----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | ref  | idx_country_city | idx_country_city | 403     | const |    1 |   100.00 | Using index |
++----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------------+
 1 row in set, 1 warning (0.00 sec)</code></pre>
 
 <ul>
 <li><code>Using index condition</code>：使用索引条件下推。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where country like &#39;中国%&#39; and city &#x3D; &#39;贵州省&#39;;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where country like &#39;中华人民共和国%&#39; and city &#x3D; &#39;贵州省&#39;;
 +----+-------------+-------+------------+-------+------------------+------------------+---------+------+------+----------+-----------------------+
 | id | select_type | table | partitions | type  | possible_keys    | key              | key_len | ref  | rows | filtered | Extra                 |
 +----+-------------+-------+------------+-------+------------------+------------------+---------+------+------+----------+-----------------------+
-|  1 | SIMPLE      | user  | NULL       | range | idx_country_city | idx_country_city | 806     | NULL | 4270 |    10.00 | Using index condition |
+|  1 | SIMPLE      | user  | NULL       | range | idx_country_city | idx_country_city | 806     | NULL |    1 |    10.00 | Using index condition |
 +----+-------------+-------+------------+-------+------------------+------------------+---------+------+------+----------+-----------------------+
-1 row in set (0.12 sec)</code></pre>
+1 row in set, 1 warning (0.01 sec)</code></pre>
 
 <ul>
 <li><code>Using union</code>：使用索引合并。</li>
 </ul>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 or job &#x3D; &#39;&#39;;
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10 or job &#x3D; &#39;工程师&#39;;
 +----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
 | id | select_type | table | partitions | type        | possible_keys   | key             | key_len | ref  | rows   | filtered | Extra                                     |
 +----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
-|  1 | SIMPLE      | user  | NULL       | index_merge | PRIMARY,idx_job | PRIMARY,idx_job | 8,403   | NULL | 492945 |   100.00 | Using union(PRIMARY,idx_job); Using where |
+|  1 | SIMPLE      | user  | NULL       | index_merge | PRIMARY,idx_job | PRIMARY,idx_job | 8,403   | NULL | 494801 |   100.00 | Using union(PRIMARY,idx_job); Using where |
 +----+-------------+-------+------------+-------------+-----------------+-----------------+---------+------+--------+----------+-------------------------------------------+
 1 row in set, 1 warning (0.00 sec)</code></pre>
 
+<h2 id="SQL语句优化案例分析">3. SQL语句优化案例分析</h2><h3 id="查询优化">3.1. 查询优化</h3><h4 id="使用具体字段代替select">3.1.1. 使用具体字段代替select *</h4><p>使用<code>select &lt;具体字段&gt;</code>代替<code>select *</code>（在业务允许的情况下）有以下几个优点：</p>
+<ul>
+<li>减少网络IO。</li>
+<li>可以使用覆盖索引，避免回表。</li>
+</ul>
+<p>如下示例，第二条查询使用了覆盖索引，对应<code>Extra</code>字段中的<code>Using temporary</code>：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &gt; 10000 limit 100;
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL | 493563 |   100.00 | Using where |
++----+-------------+-------+------------+-------+---------------+---------+---------+------+--------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
+mysql&gt; explain select id from user where id &gt; 10000 limit 100;
++----+-------------+-------+------------+-------+--------------------------------------------------+---------+---------+------+--------+----------+--------------------------+
+| id | select_type | table | partitions | type  | possible_keys                                    | key     | key_len | ref  | rows   | filtered | Extra                    |
++----+-------------+-------+------------+-------+--------------------------------------------------+---------+---------+------+--------+----------+--------------------------+
+|  1 | SIMPLE      | user  | NULL       | range | PRIMARY,idx_job,idx_country_city,idx_create_time | PRIMARY | 8       | NULL | 493563 |   100.00 | Using where; Using index |
++----+-------------+-------+------------+-------+--------------------------------------------------+---------+---------+------+--------+----------+--------------------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
 
+<p><a href="/post/2443049666/rt-select.png" title="测试结果-使用具体字段代替select *" class="gallery-item"><img src="/post/2443049666/rt-select.png" alt="测试结果-使用具体字段代替select *"></a></p>
+<h4 id="使用union-all代替union">3.1.2. 使用union all代替union</h4><p>使用<code>union all</code>代替<code>union</code>（在业务允许的情况下）可以避免对数据集进行去重，以提高查询速度。如下示例，第一个查询使用了临时表对数据进行去重，对应<code>Extra</code>字段中的<code>Using temporary</code>：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select count(*) from (select * from user where id &gt; 1000 and id &lt; 4000 union select * from user where id &gt; 4000 and id &lt; 8000) t; 
++----+--------------+------------+------------+-------+---------------+---------+---------+------+-------+----------+-----------------+
+| id | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref  | rows  | filtered | Extra           |
++----+--------------+------------+------------+-------+---------------+---------+---------+------+-------+----------+-----------------+
+|  1 | PRIMARY      | &lt;derived2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL | 13972 |   100.00 | NULL            |
+|  2 | DERIVED      | user       | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL |  5832 |   100.00 | Using where     |
+|  3 | UNION        | user       | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL |  8140 |   100.00 | Using where     |
+|  4 | UNION RESULT | &lt;union2,3&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL |  NULL |     NULL | Using temporary |
++----+--------------+------------+------------+-------+---------------+---------+---------+------+-------+----------+-----------------+
+4 rows in set, 1 warning (0.00 sec)
 
+mysql&gt; explain select count(*) from (select * from user where id &gt; 1000 and id &lt; 4000 union all select * from user where id &gt; 4000 and id &lt; 8000) t;
++----+-------------+------------+------------+-------+---------------+---------+---------+------+-------+----------+-------------+
+| id | select_type | table      | partitions | type  | possible_keys | key     | key_len | ref  | rows  | filtered | Extra       |
++----+-------------+------------+------------+-------+---------------+---------+---------+------+-------+----------+-------------+
+|  1 | PRIMARY     | &lt;derived2&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL | 13972 |   100.00 | NULL        |
+|  2 | DERIVED     | user       | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL |  5832 |   100.00 | Using where |
+|  3 | UNION       | user       | NULL       | range | PRIMARY       | PRIMARY | 8       | NULL |  8140 |   100.00 | Using where |
++----+-------------+------------+------------+-------+---------------+---------+---------+------+-------+----------+-------------+
+3 rows in set, 1 warning (0.00 sec)</code></pre>
 
+<p><a href="/post/2443049666/rt-union.png" title="测试结果-使用union all代替union" class="gallery-item"><img src="/post/2443049666/rt-union.png" alt="测试结果-使用union all代替union"></a></p>
+<h4 id="避免索引失效">3.1.3. 避免索引失效</h4><p>当索引失效时，会使用全表扫描。如下示例，第一条查询由于对索引列进行了计算导致了索引失效，对应<code>type</code>字段中的<code>ALL</code>：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id + 1 &#x3D; 10;
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 987126 |   100.00 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
 
-<h2 id="案例分析">3. 案例分析</h2><h3 id="索引失效">3.1. 索引失效</h3><h3 id="深分页">3.2. 深分页</h3><h3 id="连接查询建立索引">3.3. 连接查询建立索引</h3><h2 id="参考文档">4. 参考文档</h2><ul>
+mysql&gt; explain select * from user where id &#x3D; 9;
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | const | PRIMARY       | PRIMARY | 8       | const |    1 |   100.00 | NULL  |
++----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.01 sec)</code></pre>
+
+<p><a href="/post/2443049666/rt-index-valid.png" title="测试结果-避免索引失效" class="gallery-item"><img src="/post/2443049666/rt-index-valid.png" alt="测试结果-避免索引失效"></a></p>
+<h4 id="使用索引提高order-by的效率">3.1.4. 使用索引提高order by的效率</h4><p>使用索引结构自身的有序性可以很快地进行排序，无需使用文件排序。如下示例，第一条查询语句由于未使用索引列排序其使用了文件排序，对应<code>Extra</code>字段中的<code>Using filesort</code>：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user order by modify_time desc limit 100, 10;
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+----------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows   | filtered | Extra          |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+----------------+
+|  1 | SIMPLE      | user  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 987126 |   100.00 | Using filesort |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+----------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql&gt; explain select * from user order by create_time desc limit 100, 10;
++----+-------------+-------+------------+-------+---------------+-----------------+---------+------+------+----------+---------------------+
+| id | select_type | table | partitions | type  | possible_keys | key             | key_len | ref  | rows | filtered | Extra               |
++----+-------------+-------+------------+-------+---------------+-----------------+---------+------+------+----------+---------------------+
+|  1 | SIMPLE      | user  | NULL       | index | NULL          | idx_create_time | 6       | NULL |  110 |   100.00 | Backward index scan |
++----+-------------+-------+------------+-------+---------------+-----------------+---------+------+------+----------+---------------------+
+1 row in set, 1 warning (0.00 sec)</code></pre>
+
+<p><a href="/post/2443049666/rt-order-by.png" title="测试结果-使用索引提高order by的效率" class="gallery-item"><img src="/post/2443049666/rt-order-by.png" alt="测试结果-使用索引提高order by的效率"></a></p>
+<h4 id="使用索引提高group-by的效率">3.1.5. 使用索引提高group by的效率</h4><p>使用索引列进行<code>group by</code>会提高分组的效率。</p>
+<h3 id="连接优化">3.2. 连接优化</h3><h4 id="join使用小表驱动大表">3.2.1. join使用小表驱动大表</h4><p>使用小表驱动大表可以提高连接查询的速度。如下示例，第一个查询语句使用大表驱动小表，第二个查询语句使用小表驱动大表：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select count(*) from user b straight_join user a on a.id &#x3D; b.id where a.salary &gt; 5000 and b.salary &gt; 1; 
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+| id | select_type | table | partitions | type   | possible_keys | key     | key_len | ref       | rows   | filtered | Extra       |
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+|  1 | SIMPLE      | b     | NULL       | ALL    | PRIMARY       | NULL    | NULL    | NULL      | 987126 |    33.33 | Using where |
+|  1 | SIMPLE      | a     | NULL       | eq_ref | PRIMARY       | PRIMARY | 8       | test.b.id |      1 |    33.33 | Using where |
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+2 rows in set, 1 warning (0.00 sec)
+mysql&gt; explain select count(*) from user a straight_join user b on a.id &#x3D; b.id where a.salary &gt; 5000 and b.salary &gt; 1; 
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+| id | select_type | table | partitions | type   | possible_keys | key     | key_len | ref       | rows   | filtered | Extra       |
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+|  1 | SIMPLE      | a     | NULL       | ALL    | PRIMARY       | NULL    | NULL    | NULL      | 987126 |    33.33 | Using where |
+|  1 | SIMPLE      | b     | NULL       | eq_ref | PRIMARY       | PRIMARY | 8       | test.a.id |      1 |    33.33 | Using where |
++----+-------------+-------+------------+--------+---------------+---------+---------+-----------+--------+----------+-------------+
+2 rows in set, 1 warning (0.01 sec)</code></pre>
+
+<p><a href="/post/2443049666/rt-join.png" title="测试结果-join使用小表驱动大表" class="gallery-item"><img src="/post/2443049666/rt-join.png" alt="测试结果-join使用小表驱动大表"></a></p>
+<h4 id="join的表不宜过多">3.2.2. join的表不宜过多</h4><p>连接查询的表不宜过多，避免产生过大的笛卡尔积。</p>
+<h4 id="为join的关联条件建立索引">3.2.3. 为join的关联条件建立索引</h4><p>为连接条件的列添加索引，使其使用<code>eq_ref</code>进行连接查询，可以提高连接查询的效率。</p>
+<h3 id="业务优化">3.3. 业务优化</h3><h4 id="深分页优化">3.3.1. 深分页优化</h4><p>当使用第一条查询语句时，随着页码越来越大，查询速度会越来越慢，即深分页问题。深分页的本质原因是MySQL中的<code>limit</code>语句会舍弃<code>offset</code>行需要回表的数据。如下示例，第一条查询语句存在深分页问题，第二条查询语句通过覆盖索引的方式减少回表的次数：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user order by create_time desc limit 900000, 10;
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+----------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows   | filtered | Extra          |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+----------------+
+|  1 | SIMPLE      | user  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 987126 |   100.00 | Using filesort |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+----------------+
+1 row in set, 1 warning (0.00 sec)
+mysql&gt; explain select * from user a, (select id from user order by create_time desc limit 900000, 10) b where a.id &#x3D; b.id;
++----+-------------+------------+------------+--------+---------------+-----------------+---------+------+--------+----------+----------------------------------+
+| id | select_type | table      | partitions | type   | possible_keys | key             | key_len | ref  | rows   | filtered | Extra                            |
++----+-------------+------------+------------+--------+---------------+-----------------+---------+------+--------+----------+----------------------------------+
+|  1 | PRIMARY     | &lt;derived2&gt; | NULL       | ALL    | NULL          | NULL            | NULL    | NULL | 900010 |   100.00 | NULL                             |
+|  1 | PRIMARY     | a          | NULL       | eq_ref | PRIMARY       | PRIMARY         | 8       | b.id |      1 |   100.00 | NULL                             |
+|  2 | DERIVED     | user       | NULL       | index  | NULL          | idx_create_time | 6       | NULL | 900010 |   100.00 | Backward index scan; Using index |
++----+-------------+------------+------------+--------+---------------+-----------------+---------+------+--------+----------+----------------------------------+
+3 rows in set, 1 warning (0.01 sec)</code></pre>
+<p><a href="/post/2443049666/rt-deep-page.png" title="测试结果-深分页优化" class="gallery-item"><img src="/post/2443049666/rt-deep-page.png" alt="测试结果-深分页优化"></a></p>
+<h2 id="参考文档">4. 参考文档</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/optimize-overview.html">MySQL :: MySQL 8.0 Reference Manual :: 10.1 Optimization Overview</a></li>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format</a></li>
 <li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/statement-optimization.html">MySQL :: MySQL 8.0 Reference Manual :: 10.2 Optimizing SQL Statements</a></li>
