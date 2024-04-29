@@ -10,17 +10,57 @@
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Open+Sans&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
   
 <script src="https://cdn.staticfile.org/prism/1.17.1/prism.min.js"></script>
 
   
 <script src="https://cdn.staticfile.org/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
-
-  
-<link rel="stylesheet" href="/css/prism/material-light.css">
-
-  
-<link rel="stylesheet" href="/css/prism/material-dark.css">
 
   
 <script src="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
@@ -29,68 +69,18 @@
 <link rel="stylesheet" href="https://cdn.staticfile.org/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
 
   
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
 <link rel="stylesheet" href="/css/style.css">
 
-  
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
-
-  
-<link rel="stylesheet" href="/iconfont/iconfont.css">
-
-  
-  
-<link rel="stylesheet" href="/lightgallery/lightgallery.css">
-
-  
-<script src="/lightgallery/lightgallery.min.js"></script>
-
-  
-<script src="/lightgallery/lg-zoom.min.js"></script>
-
-  
-<script src="/lightgallery/lg-fullscreen.min.js"></script>
-
-  
-<script src="/lightgallery/lg-thumbnail.min.js"></script>
-
-  
-  
-<script src="https://cdn.staticfile.org/echarts/4.8.0/echarts.min.js"></script>
 
 <meta name="generator" content="Hexo 6.3.0"></head>
-<script>
-  function setIsNight(isNight) {
-    localStorage.setItem('isNight', isNight)
-  }
-
-  function getIsNight() {
-    return localStorage.getItem('isNight')
-  }
-
-  function switchTheme() {
-    let isNight = getIsNight()
-    if (isNight === 'false') {
-      document.documentElement.className = 'dark'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
-      setIsNight('true')
-    } else {
-      document.documentElement.className = 'light'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
-      setIsNight('false')
-    }
-  }
-
-  let isNight = getIsNight()
-  if (isNight == null) {
-    isNight = 'false'
-    setIsNight('false')
-  }
-  if (isNight === 'false') {
-    document.documentElement.className = 'light'
-  } else {
-    document.documentElement.className = 'dark'
-  }
-</script>
 
 <body>
   <div class="show-area">
@@ -110,8 +100,38 @@
     </li>
   </ul>
   <div class="theme-switcher" onclick="switchTheme()">🌞</div>
-  <script>
-  </script>
+  
+<script>
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+	setThemeMode('light')
+	switchTheme()
+  }
+</script>
 </header>
     <main class="main-body">
   <h2 class="page-title">标签: 源码</h2>
@@ -120,25 +140,119 @@
   <li class="post-list-child">
     <div class="post-list-left">
       <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/12/16/编码/大模型驱动的智能代码评审研究-预演评审代码集/" title="大模型驱动的智能代码评审研究-预演评审代码集">
+      <a href="/post/2607385150/" title="AQS底层是如何工作的？？">
 		
-		  『编码』
+		  『并发编程』
 		
-		大模型驱动的智能代码评审研究-预演评审代码集
+		AQS底层是如何工作的？？
 		
 	  </a>
     </div>
     <span class="post-list-date">
-      2023-12-16 23:00
+      2024年04月22日
     </span>
   </li>
   
   <li class="post-list-child">
     <div class="post-list-left">
       <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/12/06/SpringFramework/Spring Boot是如何实现自动配置的？/" title="Spring Boot是如何实现自动配置的？">
+      <a href="/post/443464357/" title="Synchronized关键字是如何生效的？">
+		
+		  『并发编程』
+		
+		Synchronized关键字是如何生效的？
+		
+	  </a>
+    </div>
+    <span class="post-list-date">
+      2024年04月22日
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+      <a href="/post/3956655409/" title="CAS底层是如何工作的？？">
+		
+		  『并发编程』
+		
+		CAS底层是如何工作的？？
+		
+	  </a>
+    </div>
+    <span class="post-list-date">
+      2024年04月22日
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+      <a href="/post/2607385152/" title="AQS底层是如何工作的？？">
+		
+		  『并发编程』
+		
+		AQS底层是如何工作的？？
+		
+	  </a>
+    </div>
+    <span class="post-list-date">
+      2024年04月22日
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+      <a href="/post/2607385151/" title="AQS底层是如何工作的？？">
+		
+		  『并发编程』
+		
+		AQS底层是如何工作的？？
+		
+	  </a>
+    </div>
+    <span class="post-list-date">
+      2024年04月22日
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+      <a href="/post/1380088667/" title="@Transactional是如何生效的？">
+		
+		  『SpringFramework』
+		
+		@Transactional是如何生效的？
+		
+	  </a>
+    </div>
+    <span class="post-list-date">
+      2024年04月10日
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+      <a href="/post/797218127/" title="Spring应用是如何启动的？">
+		
+		  『SpringFramework』
+		
+		Spring应用是如何启动的？
+		
+	  </a>
+    </div>
+    <span class="post-list-date">
+      2024年03月30日
+    </span>
+  </li>
+  
+  <li class="post-list-child">
+    <div class="post-list-left">
+      <div class="post-list-symbol">✦</div>
+      <a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">
 		
 		  『SpringFramework』
 		
@@ -147,15 +261,14 @@
 	  </a>
     </div>
     <span class="post-list-date">
-      2023-12-06 20:00
+      2023年12月06日
     </span>
   </li>
   
   <li class="post-list-child">
     <div class="post-list-left">
       <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/11/16/编码/在典型业务场景下如何运用设计模式提高代码可读性和扩展性？/" title="在典型业务场景下如何运用设计模式提高代码可读性和扩展性？">
+      <a href="/post/2269236659/" title="在典型业务场景下如何运用设计模式提高代码可读性和扩展性？">
 		
 		  『编码』
 		
@@ -164,15 +277,14 @@
 	  </a>
     </div>
     <span class="post-list-date">
-      2023-11-16 19:26
+      2023年11月16日
     </span>
   </li>
   
   <li class="post-list-child">
     <div class="post-list-left">
       <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/11/11/SpringFramework/Spring MVC是如何分发HTTP请求的？/" title="Spring MVC是如何分发HTTP请求的？">
+      <a href="/post/1808606146/" title="Spring MVC是如何分发HTTP请求的？">
 		
 		  『SpringFramework』
 		
@@ -181,196 +293,31 @@
 	  </a>
     </div>
     <span class="post-list-date">
-      2023-11-11 16:25
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/10/24/CollectionsFramework/Java集合框架中Queue接口有哪些实现？/" title="Java集合框架中Queue接口有哪些实现？">
-		
-		  『CollectionsFramework』
-		
-		Java集合框架中Queue接口有哪些实现？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-10-24 20:37
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/10/17/CollectionsFramework/Java集合框架中Set接口有哪些实现？/" title="Java集合框架中Set接口有哪些实现？">
-		
-		  『CollectionsFramework』
-		
-		Java集合框架中Set接口有哪些实现？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-10-17 20:00
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/09/28/CollectionsFramework/Java集合框架中Map接口有哪些实现？/" title="Java集合框架中Map接口有哪些实现？">
-		
-		  『CollectionsFramework』
-		
-		Java集合框架中Map接口有哪些实现？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-09-28 20:00
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/09/25/CollectionsFramework/Java集合框架中List接口有哪些实现？/" title="Java集合框架中List接口有哪些实现？">
-		
-		  『CollectionsFramework』
-		
-		Java集合框架中List接口有哪些实现？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-09-25 20:00
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/08/27/SpringFramework/@Configuration及其周边注解是如何生效的？/" title="@Configuration及其周边注解是如何生效的？">
-		
-		  『SpringFramework』
-		
-		@Configuration及其周边注解是如何生效的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-08-27 16:12
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/08/13/SpringFramework/Spring应用上下文是如何刷新的？/" title="Spring应用上下文是如何刷新的？">
-		
-		  『SpringFramework』
-		
-		Spring应用上下文是如何刷新的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-08-13 14:51
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/08/05/SpringFramework/@PostConstruct和@PreDestroy是如何生效的？/" title="@PostConstruct和@PreDestroy是如何生效的？">
-		
-		  『SpringFramework』
-		
-		@PostConstruct和@PreDestroy是如何生效的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-08-05 22:54
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/25/SpringFramework/Bean在Spring中是如何完成依赖注入的？/" title="Bean在Spring中是如何完成依赖注入的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何完成依赖注入的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-25 19:59
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/05/SpringFramework/Bean在Spring中是如何被加载的？/" title="Bean在Spring中是如何被加载的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何被加载的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-05 23:38
-    </span>
-  </li>
-  
-  <li class="post-list-child">
-    <div class="post-list-left">
-      <div class="post-list-symbol">✦</div>
-	  
-      <a href="/2023/07/05/SpringFramework/Bean在Spring中是如何表示的？/" title="Bean在Spring中是如何表示的？">
-		
-		  『SpringFramework』
-		
-		Bean在Spring中是如何表示的？
-		
-	  </a>
-    </div>
-    <span class="post-list-date">
-      2023-07-05 00:24
+      2023年11月11日
     </span>
   </li>
   
 </ul>
+
+<div class="paginator">
+    <span class="page-number current">1</span><a class="page-number" href="/tags/%E6%BA%90%E7%A0%81/page/2/">2</a><a class="extend next" rel="next" href="/tags/%E6%BA%90%E7%A0%81/page/2/">下一页</a>
+</div>
+
 </main>
     <footer>
   <div class="footer-info">
   <a style="margin: 0 0.4rem 0 0.4rem">© 2024 徐梦旗</a> 
   | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
+  | <a href="/console" style="margin: 0 0.4rem 0 0.4rem">控制台</a>
   | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
-  | <img src="/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
+	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
     <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
   </div>
 </footer>
   </div>
 </body>
-
-
 </html>
