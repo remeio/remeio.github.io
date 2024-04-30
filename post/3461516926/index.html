@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" class="light">
+<html lang="zh-CN" class="light">
 <head>
   <meta charset="utf-8">
   
@@ -81,25 +81,24 @@
 
 
 <meta name="generator" content="Hexo 6.3.0"></head>
-
 <body>
-  <div class="show-area">
+  <div class="layout-container">
     <header>
-  <ul class="nav">
-    <li class="nav-child">
+  <ul class="header-nav">
+    <li class="header-nav-child">
       <a href="/">🏠首页</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/categories">📌分类</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/tags">🔗标签</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/about">👨‍💻关于</a>
     </li>
   </ul>
-  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
   
 <script>
   function setThemeMode(mode) {
@@ -114,11 +113,11 @@
     let themeMode = getThemeMode()
     if (themeMode === 'light') {
       document.documentElement.className = 'dark'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌛'
       setThemeMode('dark')
     } else {
       document.documentElement.className = 'light'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌞'
       setThemeMode('light')
     }
   }
@@ -128,34 +127,34 @@
 	  switchTheme()
   }
   if (getThemeMode() === 'dark') {
-	setThemeMode('light')
-	switchTheme()
+    setThemeMode('light')
+    switchTheme()
   }
 </script>
 </header>
-    <main class="main-body">
+    <main>
   <div class="toc-container">
-    <div class="toc-toggle">
-      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
-    </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85node%E5%92%8Cnpm"><span class="toc-text">1. 安装node和npm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85hexo"><span class="toc-text">2. 安装hexo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-text">3. 新建博客文件夹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96hexo-%E9%A1%B9%E7%9B%AE"><span class="toc-text">4. 初始化hexo 项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E5%B8%83%E5%B1%80"><span class="toc-text">5. 新建布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="toc-text">6. 新建文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-text">7. 启动服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2"><span class="toc-text">8. 一键部署</span></a></li></ol>
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
   </div>
-  
-  <script>
-    var show = false
-    function toggleShow() {
-      if (show) {
-        document.getElementsByClassName('toc')[0].className = 'toc'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
-      } else {
-        document.getElementsByClassName('toc')[0].className = 'toc show'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
-      }
-      show = !show
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85node%E5%92%8Cnpm"><span class="toc-text">1. 安装node和npm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85hexo"><span class="toc-text">2. 安装hexo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-text">3. 新建博客文件夹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96hexo-%E9%A1%B9%E7%9B%AE"><span class="toc-text">4. 初始化hexo 项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E5%B8%83%E5%B1%80"><span class="toc-text">5. 新建布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="toc-text">6. 新建文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-text">7. 启动服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2"><span class="toc-text">8. 一键部署</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
     }
-    document.getElementsByClassName('toc')[0].onclick = toggleShow
-  </script>
-  
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
   <div class="article-header">
     <h1 class="article-title">如何使用Hexo搭建博客？</h1>
     <div class="article-details">
@@ -165,7 +164,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-07-03 10:58，
-		<span class="post-count">字数：79，预计阅读：1分钟</span>
+		<span>字数：79，预计阅读：1分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -197,6 +196,13 @@
     <a href="/post/3448844314/">上一篇：Bean在Spring中是如何表示的？</a>
     <a href="/"></a>
   </div>
+  <p class="article-top" onclick="scrollToTop()">👆</p>
+  <script>
+    function scrollToTop() {
+      document.body.scrollTop = 0; // 对Safari
+      document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">
@@ -207,7 +213,7 @@
   | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
-	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
     <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
   </div>

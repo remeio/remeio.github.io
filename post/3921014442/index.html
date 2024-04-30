@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" class="light">
+<html lang="zh-CN" class="light">
 <head>
   <meta charset="utf-8">
   
@@ -81,25 +81,24 @@
 
 
 <meta name="generator" content="Hexo 6.3.0"></head>
-
 <body>
-  <div class="show-area">
+  <div class="layout-container">
     <header>
-  <ul class="nav">
-    <li class="nav-child">
+  <ul class="header-nav">
+    <li class="header-nav-child">
       <a href="/">🏠首页</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/categories">📌分类</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/tags">🔗标签</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/about">👨‍💻关于</a>
     </li>
   </ul>
-  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
   
 <script>
   function setThemeMode(mode) {
@@ -114,11 +113,11 @@
     let themeMode = getThemeMode()
     if (themeMode === 'light') {
       document.documentElement.className = 'dark'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌛'
       setThemeMode('dark')
     } else {
       document.documentElement.className = 'light'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌞'
       setThemeMode('light')
     }
   }
@@ -128,34 +127,34 @@
 	  switchTheme()
   }
   if (getThemeMode() === 'dark') {
-	setThemeMode('light')
-	switchTheme()
+    setThemeMode('light')
+    switchTheme()
   }
 </script>
 </header>
-    <main class="main-body">
+    <main>
   <div class="toc-container">
-    <div class="toc-toggle">
-      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
-    </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Set接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Set接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. HashSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. HashSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. HashSet是如何添加元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E6%9F%A5%E8%AF%A2%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. HashSet是如何查询元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. HashSet是如何删除元素的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedHashSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. LinkedHashSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashSet%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. LinkedHashSet是如何实现有序的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TreeSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. TreeSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">4.1. TreeSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeSet%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. TreeSet是如何实现有序的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EnumSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">5. EnumSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EnumSet%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">5.1. EnumSet有哪些实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RegularEnumSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">5.2. RegularEnumSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JumboEnumSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">5.3. JumboEnumSet是如何设计的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">6. 参考文档</span></a></li></ol>
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
   </div>
-  
-  <script>
-    var show = false
-    function toggleShow() {
-      if (show) {
-        document.getElementsByClassName('toc')[0].className = 'toc'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
-      } else {
-        document.getElementsByClassName('toc')[0].className = 'toc show'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
-      }
-      show = !show
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Set接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Set%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Set接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. HashSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. HashSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. HashSet是如何添加元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E6%9F%A5%E8%AF%A2%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. HashSet是如何查询元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashSet%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. HashSet是如何删除元素的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedHashSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. LinkedHashSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashSet%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. LinkedHashSet是如何实现有序的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TreeSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. TreeSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">4.1. TreeSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeSet%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. TreeSet是如何实现有序的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EnumSet%E8%AF%A6%E8%A7%A3"><span class="toc-text">5. EnumSet详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EnumSet%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">5.1. EnumSet有哪些实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RegularEnumSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">5.2. RegularEnumSet是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JumboEnumSet%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">5.3. JumboEnumSet是如何设计的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">6. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
     }
-    document.getElementsByClassName('toc')[0].onclick = toggleShow
-  </script>
-  
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
   <div class="article-header">
     <h1 class="article-title">Java集合框架中Set接口有哪些实现？</h1>
     <div class="article-details">
@@ -165,7 +164,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-10-17 20:00，
-		<span class="post-count">字数：1k，预计阅读：4分钟</span>
+		<span>字数：1k，预计阅读：4分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -309,6 +308,13 @@ public boolean contains(Object e) &#123;
     <a href="/post/2304171767/">上一篇：Java集合框架中Queue接口有哪些实现？</a>
     <a href="/post/406000279/">下一篇：Java集合框架中Map接口有哪些实现？</a>
   </div>
+  <p class="article-top" onclick="scrollToTop()">👆</p>
+  <script>
+    function scrollToTop() {
+      document.body.scrollTop = 0; // 对Safari
+      document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">
@@ -319,7 +325,7 @@ public boolean contains(Object e) &#123;
   | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
-	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
     <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
   </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" class="light">
+<html lang="zh-CN" class="light">
 <head>
   <meta charset="utf-8">
   
@@ -81,25 +81,24 @@
 
 
 <meta name="generator" content="Hexo 6.3.0"></head>
-
 <body>
-  <div class="show-area">
+  <div class="layout-container">
     <header>
-  <ul class="nav">
-    <li class="nav-child">
+  <ul class="header-nav">
+    <li class="header-nav-child">
       <a href="/">🏠首页</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/categories">📌分类</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/tags">🔗标签</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/about">👨‍💻关于</a>
     </li>
   </ul>
-  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
   
 <script>
   function setThemeMode(mode) {
@@ -114,11 +113,11 @@
     let themeMode = getThemeMode()
     if (themeMode === 'light') {
       document.documentElement.className = 'dark'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌛'
       setThemeMode('dark')
     } else {
       document.documentElement.className = 'light'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌞'
       setThemeMode('light')
     }
   }
@@ -128,34 +127,34 @@
 	  switchTheme()
   }
   if (getThemeMode() === 'dark') {
-	setThemeMode('light')
-	switchTheme()
+    setThemeMode('light')
+    switchTheme()
   }
 </script>
 </header>
-    <main class="main-body">
+    <main>
   <div class="toc-container">
-    <div class="toc-toggle">
-      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
-    </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Map接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Map接口有哪些实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-text">1.2. Map接口的实现有什么不同？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. HashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. HashMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. HashMap是如何解决哈希冲突的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E7%9A%84%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. HashMap的哈希函数是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%89%A9%E5%AE%B9%EF%BC%9F"><span class="toc-text">2.4. HashMap为什么需要扩容？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E4%B8%BA%E6%8F%90%E5%8D%87%E6%80%A7%E8%83%BD%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2.5. HashMap为提升性能做了哪些设计？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E9%94%AE%E5%80%BC%E5%AF%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.6. HashMap是如何添加键值对的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%A0%B9%E6%8D%AE%E9%94%AE%E6%89%BE%E5%88%B0%E5%80%BC%E7%9A%84%EF%BC%9F"><span class="toc-text">2.7. HashMap是如何根据键找到值的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.8. HashMap是如何扩容的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedHashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. LinkedHashMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. LinkedHashMap是如何实现有序的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E5%92%8CHashMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">3.3. LinkedHashMap和HashMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hashtable%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. Hashtable详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">4.1. Hashtable是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E9%94%AE%E5%80%BC%E5%AF%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. Hashtable是如何添加键值对的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hastable%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">4.3. Hastable是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%92%8CHashtable%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">4.4. HashMap和Hashtable有什么区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Properties%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">4.5. Properties是如何设计的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TreeMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">5. TreeMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">5.1. TreeMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">5.2. TreeMap是如何实现有序的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%92%8CTreeMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">5.3. HashMap和TreeMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EnumMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">6. EnumMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EnumMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">6.1. EnumMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%92%8CEnumMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">6.2. HashMap和EnumMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">7. 参考文档</span></a></li></ol>
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
   </div>
-  
-  <script>
-    var show = false
-    function toggleShow() {
-      if (show) {
-        document.getElementsByClassName('toc')[0].className = 'toc'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
-      } else {
-        document.getElementsByClassName('toc')[0].className = 'toc show'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
-      }
-      show = !show
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Map接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Map接口有哪些实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-text">1.2. Map接口的实现有什么不同？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. HashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. HashMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. HashMap是如何解决哈希冲突的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E7%9A%84%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. HashMap的哈希函数是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%89%A9%E5%AE%B9%EF%BC%9F"><span class="toc-text">2.4. HashMap为什么需要扩容？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E4%B8%BA%E6%8F%90%E5%8D%87%E6%80%A7%E8%83%BD%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2.5. HashMap为提升性能做了哪些设计？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E9%94%AE%E5%80%BC%E5%AF%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.6. HashMap是如何添加键值对的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%A0%B9%E6%8D%AE%E9%94%AE%E6%89%BE%E5%88%B0%E5%80%BC%E7%9A%84%EF%BC%9F"><span class="toc-text">2.7. HashMap是如何根据键找到值的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.8. HashMap是如何扩容的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LinkedHashMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. LinkedHashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. LinkedHashMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. LinkedHashMap是如何实现有序的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedHashMap%E5%92%8CHashMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">3.3. LinkedHashMap和HashMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hashtable%E8%AF%A6%E8%A7%A3"><span class="toc-text">4. Hashtable详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">4.1. Hashtable是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hashtable%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E9%94%AE%E5%80%BC%E5%AF%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. Hashtable是如何添加键值对的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hastable%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">4.3. Hastable是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%92%8CHashtable%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">4.4. HashMap和Hashtable有什么区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Properties%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">4.5. Properties是如何设计的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TreeMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">5. TreeMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">5.1. TreeMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TreeMap%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%89%E5%BA%8F%E7%9A%84%EF%BC%9F"><span class="toc-text">5.2. TreeMap是如何实现有序的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%92%8CTreeMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">5.3. HashMap和TreeMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EnumMap%E8%AF%A6%E8%A7%A3"><span class="toc-text">6. EnumMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EnumMap%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">6.1. EnumMap是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HashMap%E5%92%8CEnumMap%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">6.2. HashMap和EnumMap有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">7. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
     }
-    document.getElementsByClassName('toc')[0].onclick = toggleShow
-  </script>
-  
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
   <div class="article-header">
     <h1 class="article-title">Java集合框架中Map接口有哪些实现？</h1>
     <div class="article-details">
@@ -165,7 +164,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-09-28 20:00，
-		<span class="post-count">字数：5.6k，预计阅读：23分钟</span>
+		<span>字数：5.6k，预计阅读：23分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -697,6 +696,13 @@ private void addEntry(int hash, K key, V value, int index) &#123;
     <a href="/post/3921014442/">上一篇：Java集合框架中Set接口有哪些实现？</a>
     <a href="/post/3887577193/">下一篇：记录一次服务器被植入木马的排查过程</a>
   </div>
+  <p class="article-top" onclick="scrollToTop()">👆</p>
+  <script>
+    function scrollToTop() {
+      document.body.scrollTop = 0; // 对Safari
+      document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">
@@ -707,7 +713,7 @@ private void addEntry(int hash, K key, V value, int index) &#123;
   | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
-	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
     <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
   </div>

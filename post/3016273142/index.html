@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" class="light">
+<html lang="zh-CN" class="light">
 <head>
   <meta charset="utf-8">
   
@@ -81,25 +81,24 @@
 
 
 <meta name="generator" content="Hexo 6.3.0"></head>
-
 <body>
-  <div class="show-area">
+  <div class="layout-container">
     <header>
-  <ul class="nav">
-    <li class="nav-child">
+  <ul class="header-nav">
+    <li class="header-nav-child">
       <a href="/">🏠首页</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/categories">📌分类</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/tags">🔗标签</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/about">👨‍💻关于</a>
     </li>
   </ul>
-  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
   
 <script>
   function setThemeMode(mode) {
@@ -114,11 +113,11 @@
     let themeMode = getThemeMode()
     if (themeMode === 'light') {
       document.documentElement.className = 'dark'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌛'
       setThemeMode('dark')
     } else {
       document.documentElement.className = 'light'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌞'
       setThemeMode('light')
     }
   }
@@ -128,34 +127,34 @@
 	  switchTheme()
   }
   if (getThemeMode() === 'dark') {
-	setThemeMode('light')
-	switchTheme()
+    setThemeMode('light')
+    switchTheme()
   }
 </script>
 </header>
-    <main class="main-body">
+    <main>
   <div class="toc-container">
-    <div class="toc-toggle">
-      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
-    </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-text">1. 事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="toc-text">1.1. 什么是事务？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">1.2. 事务有哪些并发问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F"><span class="toc-text">1.3. 事务有哪些隔离级别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="toc-text">2. 多版本并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%EF%BC%9F"><span class="toc-text">2.1. 什么是多版本并发控制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Undo-Log%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.2. Undo Log的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%86%E5%9B%BE%EF%BC%9F"><span class="toc-text">2.3. 什么是一致性视图？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E8%AE%B0%E5%BD%95%E7%9A%84%E7%89%88%E6%9C%AC%E5%AF%B9%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%90%A6%E6%98%AF%E5%8F%AF%E8%A7%81%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. 如何判断记录的版本对事务是否是可见的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%86%E5%9B%BE%E7%9A%84%E6%97%B6%E6%9C%BA%EF%BC%9F"><span class="toc-text">2.5. 创建一致性视图的时机？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB%E5%92%8C%E5%BD%93%E5%89%8D%E8%AF%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.6. 快照读和当前读有什么区别？</span></a></li></ol></li></ol>
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
   </div>
-  
-  <script>
-    var show = false
-    function toggleShow() {
-      if (show) {
-        document.getElementsByClassName('toc')[0].className = 'toc'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
-      } else {
-        document.getElementsByClassName('toc')[0].className = 'toc show'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
-      }
-      show = !show
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-text">1. 事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="toc-text">1.1. 什么是事务？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">1.2. 事务有哪些并发问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F"><span class="toc-text">1.3. 事务有哪些隔离级别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="toc-text">2. 多版本并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%EF%BC%9F"><span class="toc-text">2.1. 什么是多版本并发控制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Undo-Log%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.2. Undo Log的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%86%E5%9B%BE%EF%BC%9F"><span class="toc-text">2.3. 什么是一致性视图？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E8%AE%B0%E5%BD%95%E7%9A%84%E7%89%88%E6%9C%AC%E5%AF%B9%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%90%A6%E6%98%AF%E5%8F%AF%E8%A7%81%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. 如何判断记录的版本对事务是否是可见的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%86%E5%9B%BE%E7%9A%84%E6%97%B6%E6%9C%BA%EF%BC%9F"><span class="toc-text">2.5. 创建一致性视图的时机？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB%E5%92%8C%E5%BD%93%E5%89%8D%E8%AF%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.6. 快照读和当前读有什么区别？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
     }
-    document.getElementsByClassName('toc')[0].onclick = toggleShow
-  </script>
-  
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
   <div class="article-header">
     <h1 class="article-title">InnoDB存储引擎的事务是如何实现的？</h1>
     <div class="article-details">
@@ -165,7 +164,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2024-01-17 20:00，
-		<span class="post-count">字数：1.6k，预计阅读：6分钟</span>
+		<span>字数：1.6k，预计阅读：6分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -350,6 +349,13 @@ public:
     <a href="/post/3230764913/">上一篇：InnoDB存储引擎的索引是如何实现的？</a>
     <a href="/post/99009864/">下一篇：InnoDB存储引擎的磁盘结构和内存结构是怎样的？</a>
   </div>
+  <p class="article-top" onclick="scrollToTop()">👆</p>
+  <script>
+    function scrollToTop() {
+      document.body.scrollTop = 0; // 对Safari
+      document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">
@@ -360,7 +366,7 @@ public:
   | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
-	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
     <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
   </div>

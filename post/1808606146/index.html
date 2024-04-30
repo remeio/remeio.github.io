@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" class="light">
+<html lang="zh-CN" class="light">
 <head>
   <meta charset="utf-8">
   
@@ -81,25 +81,24 @@
 
 
 <meta name="generator" content="Hexo 6.3.0"></head>
-
 <body>
-  <div class="show-area">
+  <div class="layout-container">
     <header>
-  <ul class="nav">
-    <li class="nav-child">
+  <ul class="header-nav">
+    <li class="header-nav-child">
       <a href="/">🏠首页</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/categories">📌分类</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/tags">🔗标签</a>
     </li>
-    <li class="nav-child">
+    <li class="header-nav-child">
       <a href="/about">👨‍💻关于</a>
     </li>
   </ul>
-  <div class="theme-switcher" onclick="switchTheme()">🌞</div>
+  <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
   
 <script>
   function setThemeMode(mode) {
@@ -114,11 +113,11 @@
     let themeMode = getThemeMode()
     if (themeMode === 'light') {
       document.documentElement.className = 'dark'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌛'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌛'
       setThemeMode('dark')
     } else {
       document.documentElement.className = 'light'
-      document.getElementsByClassName('theme-switcher')[0].textContent = '🌞'
+      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌞'
       setThemeMode('light')
     }
   }
@@ -128,34 +127,34 @@
 	  switchTheme()
   }
   if (getThemeMode() === 'dark') {
-	setThemeMode('light')
-	switchTheme()
+    setThemeMode('light')
+    switchTheme()
   }
 </script>
 </header>
-    <main class="main-body">
+    <main>
   <div class="toc-container">
-    <div class="toc-toggle">
-      <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
-    </div>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%8F%91HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%EF%BC%9F"><span class="toc-text">2. Spring MVC是如何分发HTTP请求的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%89%A7%E8%A1%8C%E9%93%BE"><span class="toc-text">2.1. 获取给定请求的处理器执行链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">2.2. 获取给定处理器的处理器适配器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%89%8D%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.3. 拦截器前置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">2.4. 处理器适配器处理给定的请求和处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%BB%98%E8%AE%A4%E8%A7%86%E5%9B%BE%E5%90%8D%E7%A7%B0"><span class="toc-text">2.5. 应用默认视图名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.6. 拦截器后置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%88%86%E5%8F%91%E7%BB%93%E6%9E%9C"><span class="toc-text">2.7. 处理分发结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Controller%E5%92%8C-RequestMapping%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. @Controller和@RequestMapping是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1. 初始化处理器方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%BE%E5%88%B0%E7%BB%99%E5%AE%9ABean%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.1. 找到给定Bean的处理器和方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E6%B3%A8%E5%86%8C%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.2. 创建并注册处理器方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.2. 获取给定请求的处理器方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8-1"><span class="toc-text">3.3. 处理器适配器处理给定的请求和处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAServletInvocableHandlerMethod"><span class="toc-text">3.3.1. 创建ServletInvocableHandlerMethod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A7%A3%E6%9E%90%E5%8F%82%E6%95%B0"><span class="toc-text">3.3.2. 处理器方法参数解析器解析参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">3.3.3. 反射调用处理器的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%84%E7%90%86%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">3.3.4. 处理器方法返回值处理器处理返回值</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RequestBody%E5%92%8C-ResponseBody%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">4. @RequestBody和@ResponseBody是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RequestBody%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90"><span class="toc-text">4.1. @RequestBody参数解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ResponseBody%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-text">4.2. @ResponseBody返回值处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E6%AF%8F%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%EF%BC%9F"><span class="toc-text">5.1. 如何打印每个请求的执行时间？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%A0%B9%E6%8D%AEtoken%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">5.2. 如何实现根据token获取用户信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%93%8D%E5%BA%94%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%EF%BC%9F"><span class="toc-text">5.3. 如何实现响应信息的可视化？</span></a></li></ol></li></ol>
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
   </div>
-  
-  <script>
-    var show = false
-    function toggleShow() {
-      if (show) {
-        document.getElementsByClassName('toc')[0].className = 'toc'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
-      } else {
-        document.getElementsByClassName('toc')[0].className = 'toc show'
-        document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
-      }
-      show = !show
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%8F%91HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%EF%BC%9F"><span class="toc-text">2. Spring MVC是如何分发HTTP请求的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%89%A7%E8%A1%8C%E9%93%BE"><span class="toc-text">2.1. 获取给定请求的处理器执行链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">2.2. 获取给定处理器的处理器适配器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%89%8D%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.3. 拦截器前置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">2.4. 处理器适配器处理给定的请求和处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%BB%98%E8%AE%A4%E8%A7%86%E5%9B%BE%E5%90%8D%E7%A7%B0"><span class="toc-text">2.5. 应用默认视图名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.6. 拦截器后置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%88%86%E5%8F%91%E7%BB%93%E6%9E%9C"><span class="toc-text">2.7. 处理分发结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Controller%E5%92%8C-RequestMapping%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. @Controller和@RequestMapping是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1. 初始化处理器方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%BE%E5%88%B0%E7%BB%99%E5%AE%9ABean%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.1. 找到给定Bean的处理器和方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E6%B3%A8%E5%86%8C%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.2. 创建并注册处理器方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.2. 获取给定请求的处理器方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8-1"><span class="toc-text">3.3. 处理器适配器处理给定的请求和处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAServletInvocableHandlerMethod"><span class="toc-text">3.3.1. 创建ServletInvocableHandlerMethod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A7%A3%E6%9E%90%E5%8F%82%E6%95%B0"><span class="toc-text">3.3.2. 处理器方法参数解析器解析参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">3.3.3. 反射调用处理器的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%84%E7%90%86%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">3.3.4. 处理器方法返回值处理器处理返回值</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RequestBody%E5%92%8C-ResponseBody%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">4. @RequestBody和@ResponseBody是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RequestBody%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90"><span class="toc-text">4.1. @RequestBody参数解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ResponseBody%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-text">4.2. @ResponseBody返回值处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E6%AF%8F%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%EF%BC%9F"><span class="toc-text">5.1. 如何打印每个请求的执行时间？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%A0%B9%E6%8D%AEtoken%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">5.2. 如何实现根据token获取用户信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%93%8D%E5%BA%94%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%EF%BC%9F"><span class="toc-text">5.3. 如何实现响应信息的可视化？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
     }
-    document.getElementsByClassName('toc')[0].onclick = toggleShow
-  </script>
-  
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
   <div class="article-header">
     <h1 class="article-title">Spring MVC是如何分发HTTP请求的？</h1>
     <div class="article-details">
@@ -165,7 +164,7 @@
 		
 		<span>作者：</span> 徐梦旗，
 	  	<span>发布于：</span> 2023-11-11 16:25，
-		<span class="post-count">字数：3k，预计阅读：13分钟</span>
+		<span>字数：3k，预计阅读：13分钟</span>
 	  </div>
       <div class="article-tags">
         
@@ -576,6 +575,13 @@ public class CustomController &#123;
     <a href="/post/2269236659/">上一篇：在典型业务场景下如何运用设计模式提高代码可读性和扩展性？</a>
     <a href="/post/2304171767/">下一篇：Java集合框架中Queue接口有哪些实现？</a>
   </div>
+  <p class="article-top" onclick="scrollToTop()">👆</p>
+  <script>
+    function scrollToTop() {
+      document.body.scrollTop = 0; // 对Safari
+      document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">
@@ -586,7 +592,7 @@ public class CustomController &#123;
   | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
   </div>
   <div class="footer-info">
-	<a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
     <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
     <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
   </div>
