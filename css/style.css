@@ -18,7 +18,7 @@ html {
   font-size: 60%;
   -webkit-text-size-adjust: none;
   --global-font-family: 'Noto Serif SC', 'Open Sans';
-  --global-code-font-family: 'Noto Serif SC', 'JetBrains Mono';
+  --global-code-font-family: 'Noto Serif SC', 'Consolas';
   scroll-behavior: smooth;
 }
 body {
@@ -89,16 +89,16 @@ h1 {
   font-size: 2.2rem;
 }
 h2 {
-  font-size: 2rem;
+  font-size: 2.2rem;
 }
 h3 {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
 }
 h4 {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 h5 {
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 h6 {
   font-size: 0.6rem;
@@ -106,7 +106,7 @@ h6 {
 p {
   font-size: 1.5rem !important;
   line-height: 2.5rem;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
 }
 ul p {
   margin: 0;
@@ -342,28 +342,13 @@ th:not(:last-child)::before {
   border-radius: 50%;
   box-shadow: 0 1px 4px -2px rgba(0,0,0,0.13), 0 2px 8px 0 rgba(0,0,0,0.08), 0 8px 16px 4px rgba(0,0,0,0.04);
 }
-.article h1 {
-  margin-top: 2.2rem;
-  margin-bottom: 2rem;
-}
-.article h2 {
-  margin-top: 2rem;
-  margin-bottom: 1.8rem;
-}
-.article h3 {
-  margin-top: 1.8rem;
-  margin-bottom: 1.6rem;
-}
-.article h4 {
-  margin-top: 1.6rem;
-  margin-bottom: 1.4rem;
-}
-.article h5 {
+.article h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin-top: 1.4rem;
-  margin-bottom: 1.2rem;
-}
-.article h6 {
-  margin-top: 1.2rem;
   margin-bottom: 1rem;
 }
 .article>ul {
@@ -539,8 +524,9 @@ header {
 .hint--top:before {
   border-top-color: var(--bgColor2) !important;
 }
-.hint--medium:after,
-width: 400px !important,
+.hint--medium:after {
+  width: 400px !important;
+}
 [class*=hint--]:after {
   font-family: var(--global-font-family) !important;
 }
