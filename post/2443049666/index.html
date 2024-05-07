@@ -219,7 +219,8 @@
 ) ENGINE&#x3D;InnoDB DEFAULT CHARSET&#x3D;utf8mb4 COLLATE&#x3D;utf8mb4_general_ci</code></pre>
 
 
-<h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code>命令来查看SQL语句的执行计划，如下图：</p>
+<h2 id="执行计划">2. 执行计划</h2><h3 id="如何查看SQL语句的执行计划？">2.1. 如何查看SQL语句的执行计划？</h3><p>可以通过<code>EXPLAIN</code><sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format
+">[1]</span></a></sup>命令来查看SQL语句的执行计划，如下图：</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; explain select * from user where id &#x3D; 1;
 +----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
@@ -657,12 +658,7 @@ mysql&gt; &#x2F;**Q2**&#x2F;explain select * from user a, (select id from user o
 +----+-------------+------------+------------+--------+---------------+-----------------+---------+------+--------+----------+----------------------------------+
 3 rows in set, 1 warning (0.01 sec)</code></pre>
 <p><a href="/post/2443049666/rt-deep-page.png" title="测试结果-深分页优化" class="gallery-item"><img src="/post/2443049666/rt-deep-page.png" alt="测试结果-深分页优化"></a></p>
-<h2 id="参考文档">4. 参考文档</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/optimize-overview.html">MySQL :: MySQL 8.0 Reference Manual :: 10.1 Optimization Overview</a></li>
-<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format</a></li>
-<li><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/statement-optimization.html">MySQL :: MySQL 8.0 Reference Manual :: 10.2 Optimizing SQL Statements</a></li>
-</ul>
-</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+<h2 id="参考文档">4. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">[MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/statement-optimization.html">MySQL :: MySQL 8.0 Reference Manual :: 10.2 Optimizing SQL Statements</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
         var options = {
             selector: '.gallery-item'
         };
