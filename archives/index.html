@@ -5,7 +5,7 @@
   
   <title>
     
-    叫我小旗好了
+    🎨徐梦旗的个人博客
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -86,21 +86,29 @@
     <header>
   <ul class="header-nav">
     <li class="header-nav-child">
-      <a href="/">🏠首页</a>
+      <h3>🎨徐梦旗的个人博客</h3>
     </li>
     <li class="header-nav-child">
-      <a href="/categories">📌分类</a>
+      <a href="/">首页</a>
     </li>
     <li class="header-nav-child">
-      <a href="/tags">🔗标签</a>
+      <a href="/categories">分类</a>
     </li>
     <li class="header-nav-child">
-      <a href="/about">👨‍💻关于</a>
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于</a>
     </li>
   </ul>
   <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
-  
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
 <script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
   function setThemeMode(mode) {
     localStorage.setItem('theme-mode', mode)
   }
@@ -132,177 +140,415 @@
   }
 </script>
 </header>
-    <main>
-  <h2>🎨叫我小旗好了</h2>
-  <p></p>
-  <p id="blog-description"></p>
-  <h3>全部文章（30篇）：</h3>
-  <ul class="archive">
+    <main class="main-index">
+  <div class="archive">
   
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">
-		
-		  『并发编程』
-		
-		synchronized内置锁是如何实现的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年04月22日
-    </span>
-  </li>
   
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/1380088667/" title="@Transactional是如何生效的？">
-		
-		  『SpringFramework』
-		
-		@Transactional是如何生效的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年04月10日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/797218127/" title="Spring应用是如何启动的？">
-		
-		  『SpringFramework』
-		
-		Spring应用是如何启动的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年03月30日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/2443049666/" title="SQL语句如何优化及案例分析？">
-		
-		  『MySQL』
-		
-		SQL语句如何优化及案例分析？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年03月19日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/4092758909/" title="MySQL数据库如何调优？">
-		
-		  『MySQL』
-		
-		MySQL数据库如何调优？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年03月08日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/104890545/" title="MySQL数据库中有哪些锁？">
-		
-		  『MySQL』
-		
-		MySQL数据库中有哪些锁？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年01月22日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/3230764913/" title="InnoDB存储引擎的索引是如何实现的？">
-		
-		  『MySQL』
-		
-		InnoDB存储引擎的索引是如何实现的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年01月19日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/3016273142/" title="InnoDB存储引擎的事务是如何实现的？">
-		
-		  『MySQL』
-		
-		InnoDB存储引擎的事务是如何实现的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年01月17日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/99009864/" title="InnoDB存储引擎的磁盘结构和内存结构是怎样的？">
-		
-		  『MySQL』
-		
-		InnoDB存储引擎的磁盘结构和内存结构是怎样的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2024年01月14日
-    </span>
-  </li>
-  
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">
-		
-		  『SpringFramework』
-		
-		Spring Boot是如何实现自动配置的？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2023年12月06日
-    </span>
-  </li>
-  
-</ul>
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">
+          
+            并发编程
+          ——synchronized内置锁是如何实现的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/源码">源码</a>
+        
+      </div>
+      <div class="archive-intro">
+        当共享资源被多个线程同时访问时，可能会产生不符合预期的并发问题。为了保证共享资源在某一时刻只能被一个线程访问到，则需要对资源进行加锁，为此Java提供了一种易用的内置锁synchronized[^1]。锁的添加和释放过程如下：
 
-<div class="archive-paginator">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/">下一页</a>
+ 在访问共享资源前，线程需要获取锁。如果获取锁成功，则访问共享资源；如果获取锁失败，则阻塞该线程，等待其他线程释放锁之后重新尝试获取锁。
+ 在访问共享资源后，持有锁...
+      </div>
+      <div class="archive-readmore"><a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年04月22日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/1380088667/" title="@Transactional是如何生效的？">
+          
+            SpringFramework
+          ——@Transactional是如何生效的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/源码">源码</a>
+        
+      </div>
+      <div class="archive-intro">
+        相比于JDBC的编程式事务，Spring提供了一种更便捷的处理事务的方式，即声明式事务。我们只需要在方法或类上标注@Transactional注解便可完成事务的声明，如下示例：
+
+java
+@Transactional(rollbackFor = Exception.class)
+public void pay() {
+	jdbcTemplate.execute(&#34;update balanc...
+      </div>
+      <div class="archive-readmore"><a href="/post/1380088667/" title="@Transactional是如何生效的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年04月10日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/797218127/" title="Spring应用是如何启动的？">
+          
+            SpringFramework
+          ——Spring应用是如何启动的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/源码">源码</a>
+        
+      </div>
+      <div class="archive-intro">
+        得益于SpringBoot的封装，我们只需要简单的几行代码便可启动一个Spring应用，如下示例：
+
+java
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+      SpringApplication.run(DemoApplicatio...
+      </div>
+      <div class="archive-readmore"><a href="/post/797218127/" title="Spring应用是如何启动的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月30日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/2443049666/" title="SQL语句如何优化及案例分析？">
+          
+            MySQL
+          ——SQL语句如何优化及案例分析？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+        <a href="/tags/图解">图解</a>
+        
+      </div>
+      <div class="archive-intro">
+        为什么需要优化SQL语句？
+
+ 从开发人员的角度来说，优化SQL语句是为了能够支撑更大的数据量，提供更快性能更好的业务接口。
+ 从用户的角度来说，优化SQL语句是为了给用户提供更好的服务，如更低的响应时间（RT）和更高的每秒事务处理数（TPS）。
+
+ 如何定位并优化慢的SQL语句？
+
+1. 保持良好的习惯，在每编写完一条SQL语句后都分析下该语句的执行计划，以评估该语句的查询速度，排查潜在的...
+      </div>
+      <div class="archive-readmore"><a href="/post/2443049666/" title="SQL语句如何优化及案例分析？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月19日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/4092758909/" title="MySQL数据库如何调优？">
+          
+            MySQL
+          ——MySQL数据库如何调优？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+        <a href="/tags/图解">图解</a>
+        
+      </div>
+      <div class="archive-intro">
+        数据库调优
+
+ 为什么需要数据库调优？
+
+数据库调优是为了提高数据库的性能、降低接口的响应时间等。体现在以下几个指标：
+ 响应时间（Response Time，RT）
+ 每秒事务处理量（Transaction Per Second，TPS）
+ 每秒查询处理量（Query Per Second，QPS）
+
+ 如何进行数据库压力测试？
+
+可以使用JMeter工具进行数据库压力测试。下图是使用主键...
+      </div>
+      <div class="archive-readmore"><a href="/post/4092758909/" title="MySQL数据库如何调优？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月08日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/104890545/" title="MySQL数据库中有哪些锁？">
+          
+            MySQL
+          ——MySQL数据库中有哪些锁？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+        <a href="/tags/图解">图解</a>
+        
+      </div>
+      <div class="archive-intro">
+        锁
+
+ 数据库中的锁有什么作用？
+
+锁是一种并发控制手段，避免多个事务同时对同一条记录进行修改，用来解决线程安全问题。
+
+ 数据库中的锁有哪些分类？
+
+按照锁的功能来划分：
+ 读锁（Read Locks），也叫共享锁[^1]（Shared Locks，S锁）。
+ 写锁（Write Locks），也叫排他锁[^1]（Exclusive Locks，X锁）。
+
+按照锁的粒度来划分：
+ 全局锁（G...
+      </div>
+      <div class="archive-readmore"><a href="/post/104890545/" title="MySQL数据库中有哪些锁？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年01月22日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/3230764913/" title="InnoDB存储引擎的索引是如何实现的？">
+          
+            MySQL
+          ——InnoDB存储引擎的索引是如何实现的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+        <a href="/tags/图解">图解</a>
+        
+      </div>
+      <div class="archive-intro">
+        索引的概念
+
+ 什么是索引？
+
+索引[^1]（Index）是一种数据结构，用来加快查询的速度。如果表中的记录较少时，不创建索引也能满足查询的需求，但如果表中的记录较多时，如果不建立索引查询的速度会很慢。索引本质上是一种空间换时间的策略。
+
+&gt; 可以通过show index from &lt;table_name&gt;命令可以查看指定表中建立的索引。
+
+ 什么是索引组织表？
+
+索引组织表（Index O...
+      </div>
+      <div class="archive-readmore"><a href="/post/3230764913/" title="InnoDB存储引擎的索引是如何实现的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年01月19日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/3016273142/" title="InnoDB存储引擎的事务是如何实现的？">
+          
+            MySQL
+          ——InnoDB存储引擎的事务是如何实现的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+        <a href="/tags/图解">图解</a>
+        
+      </div>
+      <div class="archive-intro">
+        事务
+
+ 什么是事务？
+
+事务是指一组操作要么全部成功，要么全部失败。事务具有四大特性[^1]（ACID）：
+
+ 原子性（Atomicity）：指一组操作是原子的，要么全部成功，要么全部失败。
+ 一致性（Consistency）：指事务执行前后，数据需要是一致的状态。
+ 隔离性（Isolation）：指一个事务执行时，不能受其他事务影响。
+ 持久性（Durability）：指事务提交后，对数...
+      </div>
+      <div class="archive-readmore"><a href="/post/3016273142/" title="InnoDB存储引擎的事务是如何实现的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年01月17日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/99009864/" title="InnoDB存储引擎的磁盘结构和内存结构是怎样的？">
+          
+            MySQL
+          ——InnoDB存储引擎的磁盘结构和内存结构是怎样的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+        <a href="/tags/图解">图解</a>
+        
+      </div>
+      <div class="archive-intro">
+        MySQL逻辑架构
+
+ MySQL的逻辑架构由哪些部分组成？
+
+MySQL的逻辑架构由服务层和存储引擎层组成。其中服务层有以下几部分：
+ 连接器：管理权限，验证连接。
+ 查询缓存：命中缓存直接返回结果（在MySQL8.0版本移除）。
+ 分析器：词法分析，语法分析。
+ 优化器：生成执行计划，选择合适的索引。
+ 执行器：调用存储引擎接口，返回结果。
+
+其中存储引擎层有InnoDB，MyISAM和...
+      </div>
+      <div class="archive-readmore"><a href="/post/99009864/" title="InnoDB存储引擎的磁盘结构和内存结构是怎样的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年01月14日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">
+          
+            SpringFramework
+          ——Spring Boot是如何实现自动配置的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/源码">源码</a>
+        
+      </div>
+      <div class="archive-intro">
+        什么是自动配置？
+
+当我们需要集成某些功能时，只需要依赖Spring Boot或第三方提供的Starter即可，自动配置机制会将相关的配置注册到容器中，开箱即用，降低了开发人员的使用成本。通过@EnableAutoConfiguration注解可以开启自动配置。
+以Spring Boot应用集成Redis为例，首先在pom文件中依赖springbootstarterdataredis，然后在...
+      </div>
+      <div class="archive-readmore"><a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年12月06日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+  
+    <div class="archive-paginator">
+      <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/">下一页</a>
+    </div>
+  
 </div>
 
   <script>
@@ -327,22 +573,20 @@
 		};
 		xhr.send();
 	}
-	getHitokoto();
+	// getHitokoto();
   </script>
 </main>
     <footer>
   <div class="footer-info">
-  <a style="margin: 0 0.4rem 0 0.4rem">© 2024 徐梦旗</a> 
-  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
-  | <a href="/console" style="margin: 0 0.4rem 0 0.4rem">控制台</a>
-  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
-  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
-  </div>
-  <div class="footer-info">
-	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
-    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
-    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
-  </div>
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
 </footer>
   </div>
 </body>

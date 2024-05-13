@@ -5,7 +5,7 @@
   
   <title>
     
-    叫我小旗好了
+    🎨徐梦旗的个人博客
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -86,21 +86,29 @@
     <header>
   <ul class="header-nav">
     <li class="header-nav-child">
-      <a href="/">🏠首页</a>
+      <h3>🎨徐梦旗的个人博客</h3>
     </li>
     <li class="header-nav-child">
-      <a href="/categories">📌分类</a>
+      <a href="/">首页</a>
     </li>
     <li class="header-nav-child">
-      <a href="/tags">🔗标签</a>
+      <a href="/categories">分类</a>
     </li>
     <li class="header-nav-child">
-      <a href="/about">👨‍💻关于</a>
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于</a>
     </li>
   </ul>
   <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
-  
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
 <script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
   function setThemeMode(mode) {
     localStorage.setItem('theme-mode', mode)
   }
@@ -132,46 +140,74 @@
   }
 </script>
 </header>
-    <main>
-  <h2>标签: 总结</h2>
-  <ul class="archive">
+    <main class="main-tag">
+  <h2># 标签: 总结</h2>
+  <hr>
+  <div class="archive">
   
-  <li class="archive-child">
-    <div class="archive-left">
-      <div class="archive-symbol">✦</div>
-      <a href="/post/556202715/" title="如何自定义类加载器及如何打破双亲委派模型？">
-		
-		  『JVM』
-		
-		如何自定义类加载器及如何打破双亲委派模型？
-		
-	  </a>
-    </div>
-    <span class="archive-date">
-      2023年07月31日
-    </span>
-  </li>
   
-</ul>
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/556202715/" title="如何自定义类加载器及如何打破双亲委派模型？">
+          
+            JVM
+          ——如何自定义类加载器及如何打破双亲委派模型？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">总结</a>
+        
+      </div>
+      <div class="archive-intro">
+        类加载机制
 
-<div class="archive-paginator">
-    <a class="extend prev" rel="prev" href="/tags/%E6%80%BB%E7%BB%93/">上一页</a><a class="page-number" href="/tags/%E6%80%BB%E7%BB%93/">1</a><span class="page-number current">2</span>
+ 什么是类加载机制？
+
+类加载（Class Loading）是指Java虚拟机将class字节码文件加载到内存中并生成Class对象的过程。
+
+&gt; 虚拟机参数：可以通过verbose:class来打印类加载的日志。
+
+ 类加载有哪些步骤？
+
+类加载有以下几个步骤：
+1. 通过全限定类名获取到类的class二进制字节流，即加载[^1]（Loading）；
+2. 验证class二进...
+      </div>
+      <div class="archive-readmore"><a href="/post/556202715/" title="如何自定义类加载器及如何打破双亲委派模型？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年07月31日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+  
+    <div class="archive-paginator">
+      <a class="extend prev" rel="prev" href="/tags/%E6%80%BB%E7%BB%93/">上一页</a><a class="page-number" href="/tags/%E6%80%BB%E7%BB%93/">1</a><span class="page-number current">2</span>
+    </div>
+  
 </div>
 
 </main>
     <footer>
   <div class="footer-info">
-  <a style="margin: 0 0.4rem 0 0.4rem">© 2024 徐梦旗</a> 
-  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow" style="margin: 0 0.4rem 0 0.4rem">Theme Insnow</a>
-  | <a href="/console" style="margin: 0 0.4rem 0 0.4rem">控制台</a>
-  | <a href="http://beian.miit.gov.cn/"; target=_blank style="margin: 0 0.4rem 0 0.4rem">浙ICP备2021010658号-1</a>
-  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272" >浙公网安备 33011802002272号</a>
-  </div>
-  <div class="footer-info">
-	  <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
-    <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
-    <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
-  </div>
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
 </footer>
   </div>
 </body>
