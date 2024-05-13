@@ -13,6 +13,12 @@
     padding-left: 0rem;
     padding-right: 0rem;
   }
+  .main-post {
+    margin-left: 0%;
+  }
+  .toc-pin {
+    display: none;
+  }
   .footer-info {
     flex-direction: column;
     align-items: center;

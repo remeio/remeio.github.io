@@ -164,7 +164,10 @@
 </script>
 
   <div class="article-header">
-    <h2>Java集合框架中Queue接口有哪些实现？</h2>
+    <div class="article-title">
+      
+      <h1>Java集合框架中Queue接口有哪些实现？</h1>
+    </div>
     <div class="article-details">
       <div class="article-post-date">
 	  	
@@ -328,6 +331,42 @@ private void siftUpUsingComparator(int k, E x) &#123;
     <a href="/post/1808606146/">上一篇：Spring MVC是如何分发HTTP请求的？</a>
     <a href="/post/3921014442/">下一篇：Java集合框架中Set接口有哪些实现？</a>
   </div>
+  <div class="toc-pin">
+  <h3>目录</h3>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Queue接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Queue接口有哪些实现？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E7%9A%84%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0%E6%9C%89%E4%BB%80%E4%B9%88%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-text">1.2. Queue接口的不同实现有什么不同？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArrayDeque%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. ArrayDeque详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. ArrayDeque是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. ArrayDeque是如何添加新元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. ArrayDeque是如何删除元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. ArrayDeque是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E4%B8%BA%E4%BA%86%E6%8F%90%E5%8D%87%E6%80%A7%E8%83%BD%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2.5. ArrayDeque为了提升性能做了哪些设计？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PriorityQueue%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. PriorityQueue详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PriorityQueue%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%B4%E6%8C%81%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. PriorityQueue是如何维持优先级的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">4. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        console.log(currentPosition)
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h3').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
 </main>
     <footer>
   <div class="footer-info">

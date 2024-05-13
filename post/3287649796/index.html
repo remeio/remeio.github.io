@@ -164,7 +164,10 @@
 </script>
 
   <div class="article-header">
-    <h2>对象是如何创建的及是如何分配内存的？</h2>
+    <div class="article-title">
+      
+      <h1>对象是如何创建的及是如何分配内存的？</h1>
+    </div>
     <div class="article-details">
       <div class="article-post-date">
 	  	
@@ -303,6 +306,42 @@
     <a href="/post/1840753212/">上一篇：什么是垃圾回收及有哪些垃圾收集器？</a>
     <a href="/post/948158994/">下一篇：运行时数据区有哪些部分组成？</a>
   </div>
+  <div class="toc-pin">
+  <h3>目录</h3>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">1. 对象的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%9A%84%EF%BC%9F"><span class="toc-text">1.1. 对象是如何创建的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.2. 对象的内存分配方式有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">1.3. 如何解决内存分配的线程安全问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-text">2. 对象的内存分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%AF%B9%E8%B1%A1%E5%9C%A8%E5%A0%86%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. 新对象在堆中是如何分配内存的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3%E7%9A%84%E5%AF%B9%E8%B1%A1%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3%EF%BC%9F"><span class="toc-text">2.2. 新生代的对象什么时候进入老年代？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D%EF%BC%9F"><span class="toc-text">2.3. 什么是空间分配担保？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8F%91%E7%94%9FMinor-GC%E5%92%8CFull-GC%EF%BC%9F"><span class="toc-text">2.4. 什么时候发生Minor GC和Full GC？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%91%E7%B9%81%E5%8F%91%E7%94%9FFull-GC%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.5. 频繁发生Full GC的原因是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-text">3. 对象的内存布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. 对象的内存布局是怎样的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%9F"><span class="toc-text">3.2. 如何访问一个对象？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        console.log(currentPosition)
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h3').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
 </main>
     <footer>
   <div class="footer-info">

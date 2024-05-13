@@ -164,7 +164,10 @@
 </script>
 
   <div class="article-header">
-    <h2>Spring应用上下文是如何刷新的？</h2>
+    <div class="article-title">
+      
+      <h1>Spring应用上下文是如何刷新的？</h1>
+    </div>
     <div class="article-details">
       <div class="article-post-date">
 	  	
@@ -353,6 +356,42 @@
     <a href="/post/495983587/">上一篇：@Configuration及其周边注解是如何生效的？</a>
     <a href="/post/3592105479/">下一篇：@PostConstruct和@PreDestroy是如何生效的？</a>
   </div>
+  <div class="toc-pin">
+  <h3>目录</h3>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanFactory%E5%92%8CApplicationContext%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">1.1. BeanFactory和ApplicationContext有什么区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8ApplicationContext%EF%BC%9F"><span class="toc-text">1.2. 为什么要使用ApplicationContext？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ApplicationContext%E7%9A%84%E7%BB%A7%E6%89%BF%E4%BD%93%E7%B3%BB"><span class="toc-text">1.3. ApplicationContext的继承体系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%B7%E6%96%B0%E6%B5%81%E7%A8%8B"><span class="toc-text">2. Spring应用上下文刷新流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E8%A6%81%E5%88%B7%E6%96%B0%E7%9A%84%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88prepareRefresh%EF%BC%89"><span class="toc-text">2.1. 准备要刷新的应用上下文（prepareRefresh）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E4%BD%BF%E7%94%A8%E7%9A%84Bean%E5%B7%A5%E5%8E%82%EF%BC%88obtainFreshBeanFactory%EF%BC%89"><span class="toc-text">2.2. 获取应用上下文使用的Bean工厂（obtainFreshBeanFactory）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E4%BD%BF%E7%94%A8%E7%9A%84Bean%E5%B7%A5%E5%8E%82%EF%BC%88prepareBeanFactory%EF%BC%89"><span class="toc-text">2.3. 准备应用上下文使用的Bean工厂（prepareBeanFactory）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%AD%90%E7%B1%BB%E5%AF%B9Bean%E5%B7%A5%E5%8E%82%E8%BF%9B%E8%A1%8C%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%EF%BC%88postProcessBeanFactory%EF%BC%89"><span class="toc-text">2.4. 应用上下文子类对Bean工厂进行后置处理（postProcessBeanFactory）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bean%E5%B7%A5%E5%8E%82%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%EF%BC%88invokeBeanFactoryPostProcessors%EF%BC%89"><span class="toc-text">2.5. Bean工厂后置处理器后置处理（invokeBeanFactoryPostProcessors）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8CBean%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%88registerBeanPostProcessors%EF%BC%89"><span class="toc-text">2.6. 注册Bean后置处理器（registerBeanPostProcessors）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B6%88%E6%81%AF%E6%BA%90%EF%BC%88initMessageSource%EF%BC%89"><span class="toc-text">2.7. 初始化消息源（initMessageSource）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%BA%94%E7%94%A8%E4%BA%8B%E4%BB%B6%E5%B9%BF%E6%92%AD%E5%99%A8%EF%BC%88initApplicationEventMulticaster%EF%BC%89"><span class="toc-text">2.8. 初始化应用事件广播器（initApplicationEventMulticaster）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%AD%90%E7%B1%BB%E5%88%B7%E6%96%B0%EF%BC%88onRefresh%EF%BC%89"><span class="toc-text">2.9. 应用上下文子类刷新（onRefresh）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%88registerListeners%EF%BC%89"><span class="toc-text">2.10. 注册事件监听器（registerListeners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%88%90Bean%E5%B7%A5%E5%8E%82%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%88finishBeanFactoryInitialization%EF%BC%89"><span class="toc-text">2.11. 完成Bean工厂的初始化（finishBeanFactoryInitialization）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%88%90%E5%88%B7%E6%96%B0%EF%BC%88finishRefresh%EF%BC%89"><span class="toc-text">2.12. 完成刷新（finishRefresh）</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        console.log(currentPosition)
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h3').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
 </main>
     <footer>
   <div class="footer-info">
