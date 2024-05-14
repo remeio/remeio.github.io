@@ -400,7 +400,7 @@ public class BeanDefinitionLoadTest &#123;
     <a href="/post/3448844314/">下一篇：Bean在Spring中是如何表示的？</a>
   </div>
   <div class="toc-pin">
-  <h3>目录</h3>
+  <h4>目录</h4>
   <hr>
   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2. 如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. BeanDefinition是如何存储的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%98%AF%E5%A6%82%E4%BD%95%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. BeanDefinition是如何被加载的？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E8%B7%AF%E5%BE%84%E8%8E%B7%E5%8F%96XML%E9%85%8D%E7%BD%AE%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%9F"><span class="toc-text">3.2.1. 如何通过路径获取XML配置的资源？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E9%85%8D%E7%BD%AE%E7%9A%84%E8%B5%84%E6%BA%90%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E5%8A%A0%E8%BD%BD%E4%B8%BAXML%E6%96%87%E6%A1%A3%EF%BC%9F"><span class="toc-text">3.2.2. 拿到XML配置的资源后，如何将其加载为XML文档？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E6%96%87%E6%A1%A3%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E6%A0%87%E7%AD%BE%EF%BC%9F"><span class="toc-text">3.2.3. 拿到XML文档后，如何解析文档中的各种标签？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84bean%E6%A0%87%E7%AD%BE%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E8%A7%A3%E6%9E%90%E4%B8%BABeanDefinition%EF%BC%9F"><span class="toc-text">3.2.4. 拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0BeanDefinition%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E6%B3%A8%E5%86%8C%E5%88%B0BeanDefinitionRegistry%E4%B8%AD%EF%BC%9F"><span class="toc-text">3.2.5. 拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">4. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%B7%AF%E5%BE%84%E6%9D%A5%E8%8E%B7%E5%8F%96%E8%B5%84%E6%BA%90%EF%BC%8C%E4%BC%9A%E8%BF%94%E5%9B%9E%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%9F"><span class="toc-text">4.1. 使用不同类型的路径来获取资源，会返回什么类型的资源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8debug%E7%9A%84%E6%96%B9%E5%BC%8F%E8%B7%9F%E8%B8%AAXML%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%98%AF%E5%A6%82%E4%BD%95%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. 使用debug的方式跟踪XML配置文件是如何被加载的？</span></a></li></ol></li></ol>
   <script>
@@ -425,7 +425,7 @@ public class BeanDefinitionLoadTest &#123;
             });
             navLink.classList.add('highlight');
             if (navLinks[0] === navLink) {
-              document.querySelector('.toc-pin h3').scrollIntoView();
+              document.querySelector('.toc-pin h4').scrollIntoView();
             } else {
               navLink.scrollIntoView()
             }
@@ -435,6 +435,16 @@ public class BeanDefinitionLoadTest &#123;
     });
   </script>
 </div>
+  <img class="article-to-toc" onclick="openOrCloseTocPin()" src="/img/toc.svg"/>
+  <script>
+    function openOrCloseTocPin() {
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = tocPin.style.display === 'none' ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = mainPost.style.marginLeft === 'auto' ? '' : 'auto'
+      mainPost.style.width = mainPost.style.width === '80%' ? '' : '80%'
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">

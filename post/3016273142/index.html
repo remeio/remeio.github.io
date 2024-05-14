@@ -366,7 +366,7 @@ public:
     <a href="/post/99009864/">下一篇：InnoDB存储引擎的磁盘结构和内存结构是怎样的？</a>
   </div>
   <div class="toc-pin">
-  <h3>目录</h3>
+  <h4>目录</h4>
   <hr>
   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-text">1. 事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1%EF%BC%9F"><span class="toc-text">1.1. 什么是事务？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">1.2. 事务有哪些并发问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9F"><span class="toc-text">1.3. 事务有哪些隔离级别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="toc-text">2. 多版本并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%EF%BC%9F"><span class="toc-text">2.1. 什么是多版本并发控制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Undo-Log%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.2. Undo Log的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%86%E5%9B%BE%EF%BC%9F"><span class="toc-text">2.3. 什么是一致性视图？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E8%AE%B0%E5%BD%95%E7%9A%84%E7%89%88%E6%9C%AC%E5%AF%B9%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%90%A6%E6%98%AF%E5%8F%AF%E8%A7%81%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. 如何判断记录的版本对事务是否是可见的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%86%E5%9B%BE%E7%9A%84%E6%97%B6%E6%9C%BA%EF%BC%9F"><span class="toc-text">2.5. 创建一致性视图的时机？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB%E5%92%8C%E5%BD%93%E5%89%8D%E8%AF%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.6. 快照读和当前读有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">3. 参考文档</span></a></li></ol>
   <script>
@@ -391,7 +391,7 @@ public:
             });
             navLink.classList.add('highlight');
             if (navLinks[0] === navLink) {
-              document.querySelector('.toc-pin h3').scrollIntoView();
+              document.querySelector('.toc-pin h4').scrollIntoView();
             } else {
               navLink.scrollIntoView()
             }
@@ -401,6 +401,16 @@ public:
     });
   </script>
 </div>
+  <img class="article-to-toc" onclick="openOrCloseTocPin()" src="/img/toc.svg"/>
+  <script>
+    function openOrCloseTocPin() {
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = tocPin.style.display === 'none' ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = mainPost.style.marginLeft === 'auto' ? '' : 'auto'
+      mainPost.style.width = mainPost.style.width === '80%' ? '' : '80%'
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">

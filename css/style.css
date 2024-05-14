@@ -1,4 +1,5 @@
 .dark {
+  --defaultBgColor: #2b2b2b;
   --fontColor: #e3e3e3;
   --bgColor: #181818;
   --bgColor2: #2b2b2b;
@@ -7,9 +8,10 @@
   --accentBgColor: rgba(255,255,255,0.2);
 }
 .light {
+  --defaultBgColor: #fff;
   --fontColor: #1c1e21;
   --bgColor: #fff;
-  --bgColor2: #f4f4f4;
+  --bgColor2: #f6f8fa;
   --spColor: #f97d1c;
   --borderColor: #ebebeb;
   --accentBgColor: #ebedf0;
@@ -19,11 +21,11 @@ html {
   --global-code-font-family: 'Noto Serif SC', 'Consolas';
   --box-shadow: 0 1px 4px -2px rgba(0,0,0,0.13), 0 2px 8px 0 rgba(0,0,0,0.08), 0 8px 16px 4px rgba(0,0,0,0.04);
   -webkit-text-size-adjust: none;
-  font-size: 60%;
+  font-size: 56%;
   scroll-padding-top: 6rem;
 }
 body {
-  background-color: var(--bgColor2);
+  background-color: var(--defaultBgColor);
   transition-property: background-color, color;
   transition-duration: 0.5s;
 }
@@ -120,7 +122,7 @@ blockquote {
 }
 code {
   background-color: var(--accentBgColor);
-  font-size: 13px;
+  font-size: 1.4rem;
   line-height: 2.4rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;
@@ -256,7 +258,6 @@ header {
   padding: 4px;
   line-height: 42px;
   border-radius: 50%;
-  box-shadow: var(--box-shadow);
 }
 main {
   width: 100%;
@@ -275,7 +276,6 @@ main {
   padding: 2rem 3rem;
   background-color: var(--bgColor);
   border-radius: 4px;
-  box-shadow: var(--box-shadow);
 }
 .main-post,
 .main-about,
@@ -285,7 +285,7 @@ main {
 }
 .main-post {
   width: 60%;
-  margin-left: 6%;
+  margin-left: 8%;
 }
 .main-index,
 .main-categories,
@@ -312,6 +312,8 @@ main {
   padding: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+  width: 60%;
+  margin: auto;
 }
 .categories-container .categories-category-item {
   color: var(--bgColor);
@@ -343,8 +345,8 @@ main {
   margin-left: 2.4rem;
   list-style-type: square;
   color: var(--spColor);
-  font-size: 16px;
-  line-height: 30px;
+  font-size: 1.4rem;
+  line-height: 2.4rem;
 }
 .categories-container .categories-row {
   display: flex;
@@ -390,7 +392,7 @@ footer {
   list-style: none;
   font-family: var(--global-font-family);
   font-size: 1.5rem;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--fontColor);
 }
 .archive-item {
@@ -509,10 +511,6 @@ footer {
   width: 28px;
   margin-right: 0.6rem;
 }
-.article-header a {
-  color: var(--spColor);
-  transition: color 0.5s;
-}
 .article-details {
   margin-top: 1.5rem;
   display: flex;
@@ -593,23 +591,36 @@ footer {
   display: block;
   margin: auto;
 }
+.article-to-toc {
+  position: fixed;
+  background: var(--spColor);
+  bottom: calc(20px + 42px + 2rem);
+  right: 20px;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: center;
+  width: 42px;
+  height: 42px;
+  padding: 12px;
+  line-height: 42px;
+  border-radius: 50%;
+}
 .toc-pin {
   position: fixed;
-  padding: 0rem 2rem 2rem 2rem;
-  border-radius: 4px;
+  padding: 0rem 2rem 3rem 2rem;
   background: var(--bgColor);
-  width: calc(100% - 60% - 6% - 6% - 2rem);
-  max-height: calc(100% - 5rem - 2rem - 6rem);
+  width: calc(100% - 60% - 8% - 8% - 2rem);
+  max-height: calc(100% - 5rem - 2rem - 4rem);
   overflow: overlay;
   top: 7rem;
-  left: calc(6% + 60% + 2rem);
-  box-shadow: var(--box-shadow);
+  left: calc(8% + 60% + 2rem);
+  border-left: 1px solid var(--borderColor);
 }
 .toc-pin::-webkit-scrollbar {
   width: 0px;
   height: 4px;
 }
-.toc-pin h3 {
+.toc-pin h4 {
   padding-top: 2rem;
 }
 .toc-pin .toc-item {

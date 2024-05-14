@@ -65,7 +65,7 @@ blockquote {
 }
 code {
   background-color: var(--accentBgColor);
-  font-size: 13px;
+  font-size: 1.4rem;
   line-height: 2.4rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;

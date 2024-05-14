@@ -222,7 +222,7 @@
     <a href="/post/1284794007/">下一篇：Java集合框架中List接口有哪些实现？</a>
   </div>
   <div class="toc-pin">
-  <h3>目录</h3>
+  <h4>目录</h4>
   <hr>
   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E8%B1%A1"><span class="toc-text">1. 现象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="toc-text">2. 排查过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98"><span class="toc-text">3. 复盘</span></a></li></ol>
   <script>
@@ -247,7 +247,7 @@
             });
             navLink.classList.add('highlight');
             if (navLinks[0] === navLink) {
-              document.querySelector('.toc-pin h3').scrollIntoView();
+              document.querySelector('.toc-pin h4').scrollIntoView();
             } else {
               navLink.scrollIntoView()
             }
@@ -257,6 +257,16 @@
     });
   </script>
 </div>
+  <img class="article-to-toc" onclick="openOrCloseTocPin()" src="/img/toc.svg"/>
+  <script>
+    function openOrCloseTocPin() {
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = tocPin.style.display === 'none' ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = mainPost.style.marginLeft === 'auto' ? '' : 'auto'
+      mainPost.style.width = mainPost.style.width === '80%' ? '' : '80%'
+    }
+  </script>
 </main>
     <footer>
   <div class="footer-info">
