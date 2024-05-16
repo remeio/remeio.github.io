@@ -66,11 +66,11 @@ blockquote {
 code {
   background-color: var(--accentBgColor);
   font-size: 1.4rem;
-  line-height: 2.4rem;
+  line-height: 1.4rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  margin: 0rem 0.2rem;
-  padding: 0.1rem 0.4rem;
+  margin: 0rem 0.4rem;
+  padding: 0rem 0.4rem;
   border-radius: 0.2rem;
 }
 a {

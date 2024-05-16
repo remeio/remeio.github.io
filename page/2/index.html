@@ -146,6 +146,50 @@
     <div class="archive-item">
       <div class="archive-title">
         
+        <a href="/post/3287649796/" title="对象是如何创建的及是如何分配内存的？">
+          
+            JVM
+          ——对象是如何创建的及是如何分配内存的？
+        </a>
+      </div>
+      <div class="archive-tags">
+        
+        <a href="/tags/总结">#总结</a>
+        
+      </div>
+      <div class="archive-intro">
+        对象的生命周期
+
+ 对象是如何创建的？
+
+1. 通过new指令或反射等方式创建新的对象；
+2. 若该对象对应的类从未被加载过，则进行类的加载；
+3. 在堆中（或栈上分配）为对象分配内存空间；
+4. 初始化对象的内存空间为零值；
+5. 为对象设置必要的信息，如类的元数据，对象的哈希码，GC分代年龄等；
+6. 执行对象的构造器方法&lt;init&gt;。
+
+plantuml
+title 对象的创建
+(*)...
+      </div>
+      <div class="archive-readmore"><a href="/post/3287649796/" title="对象是如何创建的及是如何分配内存的？">查看全文</a></div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年09月09日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
         <a href="/post/948158994/" title="运行时数据区有哪些部分组成？">
           
             JVM

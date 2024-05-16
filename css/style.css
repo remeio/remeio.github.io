@@ -21,7 +21,7 @@ html {
   --global-code-font-family: 'Noto Serif SC', 'Consolas';
   --box-shadow: 0 1px 4px -2px rgba(0,0,0,0.13), 0 2px 8px 0 rgba(0,0,0,0.08), 0 8px 16px 4px rgba(0,0,0,0.04);
   -webkit-text-size-adjust: none;
-  font-size: 56%;
+  font-size: 58%;
   scroll-padding-top: 6rem;
 }
 body {
@@ -123,11 +123,11 @@ blockquote {
 code {
   background-color: var(--accentBgColor);
   font-size: 1.4rem;
-  line-height: 2.4rem;
+  line-height: 1.4rem;
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  margin: 0rem 0.2rem;
-  padding: 0.1rem 0.4rem;
+  margin: 0rem 0.4rem;
+  padding: 0rem 0.4rem;
   border-radius: 0.2rem;
 }
 a {
