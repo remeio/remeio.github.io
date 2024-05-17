@@ -19,6 +19,9 @@
   .toc-pin {
     display: none;
   }
+  .article-to-toc {
+    display: none;
+  }
   .footer-info {
     flex-direction: column;
     align-items: center;
