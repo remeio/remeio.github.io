@@ -1,19 +1,18 @@
 @media (max-width: 650px) {
-  .main-post,
+  .main-index,
+  .main-tag,
   .main-tags,
+  .main-category,
   .main-categories,
   .main-about,
-  .main-console {
-    width: 100%;
-    margin-top: 0rem;
-  }
-  .main-index,
-  .main-categories,
-  .main-tags {
+  .main-console,
+  .main-post {
     padding-left: 0rem;
     padding-right: 0rem;
   }
   .main-post {
+    width: 100%;
+    margin-top: 0rem;
     margin-left: 0%;
   }
   .toc-pin {
