@@ -21,7 +21,7 @@ html {
   --global-code-font-family: 'Noto Serif SC', 'Consolas';
   --box-shadow: 0 1px 4px -2px rgba(0,0,0,0.13), 0 2px 8px 0 rgba(0,0,0,0.08), 0 8px 16px 4px rgba(0,0,0,0.04);
   -webkit-text-size-adjust: none;
-  font-size: 58%;
+  font-size: 60%;
   scroll-padding-top: 6rem;
 }
 body {
@@ -285,7 +285,7 @@ main {
 }
 .main-post {
   width: 60%;
-  margin-left: 8%;
+  margin-left: 4%;
 }
 .main-index,
 .main-categories,
@@ -609,11 +609,11 @@ footer {
   position: fixed;
   padding: 0rem 2rem 3rem 2rem;
   background: var(--bgColor);
-  width: calc(100% - 60% - 8% - 8% - 2rem);
+  max-width: calc(100% - 60% - 4% - 4% - 2rem);
   max-height: calc(100% - 5rem - 2rem - 4rem);
   overflow: overlay;
   top: 7rem;
-  left: calc(8% + 60% + 2rem);
+  left: calc(4% + 60% + 2rem);
   border-left: 1px solid var(--borderColor);
 }
 .toc-pin::-webkit-scrollbar {

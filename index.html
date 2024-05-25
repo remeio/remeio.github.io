@@ -149,10 +149,10 @@
     <div class="archive-item">
       <div class="archive-title">
         
-        <a href="/post/277452770/" title="ReentrantLock及AbstractQueuedSynchronizer是如何实现的？">
+        <a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">
           
             并发编程
-          ——ReentrantLock及AbstractQueuedSynchronizer是如何实现的？
+          ——AbstractQueuedSynchronizer和ReentrantLock是如何实现的？
         </a>
       </div>
       <div class="archive-tags">
@@ -163,31 +163,17 @@
         
       </div>
       <div class="archive-intro">
-        ReentrantLock
+        相比于synchronized内置锁隐式地加锁和释放锁的方式，ReentrantLock则采用显式地加锁和释放锁的方式，如下代码：
 
- 加锁
+java
+private final ReentrantLock lock = new ReentrantLock();
 
- 释放锁
-
- 公平锁
-
- 非公平锁
-
- AQS互斥模式解析
-
- 获取锁成功
-
- 获取锁失败阻塞
-
- 锁释放唤醒
-
- 取消获取锁
-
- 案例分析
-
-持有锁，阻塞t1，阻塞t2，t1获取锁，t1释放锁，t2获取锁
+public void m() {
+    lock.lock();
+    try {
+        // ... method b...
       </div>
-      <div class="archive-readmore"><a href="/post/277452770/" title="ReentrantLock及AbstractQueuedSynchronizer是如何实现的？">查看全文</a></div>
+      <div class="archive-readmore"><a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">查看全文</a></div>
       <div class="archive-extra">
         <img src="/img/date.svg" class="archive-extra-date-icon"/>
         <div class="archive-extra-date">
