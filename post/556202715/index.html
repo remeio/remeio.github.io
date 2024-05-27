@@ -84,10 +84,8 @@
 <body>
   <div class="layout-container">
     <header>
+  <h3>🎨徐梦旗的个人博客</h3>
   <ul class="header-nav">
-    <li class="header-nav-child">
-      <h3>🎨徐梦旗的个人博客</h3>
-    </li>
     <li class="header-nav-child">
       <a href="/">首页</a>
     </li>
@@ -98,13 +96,12 @@
       <a href="/tags">标签</a>
     </li>
     <li class="header-nav-child">
-      <a href="/about">关于</a>
+      <a href="/about">关于我</a>
     </li>
     <li class="header-nav-child">
-      <a target="_blank" rel="noopener" href="https://500px.com.cn/remeio?m=works">我的摄影作品</a>
+      <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
     </li>
   </ul>
-  <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
   <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
 <script>
   function scrollToTop() {
@@ -660,15 +657,34 @@ The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun
     });
   </script>
 </div>
-  <img class="article-to-toc" onclick="openOrCloseTocPin()" src="/img/toc.svg"/>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
   <script>
-    function openOrCloseTocPin() {
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
       var tocPin = document.querySelectorAll('.toc-pin')[0];
-      tocPin.style.display = tocPin.style.display === 'none' ? '' : 'none'
+      tocPin.style.display = show ? '' : 'none'
       var mainPost = document.querySelectorAll('.main-post')[0];
-      mainPost.style.marginLeft = mainPost.style.marginLeft === 'auto' ? '' : 'auto'
-      mainPost.style.width = mainPost.style.width === '80%' ? '' : '80%'
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '60%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
     }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+
+    window.onscroll = function() {
+      var header = document.getElementsByTagName('header')[0];
+      var sticky = header.offsetTop;
+      if (window.pageYOffset > sticky) {
+        header.style.top = '-6rem'; // 隐藏头部
+      } else {
+        header.style.top = '0'; // 显示头部
+      }
+    };
   </script>
 </main>
     <footer>

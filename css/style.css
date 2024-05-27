@@ -1,5 +1,5 @@
 .dark {
-  --defaultBgColor: #2b2b2b;
+  --defaultBgColor: #181818;
   --fontColor: #e3e3e3;
   --bgColor: #181818;
   --bgColor2: #2b2b2b;
@@ -8,7 +8,7 @@
   --accentBgColor: rgba(255,255,255,0.2);
 }
 .light {
-  --defaultBgColor: #f4f4f4;
+  --defaultBgColor: #fff;
   --fontColor: #333;
   --bgColor: #fff;
   --bgColor2: #f6f8fa;
@@ -57,10 +57,10 @@ body {
   background-color: #808080;
 }
 h1 {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
 }
 h2 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
 }
 h3 {
   font-size: 1.8rem;
@@ -116,10 +116,11 @@ blockquote {
   padding-inline-end: 1rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  border-left: 2px solid var(--fontColor);
+  border-left: 3px solid var(--fontColor);
   margin: 0.5rem 0;
   transition-property: background-color, color, border-color;
   transition-duration: 0.5s;
+  border-radius: var(--borderRadius);
 }
 code {
   background-color: var(--accentBgColor);
@@ -128,8 +129,8 @@ code {
   transition-property: background-color, color;
   transition-duration: 0.5s;
   margin: 0rem 0.4rem;
-  padding: 0rem 0.4rem;
-  border-radius: 0.2rem;
+  padding: 0rem 0.6rem;
+  border-radius: var(--borderRadius);
 }
 a {
   color: var(--spColor);
@@ -140,6 +141,7 @@ pre {
   margin: 1.5rem 0 !important;
   transition-property: background-color, color;
   transition-duration: 0.5s;
+  border-radius: var(--borderRadius);
 }
 pre code {
   font-family: var(--global-code-font-family);
@@ -153,6 +155,7 @@ table {
   transition-property: background-color, color;
   transition-duration: 0.5s;
   border-collapse: separate;
+  border-radius: 10px;
   border-spacing: 0;
 }
 thead {
@@ -188,8 +191,8 @@ th:not(:last-child)::before {
 header {
   width: 100%;
   padding: 0rem 4rem;
-  height: 5rem;
-  scroll-padding-top: 5rem;
+  height: 6rem;
+  scroll-padding-top: 6rem;
   display: flex;
   align-items: center;
   position: sticky;
@@ -198,12 +201,13 @@ header {
   box-shadow: var(--box-shadow);
   z-index: 998;
   transition-property: background-color, color, box-shadow;
-  transition-duration: 0.5s;
+  transition: top 0.5s ease;
 }
 .header-nav {
   display: flex;
   align-items: center;
   list-style: none;
+  justify-content: flex-end;
   flex-grow: 1;
   overflow: scroll;
 }
@@ -212,7 +216,7 @@ header {
 }
 .header-nav-child {
   font-size: 1.5rem;
-  margin-right: 4rem;
+  margin-right: 6rem;
   cursor: pointer;
   font-family: var(--global-font-family);
 }
@@ -282,8 +286,7 @@ main {
   width: 60%;
   padding: 2rem 3rem;
   margin-top: 2rem;
-  margin-left: 4%;
-  box-shadow: var(--box-shadow);
+  margin-left: 8%;
 }
 .categories-container {
   font-size: 1.5rem;
@@ -503,6 +506,9 @@ footer {
   justify-content: flex-start;
   align-items: center;
 }
+.article-header h1 {
+  font-size: 2.8rem;
+}
 .article-title .article-title-recommend-icon {
   height: 28px;
   width: 28px;
@@ -511,7 +517,7 @@ footer {
 .article-details {
   margin-top: 1.5rem;
   display: flex;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   justify-content: space-between;
 }
 .article-details a {
@@ -545,6 +551,15 @@ footer {
 .article h6 {
   margin-top: 1.4rem;
   margin-bottom: 1rem;
+}
+.article h2:not(:first-child)::before {
+  content: "";
+  display: block;
+  height: 5px;
+  width: 100%;
+  height: 1px;
+  background-color: var(--borderColor);
+  margin: 2rem 0 2rem 0;
 }
 .article>ul {
   margin: 1.5rem 0;
@@ -606,12 +621,12 @@ footer {
   position: fixed;
   padding: 0rem 2rem 3rem 2rem;
   background: var(--bgColor);
-  width: calc(100% - 60% - 4% - 4% - 1rem);
-  max-height: calc(100% - 5rem - 2rem - 5rem);
+  width: calc(100% - 60% - 8% - 8% - 1rem);
+  max-height: calc(100% - 5rem - 2rem - 6rem);
   overflow: overlay;
   top: calc(5rem + 2rem);
-  left: calc(4% + 60% + 1rem);
-  box-shadow: var(--box-shadow);
+  left: calc(8% + 60% + 1rem);
+/* box-shadow: var(--box-shadow) */
   border-radius: var(--borderRadius);
 /* border-left: 1px solid var(--borderColor) */
 }
@@ -643,6 +658,7 @@ footer {
 }
 .toc-container {
   top: 0;
+  display: none;
 /* position: sticky */
   z-index: 999;
   pointer-events: none;

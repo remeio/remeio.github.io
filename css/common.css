@@ -1,8 +1,8 @@
 h1 {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
 }
 h2 {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
 }
 h3 {
   font-size: 1.8rem;
@@ -58,10 +58,11 @@ blockquote {
   padding-inline-end: 1rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  border-left: 2px solid var(--fontColor);
+  border-left: 3px solid var(--fontColor);
   margin: 0.5rem 0;
   transition-property: background-color, color, border-color;
   transition-duration: 0.5s;
+  border-radius: var(--borderRadius);
 }
 code {
   background-color: var(--accentBgColor);
@@ -70,8 +71,8 @@ code {
   transition-property: background-color, color;
   transition-duration: 0.5s;
   margin: 0rem 0.4rem;
-  padding: 0rem 0.4rem;
-  border-radius: 0.2rem;
+  padding: 0rem 0.6rem;
+  border-radius: var(--borderRadius);
 }
 a {
   color: var(--spColor);
@@ -82,6 +83,7 @@ pre {
   margin: 1.5rem 0 !important;
   transition-property: background-color, color;
   transition-duration: 0.5s;
+  border-radius: var(--borderRadius);
 }
 pre code {
   font-family: var(--global-code-font-family);
@@ -95,6 +97,7 @@ table {
   transition-property: background-color, color;
   transition-duration: 0.5s;
   border-collapse: separate;
+  border-radius: 10px;
   border-spacing: 0;
 }
 thead {
