@@ -7,8 +7,8 @@
   .main-about,
   .main-console,
   .main-post {
-    padding-left: 0rem;
-    padding-right: 0rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   .main-post {
     width: 100%;

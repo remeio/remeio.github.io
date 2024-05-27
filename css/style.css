@@ -17,6 +17,7 @@
   --accentBgColor: #ebedf0;
 }
 html {
+  --borderRadius: 6px;
   --global-font-family: 'Noto Serif SC', 'Open Sans';
   --global-code-font-family: 'Noto Serif SC', 'Consolas';
   --box-shadow: 0 1px 4px -2px rgba(0,0,0,0.13), 0 2px 8px 0 rgba(0,0,0,0.08), 0 8px 16px 4px rgba(0,0,0,0.04);
@@ -275,7 +276,7 @@ main {
   margin-bottom: 1rem;
   padding: 2rem 12rem;
   background-color: var(--bgColor);
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
 }
 .main-post {
   width: 60%;
@@ -311,7 +312,7 @@ main {
   background: var(--spColor);
   margin: 1rem 0.5rem;
   text-align: center;
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
   padding: 0.4rem 0.8rem;
 }
 .categories-container .categories-title:first-child {
@@ -329,7 +330,7 @@ main {
   color: var(--fontColor);
   background: var(--accentBgColor);
   text-align: center;
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
   padding: 0.2rem 0.6rem;
 }
 .categories-container li {
@@ -388,7 +389,7 @@ footer {
 }
 .archive-item {
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -423,15 +424,19 @@ footer {
   margin-right: 0.4rem;
   font-size: 1.4rem;
   background-color: var(--accentBgColor);
+  color: var(--fontColor);
   line-height: 2rem;
   padding: 0.1rem 0.6rem;
-  border-radius: 0.2rem;
+  border-radius: 4px;
+}
+.archive-tags-category {
+  color: var(--spColor) !important;
 }
 .archive-intro {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 .archive-readmore {
-  margin-top: 1rem;
+  margin-top: 2rem;
   font-weight: 600;
 }
 .archive-readmore a {
@@ -571,7 +576,7 @@ footer {
 .article img {
   max-width: 100%;
   min-width: 50%;
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
   display: block;
   object-fit: cover;
   margin: auto;
@@ -579,7 +584,7 @@ footer {
 .article svg {
   max-width: 100%;
   min-width: 50%;
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
   display: block;
   margin: auto;
 }
@@ -607,7 +612,7 @@ footer {
   top: calc(5rem + 2rem);
   left: calc(4% + 60% + 1rem);
   box-shadow: var(--box-shadow);
-  border-radius: 4px;
+  border-radius: var(--borderRadius);
 /* border-left: 1px solid var(--borderColor) */
 }
 .toc-pin::-webkit-scrollbar {
@@ -711,8 +716,8 @@ footer {
   .main-about,
   .main-console,
   .main-post {
-    padding-left: 0rem;
-    padding-right: 0rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   .main-post {
     width: 100%;
