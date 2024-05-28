@@ -139,6 +139,25 @@
     setThemeMode('light')
     switchTheme()
   }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
 </script>
 </header>
     <main class="main-post">
@@ -166,7 +185,6 @@
 
   <div class="article-header">
     <div class="article-title">
-      
       <h1>Spring应用上下文是如何刷新的？</h1>
     </div>
     <div class="article-details">
@@ -411,16 +429,6 @@
       showToc(show)
     }
     showToc(localStorage.getItem('tocPinState') != '0')
-
-    window.onscroll = function() {
-      var header = document.getElementsByTagName('header')[0];
-      var sticky = header.offsetTop;
-      if (window.pageYOffset > sticky) {
-        header.style.top = '-6rem'; // 隐藏头部
-      } else {
-        header.style.top = '0'; // 显示头部
-      }
-    };
   </script>
 </main>
     <footer>

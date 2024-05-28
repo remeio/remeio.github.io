@@ -139,33 +139,45 @@
     setThemeMode('light')
     switchTheme()
   }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
 </script>
 </header>
     <main class="main-categories">
   <div class="categories-container">
     <div  class="categories-category">
     
-        <a class="categories-category-item" href="/tags/源码/" title="">#源码(19)</a>
+        <a class="categories-category-item" href="/tags/源码/" title="">#源码(18)</a>
     
         <a class="categories-category-item" href="/tags/总结/" title="">#总结(11)</a>
     
         <a class="categories-category-item" href="/tags/图解/" title="">#图解(6)</a>
     
-        <a class="categories-category-item" href="/tags/多线程/" title="">#多线程(4)</a>
+        <a class="categories-category-item" href="/tags/多线程/" title="">#多线程(3)</a>
     
         <a class="categories-category-item" href="/tags/木马/" title="">#木马(1)</a>
     
     </div>
     
-      <a class="categories-title" href="/tags/源码/" title=""><span class="categories-flag">#</span>源码<span class="categories-count">19篇</span></a>
+      <a class="categories-title" href="/tags/源码/" title=""><span class="categories-flag">#</span>源码<span class="categories-count">18篇</span></a>
       <ul>
-        
-        <li>
-          <div class="categories-row">
-            <a class="categories-row-title" href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">ThreadPoolExecutor线程池是如何实现的？</a>
-            <p>2024年05月27日</p>
-          </div>
-        </li>
         
         <li>
           <div class="categories-row">
@@ -424,15 +436,8 @@
         
       </ul>
     
-      <a class="categories-title" href="/tags/多线程/" title=""><span class="categories-flag">#</span>多线程<span class="categories-count">4篇</span></a>
+      <a class="categories-title" href="/tags/多线程/" title=""><span class="categories-flag">#</span>多线程<span class="categories-count">3篇</span></a>
       <ul>
-        
-        <li>
-          <div class="categories-row">
-            <a class="categories-row-title" href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">ThreadPoolExecutor线程池是如何实现的？</a>
-            <p>2024年05月27日</p>
-          </div>
-        </li>
         
         <li>
           <div class="categories-row">
