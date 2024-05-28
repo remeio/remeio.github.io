@@ -18,7 +18,7 @@
 }
 html {
   --borderRadius: 6px;
-  --global-font-family: 'Noto Serif SC', 'Open Sans';
+  --global-font-family: 'Noto Serif SC', 'Consolas';
   --global-code-font-family: 'Noto Serif SC', 'Consolas';
   --box-shadow: 0 1px 4px -2px rgba(0,0,0,0.13), 0 2px 8px 0 rgba(0,0,0,0.08), 0 8px 16px 4px rgba(0,0,0,0.04);
   -webkit-text-size-adjust: none;
@@ -441,10 +441,11 @@ footer {
   color: var(--spColor) !important;
 }
 .archive-intro {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  line-height: 3rem;
 }
 .archive-readmore {
-  margin-top: 2rem;
+  margin-top: 1rem;
   font-weight: 600;
 }
 .archive-readmore a {
@@ -457,7 +458,7 @@ footer {
   color: var(--spColor);
 }
 .archive-extra {
-  margin-top: 1rem;
+  margin-top: 3rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -467,15 +468,15 @@ footer {
   width: 16px;
 }
 .archive-extra-date {
-  margin-left: 0.4rem;
+  margin-left: 0.6rem;
 }
 .archive-extra-author-icon {
-  margin-left: 2rem;
+  margin-left: 3rem;
   height: 15px;
   width: 15px;
 }
 .archive-extra-author {
-  margin-left: 0.4rem;
+  margin-left: 0.6rem;
 }
 .archive-paginator {
   margin: 1rem 0;
