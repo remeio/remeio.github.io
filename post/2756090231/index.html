@@ -9,7 +9,7 @@
     
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
 
   <!-- lightgallery查看图片支持 -->
   
@@ -84,7 +84,8 @@
 <body>
   <div class="layout-container">
     <header>
-  <h3>🎨徐梦旗的个人博客</h3>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>徐梦旗的个人博客</h3>
   <ul class="header-nav">
     <li class="header-nav-child">
       <a href="/">首页</a>
@@ -99,7 +100,7 @@
       <a href="/about">关于我</a>
     </li>
     <li class="header-nav-child">
-      <div class="header-theme-switcher" onclick="switchTheme()">🌞</div>
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
     </li>
   </ul>
   <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
@@ -121,11 +122,11 @@
     let themeMode = getThemeMode()
     if (themeMode === 'light') {
       document.documentElement.className = 'dark'
-      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌛'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
       setThemeMode('dark')
     } else {
       document.documentElement.className = 'light'
-      document.getElementsByClassName('header-theme-switcher')[0].textContent = '🌞'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
       setThemeMode('light')
     }
   }

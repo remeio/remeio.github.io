@@ -1,4 +1,18 @@
 @media (max-width: 650px) {
+  header {
+    overflow-x: scroll;
+    overflow-y: none;
+  }
+  .header-logo {
+    margin-left: 0rem;
+    margin-right: 5rem;
+  }
+  header h3 {
+    display: none;
+  }
+  .header-nav {
+    justify-content: flex-start;
+  }
   .main-index,
   .main-tag,
   .main-tags,
@@ -7,13 +21,13 @@
   .main-about,
   .main-console,
   .main-post {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
   .main-post {
-    width: 100%;
-    margin-top: 0rem;
-    margin-left: 0%;
+    width: 100% !important;
+    margin-top: 0rem !important;
+    margin-left: 0% !important;
   }
   .toc-pin {
     display: none;

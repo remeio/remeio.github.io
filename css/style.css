@@ -12,7 +12,7 @@
   --fontColor: #333;
   --bgColor: #fff;
   --bgColor2: #f6f8fa;
-  --spColor: #f97d1c;
+  --spColor: #ff8929;
   --borderColor: #ebebeb;
   --accentBgColor: #ebedf0;
 }
@@ -203,13 +203,23 @@ header {
   transition-property: background-color, color, box-shadow;
   transition: top 0.5s ease;
 }
+.header-logo {
+  width: 6rem;
+  height: 6rem;
+  margin-left: 8rem;
+  margin-right: 1rem;
+}
+header h3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: scroll;
+}
 .header-nav {
   display: flex;
   align-items: center;
   list-style: none;
   justify-content: flex-end;
   flex-grow: 1;
-  overflow: scroll;
 }
 .header-nav::-webkit-scrollbar {
   display: none;
@@ -219,11 +229,6 @@ header {
   margin-right: 6rem;
   cursor: pointer;
   font-family: var(--global-font-family);
-}
-.header-nav-child h3 {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: scroll;
 }
 .header-nav-child a {
   color: var(--fontColor);
@@ -238,11 +243,11 @@ header {
   border-bottom: 4px solid var(--spColor);
 }
 .header-theme-switcher {
-  width: 3rem;
-  height: 3rem;
-  font-size: 2rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.6rem;
   display: flex;
-  line-height: 2rem;
+  line-height: 1.6rem;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -724,6 +729,20 @@ footer {
   padding: 0px !important;
 }
 @media (max-width: 650px) {
+  header {
+    overflow-x: scroll;
+    overflow-y: none;
+  }
+  .header-logo {
+    margin-left: 0rem;
+    margin-right: 5rem;
+  }
+  header h3 {
+    display: none;
+  }
+  .header-nav {
+    justify-content: flex-start;
+  }
   .main-index,
   .main-tag,
   .main-tags,
@@ -732,13 +751,13 @@ footer {
   .main-about,
   .main-console,
   .main-post {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
   .main-post {
-    width: 100%;
-    margin-top: 0rem;
-    margin-left: 0%;
+    width: 100% !important;
+    margin-top: 0rem !important;
+    margin-left: 0% !important;
   }
   .toc-pin {
     display: none;
