@@ -1,3 +1,4 @@
+
 .light code[class*="language-"],
 .light pre[class*="language-"] {
   text-align: left;
@@ -5,11 +6,11 @@
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
-  color: #eee;
-  background: #2f2f2f;
+  color: #90a4ae;
+  background: #f6f8fa;
   /* font-family: Roboto Mono, monospace; */
-  font-size: 1em;
-  line-height: 1.8em;
+  font-size: 1.4rem;
+  line-height: 2rem;
 
   -moz-tab-size: 4;
   -o-tab-size: 4;
@@ -25,14 +26,16 @@
 .light pre[class*="language-"]::-moz-selection,
 .light code[class*="language-"] ::-moz-selection,
 .light pre[class*="language-"] ::-moz-selection {
-  background: #b2b2b2;
+  background: #cceae7;
+  color: #263238;
 }
 
 .light code[class*="language-"]::selection,
 .light pre[class*="language-"]::selection,
 .light code[class*="language-"] ::selection,
 .light pre[class*="language-"] ::selection {
-  background: #b2b2b2;
+  background: #cceae7;
+  color: #263238;
 }
 
 .light :not(pre)>code[class*="language-"] {
@@ -45,13 +48,13 @@
   overflow: auto;
   position: relative;
   margin: 0.5em 0;
-  padding: 1.25em 1em;
+  padding: 0.5em 1em;
 }
 
 .light .language-css>code,
 .light .language-sass>code,
 .light .language-scss>code {
-  color: #fd9170;
+  color: #f76d47;
 }
 
 .light [class*="language-"] .namespace {
@@ -59,156 +62,155 @@
 }
 
 .light .token.atrule {
-  color: #c792ea;
+  color: #7c4dff;
 }
 
 .light .token.attr-name {
-  color: #ffcb6b;
+  color: #39adb5;
 }
 
 .light .token.attr-value {
-  color: #a5e844;
+  color: #f6a434;
 }
 
 .light .token.attribute {
-  color: #a5e844;
+  color: #f6a434;
 }
 
 .light .token.boolean {
-  color: #c792ea;
+  color: #7c4dff;
 }
 
 .light .token.builtin {
-  color: #ffcb6b;
+  color: #39adb5;
 }
 
 .light .token.cdata {
-  color: #80cbc4;
+  color: #39adb5;
 }
 
 .light .token.char {
-  color: #80cbc4;
+  color: #39adb5;
 }
 
 .light .token.class {
-  color: #ffcb6b;
+  color: #39adb5;
 }
 
 .light .token.class-name {
-  color: #f2ff00;
+  color: #6182b8;
 }
 
 .light .token.comment {
-  color: #657f7f;
+  color: #6a737d;
 }
 
 .light .token.constant {
-  color: #c792ea;
+  color: #7c4dff;
 }
 
 .light .token.deleted {
-  color: #ff6666;
+  color: #e53935;
 }
 
 .light .token.doctype {
-  color: #616161;
+  color: #aabfc9;
 }
 
 .light .token.entity {
-  color: #ff6666;
+  color: #e53935;
 }
 
 .light .token.function {
-  color: #c792ea;
+  color: #7c4dff;
 }
 
 .light .token.hexcode {
-  color: #f2ff00;
+  color: #f76d47;
 }
 
 .light .token.id {
-  color: #c792ea;
+  color: #7c4dff;
   font-weight: bold;
 }
 
 .light .token.important {
-  color: #c792ea;
+  color: #7c4dff;
   font-weight: bold;
 }
 
 .light .token.inserted {
-  color: #80cbc4;
+  color: #39adb5;
 }
 
 .light .token.keyword {
-  color: #c792ea;
+  color: #7c4dff;
 }
 
 .light .token.number {
-  color: #fd9170;
+  color: #f76d47;
 }
 
 .light .token.operator {
-  color: #89ddff;
+  color: #39adb5;
 }
 
 .light .token.prolog {
-  color: #616161;
+  color: #aabfc9;
 }
 
 .light .token.property {
-  color: #80cbc4;
+  color: #39adb5;
 }
 
 .light .token.pseudo-class {
-  color: #a5e844;
+  color: #f6a434;
 }
 
 .light .token.pseudo-element {
-  color: #a5e844;
+  color: #f6a434;
 }
 
 .light .token.punctuation {
-  color: #89ddff;
+  color: #39adb5;
 }
 
 .light .token.regex {
-  color: #f2ff00;
+  color: #6182b8;
 }
 
 .light .token.selector {
-  color: #ff6666;
+  color: #e53935;
 }
 
 .light .token.string {
-  color: #a5e844;
+  color: #f6a434;
 }
 
 .light .token.symbol {
-  color: #c792ea;
+  color: #7c4dff;
 }
 
 .light .token.tag {
-  color: #ff6666;
+  color: #e53935;
 }
 
 .light .token.unit {
-  color: #fd9170;
+  color: #f76d47;
 }
 
 .light .token.url {
-  color: #ff6666;
+  color: #e53935;
 }
 
 .light .token.variable {
-  color: #ff6666;
+  color: #e53935;
 }
-
 
 /* 修复行号 */
 .light pre[class*=language-].line-numbers {
   position: relative;
-  padding-left: 3.8em;
+  padding-left: 2.8em;
   counter-reset: linenumber
 }
 
@@ -220,10 +222,10 @@
 .light .line-numbers .line-numbers-rows {
   position: absolute;
   pointer-events: none;
-  top: 0;
+  top: -0.2em;
   font-size: 100%;
-  left: -3.8em;
-  width: 3em;
+  left: -2.8em;
+  width: 2em;
   letter-spacing: -1px;
   border-right: 1px solid #999;
   -webkit-user-select: none;
