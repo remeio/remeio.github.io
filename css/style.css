@@ -46,10 +46,10 @@ body {
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
-  border-radius: var(--borderRadius);
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(128,128,128,0.7);
+  border-radius: var(--borderRadius);
 }
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(128,128,128,0.2);
