@@ -214,6 +214,7 @@ header h3 {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: scroll;
+  font-style: italic;
 }
 .header-nav {
   display: flex;
@@ -423,7 +424,7 @@ footer {
 }
 .archive-title-recommend-icon {
   height: 28px;
-  width: 36px;
+  width: 40px;
   margin-right: 0.6rem;
 }
 .archive-tags {
