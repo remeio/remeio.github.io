@@ -184,7 +184,6 @@
  Queue接口有哪些实现？
 
 plantuml
-title Java Collections FrameworkQueue
 interface Queue&lt;E&gt;
 interface Deque&lt;E&gt;
 class LinkedList&lt;E&gt;
@@ -192,7 +191,8 @@ class ArrayDeque&lt;E&gt;
 class PriorityQueue&lt;E&gt;
 
 Deque u|&gt; Queue
-Linke...
+LinkedList .u.|&gt; Deque
+ArrayDeque .u.|&gt; Deq...
       </div>
       <div class="archive-readmore"><a href="/post/2304171767/" title="Java集合框架中Queue接口有哪些实现？">查看全文</a></div>
       <div class="archive-extra">
@@ -229,14 +229,14 @@ Linke...
  Set接口有哪些实现？
 
 plantuml
-title Java Collections FrameworkSet
+
 interface Set&lt;E&gt;
 interface SortedSet&lt;E&gt;
 interface NavigableSet&lt;E&gt;
 class HashSet&lt;E&gt;
 class LinkedHashSet&lt;E&gt;
 class TreeSet&lt;E&gt;
-abstra...
+abstract class EnumSet&lt;E extends Enum&lt;E&gt;&gt;...
       </div>
       <div class="archive-readmore"><a href="/post/3921014442/" title="Java集合框架中Set接口有哪些实现？">查看全文</a></div>
       <div class="archive-extra">

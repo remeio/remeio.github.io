@@ -149,18 +149,16 @@ pre code {
   padding: 0;
 }
 table {
-  width: 100%;
   table-layout: fixed;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-family: var(--global-font-family);
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  border-collapse: separate;
   border-radius: 10px;
   border-spacing: 0;
+  border-collapse: collapse;
 }
 thead {
-  background: var(--bgColor2);
   color: var(--fontColor);
   transition-property: background-color, color;
   transition-duration: 0.5s;
@@ -173,21 +171,10 @@ tbody {
 th,
 td {
   padding: 0.8rem;
-  border: 1px solid var(--borderColor);
+  border-bottom: 1px solid var(--fontColor);
   position: relative;
   transition-property: border-color;
   transition-duration: 0.5s;
-}
-th:not(:last-child)::before {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 1px;
-  height: 2rem;
-  background-color: var(--borderColor);
-  transform: translateY(-50%);
-  transition: background-color 0.5s;
-  content: "";
 }
 header {
   width: 100%;
@@ -293,7 +280,7 @@ main {
   width: 60%;
   padding: 2rem 3rem;
   margin-top: 2rem;
-  margin-left: 8%;
+  margin-left: 6%;
 }
 .categories-container {
   font-size: 1.5rem;
@@ -610,7 +597,7 @@ footer {
 }
 .article img {
   max-width: 100%;
-  min-width: 50%;
+/* min-width: 50% */
   border-radius: var(--borderRadius);
   display: block;
   object-fit: cover;
@@ -618,7 +605,7 @@ footer {
 }
 .article svg {
   max-width: 100%;
-  min-width: 50%;
+/* min-width: 50% */
   border-radius: var(--borderRadius);
   display: block;
   margin: auto;
@@ -641,11 +628,11 @@ footer {
   position: fixed;
   padding: 0rem 2rem 3rem 2rem;
   background: var(--bgColor);
-  width: calc(100% - 60% - 8% - 8% - 1rem);
+  max-width: calc(100% - 60% - 6% - 6% - 1rem + (6%));
   max-height: calc(100% - 5rem - 2rem - 6rem);
   overflow: overlay;
   top: calc(5rem + 2rem);
-  left: calc(8% + 60% + 1rem);
+  left: calc(6% + 60% + 1rem);
 /* box-shadow: var(--box-shadow) */
   border-radius: var(--borderRadius);
 /* border-left: 1px solid var(--borderColor) */

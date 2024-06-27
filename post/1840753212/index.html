@@ -204,7 +204,7 @@
   <div class="article">
   
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
-<div class="markmap-container" style="height:200px">
+<div class="markmap-container" style="height:250px">
   <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;垃圾回收和垃圾收集器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;垃圾回收原理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是垃圾？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;为什么需要垃圾回收？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;如何找到垃圾？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;哪些对象可以作为GC Roots？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些对象引用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;ThreadLocal为什么使用弱引用？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;垃圾收集器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些垃圾回收算法？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是Stop The World？什么是safe point？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些垃圾收集器？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;CMS垃圾收集器垃圾回收的过程是怎样的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;G1垃圾收集器垃圾回收的过程是怎样的？&quot;}]}]}"/>
 </div>
 
@@ -214,7 +214,7 @@
 <li>引用计数法：当对象被引用时，其引用计数器加一；当去除对象的引用时，引用计数器减一。当引用计数器的值为零时，代表该对象是垃圾对象。引用计数法不能解决循环依赖的问题。</li>
 <li>可达性分析：当对象不能被<code>GC Roots</code>直接或间接地引用时，代表该对象是垃圾对象。<code>GC Roots</code>搜索走过的路径被称为引用链。</li>
 </ul>
-<a href="\assert\puml\fed01eef2ea450a8eff2a75c7c1010755ee8c959ed994290966c9d2f05f47ee9.svg" class="gallery-item"><img src="\assert\puml\fed01eef2ea450a8eff2a75c7c1010755ee8c959ed994290966c9d2f05f47ee9.svg"></a>
+<a href="\assert\puml\1c296a03fde6952de684562e7b40d5e1b4b1b40294496fc89f72d6872a66cd67.svg" class="gallery-item"><img src="\assert\puml\1c296a03fde6952de684562e7b40d5e1b4b1b40294496fc89f72d6872a66cd67.svg"></a>
 
 <p>如上图所示，可达性分析结果如下：</p>
 <ul>
@@ -238,7 +238,7 @@
 <li>弱引用（Weak Reference），在下次GC时会被垃圾回收，如<code>ThreadLocal</code>的实现。</li>
 <li>虚引用（Plantom Reference），在下次GC时会被垃圾回收，用作回调机制。</li>
 </ul>
-<a href="\assert\puml\c2f72211623c714d38c08fe393907c192a118cb66bdf98cee62b0e4d3ffe1c5e.svg" class="gallery-item"><img src="\assert\puml\c2f72211623c714d38c08fe393907c192a118cb66bdf98cee62b0e4d3ffe1c5e.svg"></a>
+<a href="\assert\puml\7bb31587d40fd623cee78241618f0a349063cbcd17c43bf02e7a73a5538eed73.svg" class="gallery-item"><img src="\assert\puml\7bb31587d40fd623cee78241618f0a349063cbcd17c43bf02e7a73a5538eed73.svg"></a>
 
 <h3 id="ThreadLocal为什么使用弱引用？">1.6. ThreadLocal为什么使用弱引用？</h3><p><code>ThreadLocal</code>是指线程本地变量，即为每个线程提供一份变量副本。本质上是在每个线程中都维护了一个<code>ThreadLocalMap</code>，内部<code>Entry</code>的键<code>reference</code>是<code>ThreadLocal</code>，内部<code>Entry</code>的值<code>value</code>是<code>ThreadLocal</code>对应的值。</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; &#123;
@@ -255,7 +255,7 @@
 <li><code>ThreadLocal</code>使用的引用是弱引用，当客户端的强引用不再引用时，会在下次GC时会被回收，从根本上避免了内存泄漏。</li>
 <li><code>ThreadLocal</code>对应的值使用的是强引用，在使用完后需要手动调用<code>ThreadLocal#remove</code>移除引用，来避免发生内存泄漏。</li>
 </ul>
-<a href="\assert\puml\168f371824baba19e156d38bb227e3841b926047e31c123c1201b6149868198a.svg" class="gallery-item"><img src="\assert\puml\168f371824baba19e156d38bb227e3841b926047e31c123c1201b6149868198a.svg"></a>
+<a href="\assert\puml\cae19762a8f49872218addbbe25ad13a2d7106c7e3ad618bc102189a662892e1.svg" class="gallery-item"><img src="\assert\puml\cae19762a8f49872218addbbe25ad13a2d7106c7e3ad618bc102189a662892e1.svg"></a>
 
 <h2 id="垃圾收集器">2. 垃圾收集器</h2><h3 id="有哪些垃圾回收算法？">2.1. 有哪些垃圾回收算法？</h3><ul>
 <li>标记-清除算法（Mark-Sweep）。<ul>
@@ -306,7 +306,7 @@
 <li>G1<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Garbage-First Garbage Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/g1_gc.html#garbage_first_garbage_collection)">[5]</span></a></sup>，全局采用标记-整理算法，局部使用标记-复制算法的整堆垃圾收集器，减少<code>STW</code>，关注吞吐量和低延迟，适用于大内存的服务端应用。</li>
 <li>ZGC，基于标记-整理算法的整堆垃圾收集器，关注低延迟。</li>
 </ul>
-<a href="\assert\puml\9c0b486888d773b3a9102c03811954644c87cadc20ea5a66cd0c360c08401b01.svg" class="gallery-item"><img src="\assert\puml\9c0b486888d773b3a9102c03811954644c87cadc20ea5a66cd0c360c08401b01.svg"></a>
+<a href="\assert\puml\b270030336a016c67f4d02a818647227e5118ca162c39e6a02823d3fd06c3e4c.svg" class="gallery-item"><img src="\assert\puml\b270030336a016c67f4d02a818647227e5118ca162c39e6a02823d3fd06c3e4c.svg"></a>
 
 <blockquote>
 <p>虚拟机参数：</p>
@@ -361,7 +361,6 @@
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

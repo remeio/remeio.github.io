@@ -233,25 +233,25 @@ $ Hello foo!</code></pre>
 &#125;</code></pre>
 
 <p>Spring MVC中提供的<code>Servlet</code>容器是<code>DispatcherServlet</code>，其核心方法为<code>DispatcherServlet#doDispatch</code>，该方法接收两个参数分别是<code>HttpServletRequest</code>和<code>HttpServletResponse</code>。继承体系如下：</p>
-<a href="\assert\puml\ff560489a229aeb446adb8fae1ee12d59ded7941c7f6a1b8bf4b99dd2ed7d7f9.svg" class="gallery-item"><img src="\assert\puml\ff560489a229aeb446adb8fae1ee12d59ded7941c7f6a1b8bf4b99dd2ed7d7f9.svg"></a>
+<a href="\assert\puml\f10388533accea132b1b262a9aa07545cb6278d9b54a8cd3ea12693631fc2951.svg" class="gallery-item"><img src="\assert\puml\f10388533accea132b1b262a9aa07545cb6278d9b54a8cd3ea12693631fc2951.svg"></a>
 
 <p>所有的请求都会经过<code>DispatcherServlet#doDispatch</code>方法进行分发，处理流程如下图：</p>
-<a href="\assert\puml\c4bc7d02d3647d37fe17fc6a7775948e4bc2a7d27f4bea532c46c773ea076775.svg" class="gallery-item"><img src="\assert\puml\c4bc7d02d3647d37fe17fc6a7775948e4bc2a7d27f4bea532c46c773ea076775.svg"></a>
+<a href="\assert\puml\0901fb6bf34376c72905f0cceb6419f495879ddea4b9b4979d740dbd9282d63f.svg" class="gallery-item"><img src="\assert\puml\0901fb6bf34376c72905f0cceb6419f495879ddea4b9b4979d740dbd9282d63f.svg"></a>
 
 <h3 id="获取给定请求的处理器执行链">2.1. 获取给定请求的处理器执行链</h3><p>Spring MVC抽象出了处理器映射<code>HandleMapping</code>接口，其<code>getHandler</code>方法用来获取当前请求的处理器执行链<code>HandlerExecutionChain</code>。处理器执行链维护了当前请求的处理器和处理器拦截器<code>HandlerInterceptor</code>列表。为支持多种处理器映射，<code>DispatcherServlet</code>中维护了一个处理器映射列表，会遍历该列表找到当前请求对应的处理器执行链。</p>
-<a href="\assert\puml\3e7d7217aaa8ad2bf70a89f82c6c487da829bc075272ce016b62c9ce6ab6f7df.svg" class="gallery-item"><img src="\assert\puml\3e7d7217aaa8ad2bf70a89f82c6c487da829bc075272ce016b62c9ce6ab6f7df.svg"></a>
+<a href="\assert\puml\f1e6b211486d54845bc6a29086137ca277b1364e664c030b5979d2580bbc8a82.svg" class="gallery-item"><img src="\assert\puml\f1e6b211486d54845bc6a29086137ca277b1364e664c030b5979d2580bbc8a82.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>DispatcherServlet#getHandler</code>。</p>
 </blockquote>
 <h3 id="获取给定处理器的处理器适配器">2.2. 获取给定处理器的处理器适配器</h3><p>Spring MVC抽象出了处理器适配器<code>HandlerAdapter</code>接口，其<code>supports</code>方法用来判断该处理器适配器是否支持当前处理器。为支持多种处理器适配器，<code>DispatcherServlet</code>中维护了一个处理器适配器列表，会遍历该列表找到当前处理器对应的处理器适配器。</p>
-<a href="\assert\puml\f27bee07be193bd6338184a91f69607682be955134ab975987189de7238a0322.svg" class="gallery-item"><img src="\assert\puml\f27bee07be193bd6338184a91f69607682be955134ab975987189de7238a0322.svg"></a>
+<a href="\assert\puml\f9e52aabc1d49d7705e7c7963aa66d0ff0c8ebfe5642978c0381a526d7743fc9.svg" class="gallery-item"><img src="\assert\puml\f9e52aabc1d49d7705e7c7963aa66d0ff0c8ebfe5642978c0381a526d7743fc9.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>DispatcherServlet#getHandlerAdapter</code>。</p>
 </blockquote>
 <h3 id="拦截器前置处理">2.3. 拦截器前置处理</h3><p>执行处理器执行链<code>HandlerExecutionChain</code>的前置处理方法<code>applyPreHandle</code>，本质上是依次调用其内部维护的<code>HandlerInterceptor</code>列表中元素的<code>preHandle</code>方法。</p>
-<a href="\assert\puml\8ba1396b6ff97f070dc4137c4e8da85ccddab65a586b7d434f5e5000fa9c9208.svg" class="gallery-item"><img src="\assert\puml\8ba1396b6ff97f070dc4137c4e8da85ccddab65a586b7d434f5e5000fa9c9208.svg"></a>
+<a href="\assert\puml\72ab49ed71d7c6a972f8d6e28f0a43b6e34eebc0d390e6392a40f5ddd96033d1.svg" class="gallery-item"><img src="\assert\puml\72ab49ed71d7c6a972f8d6e28f0a43b6e34eebc0d390e6392a40f5ddd96033d1.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>HandlerExecutionChain#applyPreHandle</code>。</p>
@@ -265,7 +265,7 @@ $ Hello foo!</code></pre>
 <p>对应源码所在位置：<code>DispatcherServlet#applyDefaultViewName</code>。</p>
 </blockquote>
 <h3 id="拦截器后置处理">2.6. 拦截器后置处理</h3><p>执行处理器执行链<code>HandlerExecutionChain</code>的后置处理方法<code>applyPostHandle</code>，本质上是依次调用其内部维护的<code>HandlerInterceptor</code>列表中元素的<code>postHandle</code>方法。</p>
-<a href="\assert\puml\d133713e0c5acf84f872f99c4660987ce2d10cc32159f3d293d033b37cf3cdc1.svg" class="gallery-item"><img src="\assert\puml\d133713e0c5acf84f872f99c4660987ce2d10cc32159f3d293d033b37cf3cdc1.svg"></a>
+<a href="\assert\puml\2b928d7a28e21d3fd3940357645d48b88b76c5d33ebe959c50736a2fb9531c85.svg" class="gallery-item"><img src="\assert\puml\2b928d7a28e21d3fd3940357645d48b88b76c5d33ebe959c50736a2fb9531c85.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>HandlerExecutionChain#applyPostHandle</code>。</p>
@@ -287,7 +287,7 @@ $ Hello foo!</code></pre>
 <li>建立<code>HandlerMethod</code>和<code>CorsConfiguration</code>的映射；</li>
 <li>建立<code>RequestMappingInfo</code>和<code>MappingRegistration</code>的映射。</li>
 </ol>
-<a href="\assert\puml\16b79851b443d14431e67e1262cfd9a52690f8ab1cf03464b35d259a4662ef2d.svg" class="gallery-item"><img src="\assert\puml\16b79851b443d14431e67e1262cfd9a52690f8ab1cf03464b35d259a4662ef2d.svg"></a>
+<a href="\assert\puml\9e3d10e359214fa1435a26205b421eb5d625b3ed57c553178479cb9fc456f0b7.svg" class="gallery-item"><img src="\assert\puml\9e3d10e359214fa1435a26205b421eb5d625b3ed57c553178479cb9fc456f0b7.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>AbstractHandlerMethodMapping#registerHandlerMethod</code>。</p>
@@ -302,7 +302,7 @@ $ Hello foo!</code></pre>
 <blockquote>
 <p>对应源码所在位置：<code>AbstractHandlerMethodMapping#lookupHandlerMethod</code>。</p>
 </blockquote>
-<h3 id="处理器适配器处理给定的请求和处理器-1">3.3. 处理器适配器处理给定的请求和处理器</h3><a href="\assert\puml\4964af9f8af9764f208943e78584dc8addef46f05f969c6bcf4eb332276740fd.svg" class="gallery-item"><img src="\assert\puml\4964af9f8af9764f208943e78584dc8addef46f05f969c6bcf4eb332276740fd.svg"></a>
+<h3 id="处理器适配器处理给定的请求和处理器-1">3.3. 处理器适配器处理给定的请求和处理器</h3><a href="\assert\puml\d7d5bedc9b36603483f4b47bb5748d1381536d27d0f15b523c757ae52928b2e2.svg" class="gallery-item"><img src="\assert\puml\d7d5bedc9b36603483f4b47bb5748d1381536d27d0f15b523c757ae52928b2e2.svg"></a>
 
 
 <blockquote>
@@ -620,7 +620,6 @@ public class CustomController &#123;
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

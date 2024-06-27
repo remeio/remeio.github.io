@@ -228,7 +228,7 @@
 <blockquote>
 <p><code>@Import</code>注解的原理见文章：<a href="/2023/08/27/SpringFramework/@Configuration%E5%8F%8A%E5%85%B6%E5%91%A8%E8%BE%B9%E6%B3%A8%E8%A7%A3%E6%98%AF%E5%A6%82%E4%BD%95%E7%94%9F%E6%95%88%E7%9A%84%EF%BC%9F/">@Configuration及其周边注解是如何生效的？</a></p>
 </blockquote>
-<h3 id="获取候选的自动配置">2.1. 获取候选的自动配置</h3><a href="\assert\puml\c66e0d4f3f161a516b40425acd7b03dcd224852ec7e4dc9837bb28533ce17ff3.svg" class="gallery-item"><img src="\assert\puml\c66e0d4f3f161a516b40425acd7b03dcd224852ec7e4dc9837bb28533ce17ff3.svg"></a>
+<h3 id="获取候选的自动配置">2.1. 获取候选的自动配置</h3><a href="\assert\puml\2712d06aded8dd7d87395b1d036a4882df1947934bcc01d05f81a4b7ba238866.svg" class="gallery-item"><img src="\assert\puml\2712d06aded8dd7d87395b1d036a4882df1947934bcc01d05f81a4b7ba238866.svg"></a>
 
 <ol>
 <li>从<code>META-INF/spring.factories</code>文件中获取<code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code>指定的自动配置；该方式已在后续的版本中移除；</li>
@@ -256,7 +256,7 @@
 <blockquote>
 <p>对应源码所在位置：<code>AutoConfigurationImportSelector#getExclusions</code>。</p>
 </blockquote>
-<h3 id="过滤自动配置">2.4. 过滤自动配置</h3><a href="\assert\puml\d0594ffe44d2b8d911738d71ba86a377ad8864100e71fd41237409795d10725b.svg" class="gallery-item"><img src="\assert\puml\d0594ffe44d2b8d911738d71ba86a377ad8864100e71fd41237409795d10725b.svg"></a>
+<h3 id="过滤自动配置">2.4. 过滤自动配置</h3><a href="\assert\puml\d3caa7075c8b1af55ce0c39ce89abf024be6397e039db38180e7339e3e1c56d2.svg" class="gallery-item"><img src="\assert\puml\d3caa7075c8b1af55ce0c39ce89abf024be6397e039db38180e7339e3e1c56d2.svg"></a>
 
 <ol>
 <li>从<code>META-INF/spring.factories</code>文件中获取<code>org.springframework.boot.autoconfigure.AutoConfigurationImportFilter</code>配置的自动配置导入过滤器；</li>
@@ -300,7 +300,6 @@
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

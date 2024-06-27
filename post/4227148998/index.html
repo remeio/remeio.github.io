@@ -227,7 +227,7 @@
 <li>设置属性值：根据Bean定义获取到属性值，并通过反射的方式为Bean实例设置属性值；</li>
 <li>执行初始化方法：根据Bean定义获取到初始化方法，并通过反射的方式执行初始化方法。</li>
 </ol>
-<a href="\assert\puml\1ca90d824ff6da32428cd68697cb7d923ecaa4bb586ce1f2cef60540a0816f7c.svg" class="gallery-item"><img src="\assert\puml\1ca90d824ff6da32428cd68697cb7d923ecaa4bb586ce1f2cef60540a0816f7c.svg"></a>
+<a href="\assert\puml\caf9d6a12651aa4b16c2e78f24993c9d2a6def8a171608851dc82e900f737ad1.svg" class="gallery-item"><img src="\assert\puml\caf9d6a12651aa4b16c2e78f24993c9d2a6def8a171608851dc82e900f737ad1.svg"></a>
 
 <h2 id="Spring是如何设计的？">3. Spring是如何设计的？</h2><p>同我们上面的设计类似，不过Spring为了满足更多更复杂的场景，其提供了更多的扩展点，如为依赖注入，AOP，<code>Aware</code>接口等提供支持。Bean的创建由<code>BeanFactory#getBean</code>方法触发，会依次执行以下方法：</p>
 <ol>
@@ -235,7 +235,7 @@
 <li><code>AbstractAutowireCapableBeanFactory#createBean</code></li>
 <li><code>AbstractAutowireCapableBeanFactory#doCreateBean</code></li>
 </ol>
-<h3 id="AbstractBeanFactory-doGetBean-详解">3.1. AbstractBeanFactory#doGetBean 详解</h3><a href="\assert\puml\1effb8d600d26a54a68f8e36e1e819ab98024e67f3ef44ef409c8c1b305ba122.svg" class="gallery-item"><img src="\assert\puml\1effb8d600d26a54a68f8e36e1e819ab98024e67f3ef44ef409c8c1b305ba122.svg"></a>
+<h3 id="AbstractBeanFactory-doGetBean-详解">3.1. AbstractBeanFactory#doGetBean 详解</h3><a href="\assert\puml\4a641c7307a1b18cdf9b5bd456227abd4b4acf3c59dc307664d33096bcdb8238.svg" class="gallery-item"><img src="\assert\puml\4a641c7307a1b18cdf9b5bd456227abd4b4acf3c59dc307664d33096bcdb8238.svg"></a>
 <h4 id="转换传入的名称">3.1.1. 转换传入的名称</h4><p><code>DefaultListableBeanFactory</code>维护了一个Bean名称与<code>BeanDefinition</code>的映射（也就是<code>beanDefinitionMap</code>），我们通过Bean名称可以去该映射中获取到<code>BeanDefinition</code>，用于后续的创建Bean的操作。那为什么还需要转换传入的名称呢？其实传入的名称不一定是映射中的Bean名称，主要有以下两种场景：</p>
 <ol>
 <li>当获取<code>FactoryBean</code>类型的Bean时。假如有一个Bean名称为<code>factoryBean</code>的<code>FactoryBean</code>：</li>
@@ -279,7 +279,7 @@
 <blockquote>
 <p>对应源码所在位置：<code>AbstractBeanFactory#adaptBeanInstance</code>。</p>
 </blockquote>
-<h3 id="AbstractAutowireCapableBeanFactory-createBean-详解">3.2. AbstractAutowireCapableBeanFactory#createBean 详解</h3><a href="\assert\puml\5591b104b0764dc0fb24476ae6a038dfe2c3daa4da58f69c2c9452b334595555.svg" class="gallery-item"><img src="\assert\puml\5591b104b0764dc0fb24476ae6a038dfe2c3daa4da58f69c2c9452b334595555.svg"></a>
+<h3 id="AbstractAutowireCapableBeanFactory-createBean-详解">3.2. AbstractAutowireCapableBeanFactory#createBean 详解</h3><a href="\assert\puml\2f1edf16c7e6b68b2fe73e838d04f017f0e548a2d768bd8f8d9d0e0f766ba888.svg" class="gallery-item"><img src="\assert\puml\2f1edf16c7e6b68b2fe73e838d04f017f0e548a2d768bd8f8d9d0e0f766ba888.svg"></a>
 
 <h4 id="解析Bean的Class">3.2.1. 解析Bean的Class</h4><p>如果Bean名称对应的<code>BeanDefinition</code>中的<code>Class</code>还未被解析，则需要将<code>BeanDefinition</code>中的<code>beanClassName</code>解析为具体的<code>Class</code>。这也是XML配置中<code>bean</code>标签的<code>class</code>属性的原理。</p>
 <blockquote>
@@ -301,7 +301,7 @@
 <blockquote>
 <p>对应源码所在位置：<code>AbstractAutowireCapableBeanFactory#doCreateBean</code>。</p>
 </blockquote>
-<h3 id="AbstractAutowireCapableBeanFactory-doCreateBean-详解">3.3. AbstractAutowireCapableBeanFactory#doCreateBean 详解</h3><a href="\assert\puml\6bb6aa91f529d7c86a96f4e8ad23a8f5e1e40d850879a53a04766e11f48165eb.svg" class="gallery-item"><img src="\assert\puml\6bb6aa91f529d7c86a96f4e8ad23a8f5e1e40d850879a53a04766e11f48165eb.svg"></a>
+<h3 id="AbstractAutowireCapableBeanFactory-doCreateBean-详解">3.3. AbstractAutowireCapableBeanFactory#doCreateBean 详解</h3><a href="\assert\puml\8df965731f48ccbab15f98bd50173cc0be0a05f079743ab5ddf0aaeccfe51d34.svg" class="gallery-item"><img src="\assert\puml\8df965731f48ccbab15f98bd50173cc0be0a05f079743ab5ddf0aaeccfe51d34.svg"></a>
 
 
 <h4 id="实例化Bean">3.3.1. 实例化Bean</h4><p>实例化Bean是通过反射的方式创建Bean的实例。有以下几个步骤：</p>
@@ -356,7 +356,7 @@
 <p>对应源码所在位置：<code>DisposableBeanAdapter#destroy</code>。</p>
 </blockquote>
 <h3 id="Bean的创建的流程图">3.4. Bean的创建的流程图</h3><p>回顾上面三个步骤，Bean的创建的流程图如下：</p>
-<a href="\assert\puml\8516261d49e7d55880bbf84f0d4f669851030aadd6d71eac4e183f1ef0a1d34b.svg" class="gallery-item"><img src="\assert\puml\8516261d49e7d55880bbf84f0d4f669851030aadd6d71eac4e183f1ef0a1d34b.svg"></a>
+<a href="\assert\puml\69bfd1ee53e6177abe0632d487bf5a8a38f9d11368a79d7a80984ca70d3c604f.svg" class="gallery-item"><img src="\assert\puml\69bfd1ee53e6177abe0632d487bf5a8a38f9d11368a79d7a80984ca70d3c604f.svg"></a>
 
 <h2 id="实战">4. 实战</h2><h3 id="如何自定义一个线程级Bean的作用域？">4.1. 如何自定义一个线程级Bean的作用域？</h3><p>首先什么是作用域？作用域就是一个Bean生效的范围，在这个范围内根据相同的Bean名称多次获取Bean都会返回同一个Bean。</p>
 <ul>
@@ -558,7 +558,6 @@ Get prototype test bean by @Lookup: com.remeio.upsnippet.spring.beanfactory.Look
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

@@ -204,7 +204,7 @@
   <div class="article">
   
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
-<div class="markmap-container" style="height:200px">
+<div class="markmap-container" style="height:250px">
   <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;类加载子系统&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;类加载机制&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是类加载机制？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;类加载有哪些步骤？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;类加载的时机？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[5,6]},&quot;v&quot;:&quot;类加载器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些类加载器？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;类加载器加载类的过程？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;如何自定义类加载器？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[9,10]},&quot;v&quot;:&quot;双亲委派模型&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是双亲委派模型？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;为什么需要双亲委派模型？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;如何打破双亲委派模型？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是SPI机制？&quot;}]}]}"/>
 </div>
 
@@ -225,7 +225,7 @@
 ">[4]</span></a></sup>（Resolution）；</li>
 <li>执行类构造器<code>&lt;clinit&gt;</code>方法，即初始化<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 5. Loading, Linking, and Initializing - Initialization](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-5.html#jvms-5.5)">[5]</span></a></sup>（Initializing）。</li>
 </ol>
-<a href="\assert\puml\7ae3ae943a26036460dd0f9a4e6eb1139bc2cb99d51f3de21a318ddc7b866f85.svg" class="gallery-item"><img src="\assert\puml\7ae3ae943a26036460dd0f9a4e6eb1139bc2cb99d51f3de21a318ddc7b866f85.svg"></a>
+<a href="\assert\puml\5cdad0bb2a716c13f78fdbc9bd3d7395cb12b63e0740b7e90f54a35123a122a0.svg" class="gallery-item"><img src="\assert\puml\5cdad0bb2a716c13f78fdbc9bd3d7395cb12b63e0740b7e90f54a35123a122a0.svg"></a>
 
 <h4 id="在类加载的加载阶段加载不存在的类会抛出什么异常？">1.2.1. 在类加载的加载阶段加载不存在的类会抛出什么异常？</h4><p>编写一个测试类，使用<code>Class#forName</code>去加载一个并不存在的类<code>java.lang.NotExistClass</code>。运行结果如下，从堆栈信息中可以看到虚拟机使用了<code>AppClassLoader</code>去加载该类，且在执行<code>URLClassLoader#findClass</code>方法时并未找到该类，故抛出了<code>ClassNotFoundException</code>异常。</p>
 <pre class="line-numbers language-none"><code class="language-none">Exception in thread &quot;main&quot; java.lang.ClassNotFoundException: java.lang.NotExistClass
@@ -448,7 +448,7 @@ static &#123;&#125;;
 <li>应用类加载器（Application Class Loader），用来加载<code>classpath</code>下的<code>jar</code>。</li>
 <li>自定义类加载器（User Class Loader），用来加载自定义的<code>class</code>二进制字节流。</li>
 </ul>
-<a href="\assert\puml\825360d956786e29a45331a1365b146af4083f6eeebe95dad44f93ba2d9cc80d.svg" class="gallery-item"><img src="\assert\puml\825360d956786e29a45331a1365b146af4083f6eeebe95dad44f93ba2d9cc80d.svg"></a>
+<a href="\assert\puml\bfbaf50b53f29da54e52171fd3686a472fad75a46cfa3b4a83ee28af72c8bd66.svg" class="gallery-item"><img src="\assert\puml\bfbaf50b53f29da54e52171fd3686a472fad75a46cfa3b4a83ee28af72c8bd66.svg"></a>
 
 <p><strong>加载不同的类使用的是什么类型的类加载器？</strong></p>
 <p>编写一段代码去加载<code>java.lang.String</code>，<code>javafx.event.Event</code>和<code>DiffClassLoaderTest</code>类，并打印各类型对应的类加载器。代码如下：</p>
@@ -496,7 +496,7 @@ The class loader of &#39;class com.remeio.upsnippet.jvm.classloader.DiffClassLoa
 <li>如果没有被加载过，则判断该类加载器是否存在父类加载器，如果存在则委派给父类加载器去加载该类；</li>
 <li>如果父类加载器未加载到该类，则当前类加载器去加载该类。</li>
 </ol>
-<a href="\assert\puml\6a4b0fa382a2e0ef8cc76cf79b7e227d21b1caa2cf32bf44c69bfc582846934b.svg" class="gallery-item"><img src="\assert\puml\6a4b0fa382a2e0ef8cc76cf79b7e227d21b1caa2cf32bf44c69bfc582846934b.svg"></a>
+<a href="\assert\puml\133c80e6fefc4ce1a1cc3f2e58e607920276c0abe656e233c621596f44e39cd1.svg" class="gallery-item"><img src="\assert\puml\133c80e6fefc4ce1a1cc3f2e58e607920276c0abe656e233c621596f44e39cd1.svg"></a>
 
 <h3 id="如何自定义类加载器？">2.3. 如何自定义类加载器？</h3><p>一般来说自定义类加载器，只需要重写<code>ClassLoader#findClass</code>方法，在此方法中去实现<code>class</code>二进制字节流的获取，并使用<code>ClassLoader#defineClass</code>从<code>class</code>二进制字节流中创建<code>Class</code>对象。</p>
 <p>除了加载<code>JAVA_HOME</code>和<code>classpath</code>下的类，如果我们还需要从别的路径加载类便需要自定义类加载器。我们定义一个自定义类加载器<code>CustomClassPathClassLoader</code>，继承<code>ClassLoader</code>类并重写<code>ClassLoader#findClass</code>方法，让其从指定路径的文件中去获取<code>class</code>二进制字节流，然后使用<code>ClassLoader#defineClass</code>来创建<code>Class</code>对象。代码如下：</p>
@@ -561,7 +561,7 @@ public class CustomClassLoaderTest &#123;
 <li>使用SPI（Service Provider Interface）机制，使用线程上下文中的类加载器加载类。</li>
 </ol>
 <h3 id="什么是SPI机制？">3.4. 什么是SPI机制？</h3><p>SPI（Service Provider Interface）机制是指为满足服务商不同的需求，由JDK源码定义服务接口，服务商提供不同的服务实现。加载JDK源码（这里指<code>rt.jar</code>）使用的是启动类加载器，无法加载<code>classpath</code>下的服务商提供的服务实现，而SPI机制则利用线程上下文中的类加载器即应用类加载器去加载服务商提供的服务实现，如此以来便打破了双亲委派模型。</p>
-<a href="\assert\puml\c4e5e2716abc00e4e1a752e2d201a9d9f9d254f9517b9c29810e5518bb4e7075.svg" class="gallery-item"><img src="\assert\puml\c4e5e2716abc00e4e1a752e2d201a9d9f9d254f9517b9c29810e5518bb4e7075.svg"></a>
+<a href="\assert\puml\035dafb97411c51902655c277ac6e0282f141c49728981c13f9e9ca577f121a6.svg" class="gallery-item"><img src="\assert\puml\035dafb97411c51902655c277ac6e0282f141c49728981c13f9e9ca577f121a6.svg"></a>
 
 <p>下面将以示例的方式探究SPI机制是如何打破双亲委派模型的。首先编写使用<code>MySQL</code>驱动去连接数据库的代码，并打印当前线程上下文中的类加载器，加载服务定义<code>java.sql.Connection</code>的类加载器以及加载服务实现<code>com.mysql.cj.jdbc.ConnectionImpl</code>的类加载器。代码如下：</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">
@@ -654,7 +654,6 @@ The class loader of &#39;class com.mysql.cj.jdbc.ConnectionImpl&#39; is &#39;sun
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

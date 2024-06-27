@@ -204,7 +204,7 @@
   <div class="article">
   
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
-<div class="markmap-container" style="height:200px">
+<div class="markmap-container" style="height:250px">
   <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;List&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;ArrayList&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayList和数组有什么区别？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayList是如何设计的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是fast-fail机制？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayList是如何扩容的？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[6,7]},&quot;v&quot;:&quot;LinkedList&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;LinkedList是如何设计的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayList和LinkedList有什么区别？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;什么时候选用LinkedList？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[10,11]},&quot;v&quot;:&quot;Vector&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;Vector是如何设计的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayList和Vector有什么区别？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;Stack底层是如何实现的？&quot;}]}]}"/>
 </div>
 
@@ -214,7 +214,7 @@
 <li>在一般场景下，<code>ArrayList</code>有着更好的性能。</li>
 <li>在特定场景下，<code>LinkedList</code>有着更好的性能。</li>
 </ul>
-<a href="\assert\puml\d611af3e45c12c674146060e2983d71ff11c9e48f675bdadbee8d622c589f06d.svg" class="gallery-item"><img src="\assert\puml\d611af3e45c12c674146060e2983d71ff11c9e48f675bdadbee8d622c589f06d.svg"></a>
+<a href="\assert\puml\239de58ee70fae05af608e8a6b03997ecd1e440f78153df567242bf29b4c1eff.svg" class="gallery-item"><img src="\assert\puml\239de58ee70fae05af608e8a6b03997ecd1e440f78153df567242bf29b4c1eff.svg"></a>
 
 <h3 id="List接口的实现有什么不同？">1.2. List接口的实现有什么不同？</h3><div class="article-table"><table>
 <thead>
@@ -286,7 +286,7 @@
 <td align="left">O(1)</td>
 </tr>
 </tbody></table></div>
-<h2 id="ArrayList详解">2. ArrayList详解</h2><a href="\assert\puml\d104d88e3b5e917e03e912e0920aa7f2fed0cd0d836437e378a56a48e204e4ad.svg" class="gallery-item"><img src="\assert\puml\d104d88e3b5e917e03e912e0920aa7f2fed0cd0d836437e378a56a48e204e4ad.svg"></a>
+<h2 id="ArrayList详解">2. ArrayList详解</h2><a href="\assert\puml\3e0bf04e7ababb55d166e8343ae551a79ee460816f6e43803a13997c3874e960.svg" class="gallery-item"><img src="\assert\puml\3e0bf04e7ababb55d166e8343ae551a79ee460816f6e43803a13997c3874e960.svg"></a>
 
 <h3 id="ArrayList和数组有什么区别？">2.1. ArrayList和数组有什么区别？</h3><ul>
 <li>大小不同：数组的大小是固定的，在声明的时候就需要指定；<code>ArrayList</code>的大小会按需动态调整。</li>
@@ -367,7 +367,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 &#125;</code></pre>
 
 
-<h2 id="LinkedList详解">3. LinkedList详解</h2><a href="\assert\puml\17eff452fba44948226bd68d24eee39b765d46eeb413d71fce9f10e63ec94470.svg" class="gallery-item"><img src="\assert\puml\17eff452fba44948226bd68d24eee39b765d46eeb413d71fce9f10e63ec94470.svg"></a>
+<h2 id="LinkedList详解">3. LinkedList详解</h2><a href="\assert\puml\54d392bc7a94247da5f5fba86c36525f39419b5efec37c2942590a94fabf2c72.svg" class="gallery-item"><img src="\assert\puml\54d392bc7a94247da5f5fba86c36525f39419b5efec37c2942590a94fabf2c72.svg"></a>
 
 <h3 id="LinkedList是如何设计的？">3.1. LinkedList是如何设计的？</h3><ul>
 <li>继承关系：<code>LinkedList</code>实现了<code>List</code>接口和<code>Deque</code>接口。</li>
@@ -382,7 +382,7 @@ private static int hugeCapacity(int minCapacity) &#123;
 <li>实现的接口不同：<code>LinkedList</code>额外实现了<code>Deque</code>接口，可以当做双向队列使用。</li>
 </ul>
 <h3 id="什么时候选用LinkedList？">3.3. 什么时候选用LinkedList？</h3><p>官方建议在选择使用<code>LinkedList</code>前，应该同时测试<code>ArrayList</code>和<code>LinkedList</code>的性能，来验证是否真的有必要选用<code>LinkedList</code>，通常来说<code>ArrayList</code>拥有更好的性能。线程不安全的<code>Deque</code>推荐使用<code>ArrayDeque</code>，线程安全的<code>Deque</code>推荐使用<code>ConcurrentLinkedDeque</code>。</p>
-<h2 id="Vector详解">4. Vector详解</h2><a href="\assert\puml\d0d5242203a95b95c2bbf2fea2ea66808d5d6fd30309731e0720731da8398ea5.svg" class="gallery-item"><img src="\assert\puml\d0d5242203a95b95c2bbf2fea2ea66808d5d6fd30309731e0720731da8398ea5.svg"></a>
+<h2 id="Vector详解">4. Vector详解</h2><a href="\assert\puml\13c5158b1426ca173eaff34636e3228b6ac817d4f1b79128dce0643369099274.svg" class="gallery-item"><img src="\assert\puml\13c5158b1426ca173eaff34636e3228b6ac817d4f1b79128dce0643369099274.svg"></a>
 
 <h3 id="Vector是如何设计的？">4.1. Vector是如何设计的？</h3><ul>
 <li>继承关系：<code>Vector</code>实现了<code>List</code>接口和<code>RandomAccess</code>接口。</li>
@@ -584,7 +584,6 @@ Node&lt;E&gt; node(int index) &#123;
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

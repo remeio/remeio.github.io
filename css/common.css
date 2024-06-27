@@ -90,18 +90,16 @@ pre code {
   padding: 0;
 }
 table {
-  width: 100%;
   table-layout: fixed;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-family: var(--global-font-family);
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  border-collapse: separate;
   border-radius: 10px;
   border-spacing: 0;
+  border-collapse: collapse;
 }
 thead {
-  background: var(--bgColor2);
   color: var(--fontColor);
   transition-property: background-color, color;
   transition-duration: 0.5s;
@@ -114,19 +112,8 @@ tbody {
 th,
 td {
   padding: 0.8rem;
-  border: 1px solid var(--borderColor);
+  border-bottom: 1px solid var(--fontColor);
   position: relative;
   transition-property: border-color;
   transition-duration: 0.5s;
-}
-th:not(:last-child)::before {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 1px;
-  height: 2rem;
-  background-color: var(--borderColor);
-  transform: translateY(-50%);
-  transition: background-color 0.5s;
-  content: "";
 }

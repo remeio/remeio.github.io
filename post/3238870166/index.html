@@ -204,7 +204,7 @@
   <div class="article">
   
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
-<div class="markmap-container" style="height:200px">
+<div class="markmap-container" style="height:300px">
   <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;BeanDefinition的加载&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;BeanDefinition是如何存储的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;BeanDefinition是如何被加载的？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;如何通过路径获取XML配置的资源？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML配置的资源后，如何将其加载为XML文档？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML文档后，如何解析文档中的各种标签？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;实战&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;使用不同类型的路径来获取资源，会返回什么类型的资源？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;使用debug的方式跟踪XML配置文件是如何被加载的？&quot;}]}]}"/>
 </div>
 
@@ -226,7 +226,7 @@
 <li>其持有一个<code>BeanDefinitionRegistry</code>的实例，用于注册<code>BeanDefinition</code>。</li>
 <li>并提供一个加载<code>BeanDefinition</code>的方法。</li>
 </ul>
-<a href="\assert\puml\41770899fc0d077b813d477a93e0c964fa90481864669394368b58414ee86162.svg" class="gallery-item"><img src="\assert\puml\41770899fc0d077b813d477a93e0c964fa90481864669394368b58414ee86162.svg"></a>
+<a href="\assert\puml\15c81055fd2fa6531d3d731500e9974eef528d5a9ca27de62ee7500668ef176a.svg" class="gallery-item"><img src="\assert\puml\15c81055fd2fa6531d3d731500e9974eef528d5a9ca27de62ee7500668ef176a.svg"></a>
 
 <h2 id="Spring是如何设计的？">3. Spring是如何设计的？</h2><p>同我们上面的设计类似，Spring在此基础上进行接口和类的抽象以及各个功能的拆分，所以派生了大量的类，看着比我们上面的设计复杂不少，实际上殊途同归。</p>
 <blockquote>
@@ -238,15 +238,15 @@
 </ul>
 </blockquote>
 <h3 id="BeanDefinition是如何存储的？">3.1. BeanDefinition是如何存储的？</h3><p>首先我们来看<code>BeanDefinition</code>的存储，为此Spring抽象出了一个<code>BeanDefinitionRegistry</code>接口，并提供了注册<code>BeanDefinition</code>的方法，由<code>DefaultListableBeanFactory</code>进行实现，类图如下：</p>
-<a href="\assert\puml\32a394c4f225b5a1324c8f37632071ffcf99ff277bfa69b4df1e57c29633d738.svg" class="gallery-item"><img src="\assert\puml\32a394c4f225b5a1324c8f37632071ffcf99ff277bfa69b4df1e57c29633d738.svg"></a>
+<a href="\assert\puml\0cd592aa61462a133e87d72de14308405407359c5d4c334e7e4f034014243679.svg" class="gallery-item"><img src="\assert\puml\0cd592aa61462a133e87d72de14308405407359c5d4c334e7e4f034014243679.svg"></a>
 <h3 id="BeanDefinition是如何被加载的？">3.2. BeanDefinition是如何被加载的？</h3><p>有了存储<code>BeanDefinition</code>的类，还需要能够从XML或其他类型的配置文件中加载<code>BeanDefinition</code>，为此Spring抽象出了一个<code>BeanDefinitionReader</code>接口，用于从资源里加载<code>BeanDefinition</code>，由<code>XMLBeanDefinitionReader</code>等类进行实现，类图如下：</p>
-<a href="\assert\puml\f094868b5f619a886ad21e42d89773dbff22a26a983f4a75685b1caf23d6d4af.svg" class="gallery-item"><img src="\assert\puml\f094868b5f619a886ad21e42d89773dbff22a26a983f4a75685b1caf23d6d4af.svg"></a>
+<a href="\assert\puml\e1edfad3269255a3ac9e0690e56305330512f0ecacecaf1df2f2462fb249a8d0.svg" class="gallery-item"><img src="\assert\puml\e1edfad3269255a3ac9e0690e56305330512f0ecacecaf1df2f2462fb249a8d0.svg"></a>
 <blockquote>
 <p>Spring提供了加载<code>BeanDefinition</code>的通用抽象类实现<code>AbstractBeanDefinitionReader</code>，并提供了抽象方法<code>loadBeanDefinitions(Resource)</code>。如此以来，无论是从XML配置，Groovy配置，还是从Properties配置中加载<code>BeanDefinition</code>都只需要实现该抽象方法即可，这是一种模板方法模式。</p>
 </blockquote>
 <p>下面我们来看下<code>XMLBeanDefinitionReader</code>的<code>loadBeanDefinitions(String)</code>方法是如何工作的？</p>
 <h4 id="如何通过路径获取XML配置的资源？">3.2.1. 如何通过路径获取XML配置的资源？</h4><p>获取资源无非就是通过一个路径找到一个资源。Spring将资源声明为<code>Resource</code>类，并获取资源的工作则交给<code>ResourceLoader</code>类，其会根据传入路径的类型决定返回具体的<code>Resource</code>类的子类（详见下文实战），类图如下：</p>
-<a href="\assert\puml\f71eea13589baad790902625a8a345f8a22455a040e893cf58fff6b8d3e181bf.svg" class="gallery-item"><img src="\assert\puml\f71eea13589baad790902625a8a345f8a22455a040e893cf58fff6b8d3e181bf.svg"></a>
+<a href="\assert\puml\e005f87720a5143180ed2be50aa0e14d94ca1daa6218a28b77fa1d3fe33d509a.svg" class="gallery-item"><img src="\assert\puml\e005f87720a5143180ed2be50aa0e14d94ca1daa6218a28b77fa1d3fe33d509a.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：</p>
@@ -432,7 +432,6 @@ public class BeanDefinitionLoadTest &#123;
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');

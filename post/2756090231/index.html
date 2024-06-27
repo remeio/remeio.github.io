@@ -261,11 +261,11 @@ public class Client &#123;
 <li>字段注入和方法注入：<code>CommonAnnotationBeanPostProcessor#postProcessProperties</code>。</li>
 </ul>
 <p>总的来看，依赖注入发生在实例化Bean和设置Bean的属性两大步骤中，依赖注入的具体实现则在相应的Bean后置处理器中，依赖注入发生的时机如下流程图：</p>
-<a href="\assert\puml\5262a24472eb7a3a65fff56dd9742a5309a8134cb48988a67d90356aceaae8c1.svg" class="gallery-item"><img src="\assert\puml\5262a24472eb7a3a65fff56dd9742a5309a8134cb48988a67d90356aceaae8c1.svg"></a>
+<a href="\assert\puml\9046849fb1c426233a0b3daf65b694499b4ab1f11ff80914bde2cbc189edf1df.svg" class="gallery-item"><img src="\assert\puml\9046849fb1c426233a0b3daf65b694499b4ab1f11ff80914bde2cbc189edf1df.svg"></a>
 
 
 <h3 id="依赖注入在Spring中是如何描述的？">1.4. 依赖注入在Spring中是如何描述的？</h3><p>上文我们说到可以通过在Bean的字段，方法或构造器上标注特定注解（如<code>@Autowired</code>，<code>@Resource</code>等）的方式来告知IoC容器此处需要依赖注入，那在Spring中是如何描述这些需要依赖注入的地方的呢？Spring使用注入元素<code>InjectElement</code>来描述Bean中每个需要依赖注入的地方，并使用注入元数据<code>InjectMetadata</code>来组合Bean中所有的注入元素，类图如下：</p>
-<a href="\assert\puml\50848c3eb9a43b5db88c486b0944c224473a6dabf886ae22f15d2e8f6819bdc5.svg" class="gallery-item"><img src="\assert\puml\50848c3eb9a43b5db88c486b0944c224473a6dabf886ae22f15d2e8f6819bdc5.svg"></a>
+<a href="\assert\puml\28e4b465ce1ffc14f9a68f5a187d29743dd8700d6ca233a13611cb04e2b88241.svg" class="gallery-item"><img src="\assert\puml\28e4b465ce1ffc14f9a68f5a187d29743dd8700d6ca233a13611cb04e2b88241.svg"></a>
 
 <p>从类图中我们可以看到，注入元素<code>InjectElement</code>中有一个<code>InjectElement#inject</code>方法，其提供了字段注入和方法注入的默认实现。</p>
 <ul>
@@ -289,7 +289,7 @@ public class Client &#123;
 <p><code>InjectElement</code>使用了模板方法模式，子类可通过重写<code>InjectElement#getResourceToInject</code>方法来实现不同的依赖注入方式。<br><code>InjectMetadata</code>使用了组合模式，其维护了Bean进行依赖注入所需的<code>InjectElement</code>列表，当对Bean进行依赖注入时，<code>InjectMetadata#inject</code>方法会依次调用每个<code>InjectElement</code>的<code>InjectElement#inject</code>方法来进行依赖注入。</p>
 </blockquote>
 <h2 id="自动装配注解依赖注入详解">2. 自动装配注解依赖注入详解</h2><p>使用<code>@Autowired</code>，<code>@Value</code>，<code>@Inject</code>等自动装配注解完成依赖注入的流程图如下：</p>
-<a href="\assert\puml\b6e793d4964643170614c4f3dc7ae083907b3aa1b4b0ea6611527454ab71bf05.svg" class="gallery-item"><img src="\assert\puml\b6e793d4964643170614c4f3dc7ae083907b3aa1b4b0ea6611527454ab71bf05.svg"></a>
+<a href="\assert\puml\be06d03d89db45dc9ca6fbde6689e548b35cdc7d98f9b13cc1d195591825bb6b.svg" class="gallery-item"><img src="\assert\puml\be06d03d89db45dc9ca6fbde6689e548b35cdc7d98f9b13cc1d195591825bb6b.svg"></a>
 
 <h3 id="如何获取Bean的注入元数据？">2.1. 如何获取Bean的注入元数据？</h3><p>当调用自动装配Bean后置处理器的<code>AutowiredAnnotationBeanPostProcessor#postProcessProperties</code>方法时，会获取该Bean的注入元数据，为后续的依赖注入做准备。获取Bean的注入元数据的流程如下：</p>
 <ol>
@@ -304,7 +304,7 @@ public class Client &#123;
 <ol>
 <li>首先，根据字段<code>Field</code>构建依赖描述符<code>DependencyDescriptor</code>；</li>
 <li>而后，通过<code>AutowireCapableBeanFactory#resolveDependency</code>解析依赖描述符<code>DependencyDescriptor</code>所对应的依赖；</li>
-<li>最后，将解析到的依赖通过反射的方式<code>Field#set</code>设置到Bean中，实现字段注入。<a href="\assert\puml\9a791ac0a5d48326c3fac4b2b9c5306556c794e2cba235aa7f653a5b3c090b94.svg" class="gallery-item"><img src="\assert\puml\9a791ac0a5d48326c3fac4b2b9c5306556c794e2cba235aa7f653a5b3c090b94.svg"></a>
+<li>最后，将解析到的依赖通过反射的方式<code>Field#set</code>设置到Bean中，实现字段注入。<a href="\assert\puml\bd4bd1f9e85805d675c080bfbf5afea3c8277df617bc6f00dd72a48a9eceade6.svg" class="gallery-item"><img src="\assert\puml\bd4bd1f9e85805d675c080bfbf5afea3c8277df617bc6f00dd72a48a9eceade6.svg"></a>
 <blockquote>
 <p>对应源码所在位置：<code>AutowiredAnnotationBeanPostProcessor.AutowiredFieldElement#inject</code>。</p>
 </blockquote>
@@ -314,7 +314,7 @@ public class Client &#123;
 <ol>
 <li>首先，根据方法<code>Method</code>中的参数依次构建依赖描述符<code>DependencyDescriptor</code>；</li>
 <li>而后，通过<code>AutowireCapableBeanFactory#resolveDependency</code>解析每个依赖描述符<code>DependencyDescriptor</code>所对应的依赖；</li>
-<li>最后，当所有的方法参数所对应的依赖解析完成后，通过反射的方式<code>Method#invoke</code>调用注入方法，实现方法注入。<a href="\assert\puml\528c146b41b211feca07e256d76eaea148b32f32e9b272a91ce498f567d5539b.svg" class="gallery-item"><img src="\assert\puml\528c146b41b211feca07e256d76eaea148b32f32e9b272a91ce498f567d5539b.svg"></a></li>
+<li>最后，当所有的方法参数所对应的依赖解析完成后，通过反射的方式<code>Method#invoke</code>调用注入方法，实现方法注入。<a href="\assert\puml\4875316227988a93990df45d54bfecbdb346810cc40c5fa3949336b0fcccbcf3.svg" class="gallery-item"><img src="\assert\puml\4875316227988a93990df45d54bfecbdb346810cc40c5fa3949336b0fcccbcf3.svg"></a></li>
 </ol>
 <blockquote>
 <p>对应源码所在位置：<code>AutowiredAnnotationBeanPostProcessor.AutowiredMethodElement#inject</code>。</p>
@@ -337,7 +337,7 @@ public class Client &#123;
 </ol>
 <p>如果需要注入的依赖较少或强调是必选依赖，则使用构造器注入；如果需要强调是可选依赖，则使用方法注入；否者，使用字段注入。在同一个Bean中也可同时使用以上三种依赖注入的方式。</p>
 <h2 id="通用注解依赖注入详解">3. 通用注解依赖注入详解</h2><p>使用<code>@Resource</code>，<code>@Ejb</code>等通用注解完成依赖注入的流程图如下：</p>
-<a href="\assert\puml\1820ba8d4322dcdb445055f222f1e4643300bcf317dd1fe83610863260887d49.svg" class="gallery-item"><img src="\assert\puml\1820ba8d4322dcdb445055f222f1e4643300bcf317dd1fe83610863260887d49.svg"></a>
+<a href="\assert\puml\b38a6b1558b3d3bb616c2b539dd6ceda1b6663894fe9590371f5c96bb467dad1.svg" class="gallery-item"><img src="\assert\puml\b38a6b1558b3d3bb616c2b539dd6ceda1b6663894fe9590371f5c96bb467dad1.svg"></a>
 <h3 id="如何获取Bean的注入元数据">3.1. 如何获取Bean的注入元数据</h3><p>当调用自动装配Bean后置处理器的<code>CommonAnnotationBeanPostProcessor#postProcessProperties</code>方法时，会获取该Bean的注入元数据，为后续的依赖注入做准备。获取Bean的注入元数据的流程如下：</p>
 <ol>
 <li>首先，会调用<code>ReflectionUtils#doWithLocalFields</code>方法通过反射的方式执行依次遍历该Bean的各个字段<code>Field</code>，来构建注入元素<code>EjbRefElement</code>或<code>ResourceElement</code>；</li>
@@ -353,13 +353,13 @@ public class Client &#123;
 <li>如果是字段<code>Field</code>的话，会通过<code>ResourceElement#getResourceToInject</code>方法获取资源，并通过反射的方式<code>Field#set</code>设置到Bean中，实现字段注入；</li>
 <li>如果是方法<code>Method</code>的话，会通过<code>ResourceElement#getResourceToInject</code>方法获取资源，并通过反射的方式<code>Method#invoke</code>调用注入方法，实现方法注入。</li>
 </ol>
-<a href="\assert\puml\1ff321dfe284e58d913612ad728e77f705cc874e8aa96dc655712c436f8c7f97.svg" class="gallery-item"><img src="\assert\puml\1ff321dfe284e58d913612ad728e77f705cc874e8aa96dc655712c436f8c7f97.svg"></a>
+<a href="\assert\puml\7c31f73096de93603ad61eb3d8da9d4b10493e23bc3e749cc628c2027a201cdc.svg" class="gallery-item"><img src="\assert\puml\7c31f73096de93603ad61eb3d8da9d4b10493e23bc3e749cc628c2027a201cdc.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>ResourceElement#inject</code>。</p>
 </blockquote>
 <p>资源注入元素获取资源的<code>ResourceElement#getResourceToInject</code>方法的实现逻辑如下图：</p>
-<a href="\assert\puml\0278171ab3a0edac199e1cb81ad1ec08d942dfcbd2d7e55746343d2ba02d2001.svg" class="gallery-item"><img src="\assert\puml\0278171ab3a0edac199e1cb81ad1ec08d942dfcbd2d7e55746343d2ba02d2001.svg"></a>
+<a href="\assert\puml\a6833fa8966822cf956a25ce1e1eaa36e220e0636055caeb156faff7f4f6588d.svg" class="gallery-item"><img src="\assert\puml\a6833fa8966822cf956a25ce1e1eaa36e220e0636055caeb156faff7f4f6588d.svg"></a>
 
 <blockquote>
 <p>对应源码所在位置：<code>CommonAnnotationBeanPostProcessor#getResource</code>。</p>
@@ -370,7 +370,7 @@ public class Client &#123;
 <li>从依赖的获取方式上看，<code>@Autowired</code>根据类型进行依赖的获取；而<code>@Resource</code>会先尝试通过名称进行依赖的获取，未获取到则通过类型进行依赖的获取。</li>
 </ol>
 <h2 id="如何解析依赖描述符对应的依赖？">4. 如何解析依赖描述符对应的依赖？</h2><p>依赖描述符<code>DependencyDescriptor</code>用来描述被注入的依赖的信息，包括字段，方法参数或构造器参数，是否必须，依赖的类型等信息。根据依赖描述符解析依赖的方法是<code>AutowireCapableBeanFactory#resolveDependency</code>，由<code>DefaultListableBeanFactory#resolveDependency</code>实现。类图如下：</p>
-<a href="\assert\puml\a8909ae76ec49d83ab2e15ffed7d93e5a44e13398e3c757a5855ff4146630f1a.svg" class="gallery-item"><img src="\assert\puml\a8909ae76ec49d83ab2e15ffed7d93e5a44e13398e3c757a5855ff4146630f1a.svg"></a>
+<a href="\assert\puml\98ef1052261b6c0a7dda57fc55c210bcb74efed3c02e6724cefc1dd426ab45ba.svg" class="gallery-item"><img src="\assert\puml\98ef1052261b6c0a7dda57fc55c210bcb74efed3c02e6724cefc1dd426ab45ba.svg"></a>
 
 <h3 id="解析特殊类型的依赖">4.1. 解析特殊类型的依赖</h3><ol>
 <li>对于类型为<code>Optional</code>的依赖，会构建一个<code>required</code>属性为<code>false</code>的<code>NestedDependencyDescriptor</code>依赖描述符，然后解析依赖后构建<code>Optional</code>对象并返回；</li>
@@ -661,7 +661,6 @@ public class MarkedAnnotationBeanPostProcessor implements InstantiationAwareBean
       });
       window.addEventListener('scroll', function() {
         var currentPosition = window.scrollY || window.pageYOffset;
-        console.log(currentPosition)
         sectionIds.forEach(function(id) {
           var section = document.querySelector('#' + id);
           var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
