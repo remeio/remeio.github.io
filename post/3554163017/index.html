@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    虚拟机如何调优及案例分析？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%90%86%E8%AE%BA"><span class="toc-text">1. 调优理论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 调优的过程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5"><span class="toc-text">2. 调优手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%82%E6%95%B0%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">2.1. 虚拟机参数有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK%E5%B7%A5%E5%85%B7%E5%8C%85%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%EF%BC%9F"><span class="toc-text">2.2. JDK工具包中有哪些工具？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E5%8F%8A%E5%88%86%E6%9E%90%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84GC%E6%97%A5%E5%BF%97%EF%BC%9F"><span class="toc-text">2.3. 如何打印及分析虚拟机的GC日志？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B"><span class="toc-text">3. 调优案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84%E5%A0%86%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.2. 如何为虚拟机指定合适的Java虚拟机栈大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%9F"><span class="toc-text">3.3. 如何为虚拟机选择合适的垃圾收集器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.4. 程序发生内存溢出如何排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E6%AD%BB%E9%94%81%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.5. 程序发生死锁如何排查？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/JVM">> JVM</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>虚拟机如何调优及案例分析？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-09-23 18:00，字数：3.2k，预计阅读：14分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:250px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;JVM调优&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;调优理论&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;为什么需要调优？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;调优的过程是怎样的？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[4,5]},&quot;v&quot;:&quot;调优手段&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;虚拟机参数有哪些分类？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;JDK工具包中有哪些工具？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;如何打印及分析虚拟机的GC日志？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;调优案例&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;如何为虚拟机指定合适的堆内存大小和元空间大小？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;如何为虚拟机指定合适的Java虚拟机栈大小？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;如何为虚拟机选择合适的垃圾收集器？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;程序发生内存溢出如何排查？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;程序发生死锁如何排查？&quot;}]}]}"/>
+</div>
+
+
+<h2 id="调优理论">1. 调优理论</h2><h3 id="为什么需要调优？">1.1. 为什么需要调优？</h3><ul>
+<li>提高程序运行的性能，如提高程序的吞吐量、降低程序的响应时间等。</li>
+<li>解决程序出现的问题，如解决内存溢出、内存泄漏、死锁等问题。</li>
+</ul>
+<blockquote>
+<p>性能问题一般需要调整程序代码，虚拟机调优是最后手段。</p>
+</blockquote>
+<h3 id="调优的过程是怎样的？">1.2. 调优的过程是怎样的？</h3><ol>
+<li>监控虚拟机的行为，如堆的内存占用、GC次数、GC耗时等；</li>
+<li>确定目标，如降低内存占用、减小响应延迟等；</li>
+<li>制定方案，如调整虚拟机参数；</li>
+<li>验证方案，对比执行方案前和执行方案后行为的变化是否符合预期；</li>
+<li>结果验收，灰量测试，全量发布。</li>
+</ol>
+<a href="/assert/puml/ef4de504a93324913cb04c2aca8e6f99d0a126aa33af2782421ae56d7a1a444c.svg" class="gallery-item"><img src="/assert/puml/ef4de504a93324913cb04c2aca8e6f99d0a126aa33af2782421ae56d7a1a444c.svg"></a>
+<h2 id="调优手段">2. 调优手段</h2><h3 id="虚拟机参数有哪些分类？">2.1. 虚拟机参数有哪些分类？</h3><ul>
+<li>标准参数，以<code>-</code>开头，如<code>-version</code>等。</li>
+<li>非标准参数，以<code>-X</code>开头，如<code>-Xms</code>，<code>-Xmx</code>等。</li>
+<li>不稳定参数，以<code>-XX</code>开头，如<code>-XX:+UseG1GC</code>等。</li>
+</ul>
+<h3 id="JDK工具包中有哪些工具？">2.2. JDK工具包中有哪些工具？</h3><p>JDK工具：</p>
+<ul>
+<li>jps：打印当前系统中的Java进程。</li>
+<li>jinfo：打印指定Java进程的虚拟机参数和系统属性，及设置虚拟机参数。</li>
+<li>jmap：打印指定Java进程的堆的内存信息，及转储堆的内存快照文件。</li>
+<li>jstat：打印指定Java进程的堆内存信息和GC信息。</li>
+<li>jstack：打印指定Java进程的堆栈信息。</li>
+<li>jhat：分析堆的内存快照文件。</li>
+<li>jconsole：可视化工具。</li>
+<li>visualvm：可视化工具。</li>
+</ul>
+<p>第三方工具：</p>
+<ul>
+<li>GC Easy：分析GC日志。</li>
+<li>MAT：分析堆的内存快照文件。</li>
+<li>JProfile：可视化工具。</li>
+<li>Arthas：线上监控诊断工具。</li>
+</ul>
+<h3 id="如何打印及分析虚拟机的GC日志？">2.3. 如何打印及分析虚拟机的GC日志？</h3><p>可以通过指定虚拟机参数来设置打印的虚拟机的GC日志信息：</p>
+<ul>
+<li><code>-XX:+PrintGC</code>：开启打印GC日志。</li>
+<li><code>-XX:+PrintGCDetail</code>：开启打印GC详细日志。</li>
+<li><code>-XX:+PrintGCTimeStamps</code>：开启打印GC耗时。</li>
+<li><code>-XX:+PrintGCDateStamps</code>：开启打印GC发生的时间。</li>
+<li><code>-XX:+PrintHeapAtGC</code>：开启GC时打印堆信息。</li>
+<li><code>-Xloggc:&lt;filepath&gt;</code>：指定GC日志输出文件的路径。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">-XX:+PrintGC -XX:+PrintGCDetail -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -Xloggc:.&#x2F;gc.log</code></pre>
+
+<p>下面是一段GC日志的示例，我们进行以下分析:</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">Java HotSpot(TM) 64-Bit Server VM (25.181-b13) for linux-amd64 JRE (1.8.0_181-b13), built on Jul  7 2018 00:56:38 by &quot;java_re&quot; with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+Memory: 4k page, physical 8174940k(1150320k free), swap 4194300k(361300k free)
+CommandLine flags: -XX:InitialHeapSize&#x3D;130799040 -XX:MaxHeapSize&#x3D;2092784640 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC 
+&#123;Heap before GC invocations&#x3D;1 (full 0):
+ PSYoungGen      total 37888K, used 32768K [0x00000000d6700000, 0x00000000d9100000, 0x0000000100000000)
+  eden space 32768K, 100% used [0x00000000d6700000,0x00000000d8700000,0x00000000d8700000)
+  from space 5120K, 0% used [0x00000000d8c00000,0x00000000d8c00000,0x00000000d9100000)
+  to   space 5120K, 0% used [0x00000000d8700000,0x00000000d8700000,0x00000000d8c00000)
+ ParOldGen       total 86016K, used 0K [0x0000000083400000, 0x0000000088800000, 0x00000000d6700000)
+  object space 86016K, 0% used [0x0000000083400000,0x0000000083400000,0x0000000088800000)
+ Metaspace       used 5355K, capacity 5554K, committed 5888K, reserved 1056768K
+  class space    used 556K, capacity 655K, committed 768K, reserved 1048576K
+2023-09-14T20:04:40.328+0800: 1.191: [GC (Allocation Failure) [PSYoungGen: 32768K-&gt;3186K(37888K)] 32768K-&gt;3194K(123904K), 0.0119571 secs] [Times: user&#x3D;0.02 sys&#x3D;0.00, real&#x3D;0.01 secs] 
+Heap after GC invocations&#x3D;1 (full 0):
+ PSYoungGen      total 37888K, used 3186K [0x00000000d6700000, 0x00000000d9100000, 0x0000000100000000)
+  eden space 32768K, 0% used [0x00000000d6700000,0x00000000d6700000,0x00000000d8700000)
+  from space 5120K, 62% used [0x00000000d8700000,0x00000000d8a1cba0,0x00000000d8c00000)
+  to   space 5120K, 0% used [0x00000000d8c00000,0x00000000d8c00000,0x00000000d9100000)
+ ParOldGen       total 86016K, used 8K [0x0000000083400000, 0x0000000088800000, 0x00000000d6700000)
+  object space 86016K, 0% used [0x0000000083400000,0x0000000083402000,0x0000000088800000)
+ Metaspace       used 5355K, capacity 5554K, committed 5888K, reserved 1056768K
+  class space    used 556K, capacity 655K, committed 768K, reserved 1048576K
+&#125;
+&#123;Heap before GC invocations&#x3D;11 (full 1):
+ PSYoungGen      total 423424K, used 3984K [0x00000000d6700000, 0x00000000f0b80000, 0x0000000100000000)
+  eden space 417280K, 0% used [0x00000000d6700000,0x00000000d6700000,0x00000000efe80000)
+  from space 6144K, 64% used [0x00000000f0580000,0x00000000f0964040,0x00000000f0b80000)
+  to   space 6656K, 0% used [0x00000000efe80000,0x00000000efe80000,0x00000000f0500000)
+ ParOldGen       total 86016K, used 8255K [0x0000000083400000, 0x0000000088800000, 0x00000000d6700000)
+  object space 86016K, 9% used [0x0000000083400000,0x0000000083c0fd08,0x0000000088800000)
+ Metaspace       used 20547K, capacity 21142K, committed 21296K, reserved 1069056K
+  class space    used 2437K, capacity 2597K, committed 2688K, reserved 1048576K
+2023-09-14T20:04:44.496+0800: 5.360: [Full GC (Metadata GC Threshold) [PSYoungGen: 3984K-&gt;0K(423424K)] [ParOldGen: 8255K-&gt;8041K(50176K)] 12239K-&gt;8041K(473600K), [Metaspace: 20547K-&gt;20547K(1069056K)], 0.0580953 secs] [Times: user&#x3D;0.11 sys&#x3D;0.01, real&#x3D;0.06 secs] 
+Heap after GC invocations&#x3D;11 (full 1):
+ PSYoungGen      total 423424K, used 0K [0x00000000d6700000, 0x00000000f0b80000, 0x0000000100000000)
+  eden space 417280K, 0% used [0x00000000d6700000,0x00000000d6700000,0x00000000efe80000)
+  from space 6144K, 0% used [0x00000000f0580000,0x00000000f0580000,0x00000000f0b80000)
+  to   space 6656K, 0% used [0x00000000efe80000,0x00000000efe80000,0x00000000f0500000)
+ ParOldGen       total 50176K, used 8041K [0x0000000083400000, 0x0000000086500000, 0x00000000d6700000)
+  object space 50176K, 16% used [0x0000000083400000,0x0000000083bda730,0x0000000086500000)
+ Metaspace       used 20547K, capacity 21142K, committed 21296K, reserved 1069056K
+  class space    used 2437K, capacity 2597K, committed 2688K, reserved 1048576K
+&#125;</code></pre>
+
+<ol>
+<li>从第<code>1</code>行可以看到虚拟机为<code>HotSpot</code>，<code>JRE</code>的版本为<code>1.8.0_181-b13</code>；</li>
+<li>从第<code>3</code>行可以看到虚拟机启动时的命令行参数；</li>
+<li>从第<code>13</code>行可以看到在<code>20:04:40.328</code>时发生了一次Minor GC；GC的原因是<code>Allocation Failure</code>； GC后，新生代占用的内存由<code>32768K</code>变为了<code>3186K</code>，新生代Eden区和From区的总大小为<code>37888K</code>；整堆的占用的内存由<code>32768K</code>变为了<code>3194K</code>，新生代Eden区和From区以及老年代的总大小为<code>123904K</code>；GC耗时<code>0.0119571 secs</code>。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">2023-09-14T20:04:40.328+0800: 1.191: [GC (Allocation Failure) [PSYoungGen: 32768K-&gt;3186K(37888K)] 32768K-&gt;3194K(123904K), 0.0119571 secs] [Times: user&#x3D;0.02 sys&#x3D;0.00, real&#x3D;0.01 secs] </code></pre>
+
+<ol start="4">
+<li>从第<code>33</code>行可以看到在<code>20:04:44.496</code>时发生了一次Full GC；GC的原因是<code>Metadata GC Threshold</code>；GC后，新生代占用的内存由<code>3984K</code>变为了<code>0K</code>，新生代Eden区和From区的总大小为<code>423424K</code>；老年代占用的内存由<code>8255K</code>变为了<code>8041K</code>，老年代的总大小为<code>50176K</code>；整堆的占用的内存由<code>12239K</code>变为了<code>8041K</code>，新生代中的Eden区和From区以及老年代的总大小为<code>473600K</code>；元空间的占用的内存由<code>20547K</code>变为了<code>20547K</code>，元空间的总大小为<code>1069056K</code>；GC耗时<code>0.0580953 secs</code>。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">2023-09-14T20:04:44.496+0800: 5.360: [Full GC (Metadata GC Threshold) [PSYoungGen: 3984K-&gt;0K(423424K)] [ParOldGen: 8255K-&gt;8041K(50176K)] 12239K-&gt;8041K(473600K), [Metaspace: 20547K-&gt;20547K(1069056K)], 0.0580953 secs] [Times: user&#x3D;0.11 sys&#x3D;0.01, real&#x3D;0.06 secs] </code></pre>
+
+<p>从上面的示例中可以看到GC日志包含以下信息：</p>
+<ul>
+<li>GC发生的时间。</li>
+<li>GC的类型和发生的原因。</li>
+<li>GC后堆内存和元空间占用的变化。</li>
+<li>GC的耗时。</li>
+</ul>
+<h2 id="调优案例">3. 调优案例</h2><h3 id="如何为虚拟机指定合适的堆内存大小和元空间大小？">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</h3><p>堆内存大小和元空间大小最佳实践：</p>
+<ul>
+<li>整堆建议设置为老年代实际使用内存的4倍。</li>
+<li>新生代建议设置为老年代实际使用内存的1~1.5倍。</li>
+<li>元空间建议设置为元空间实际使用内存的2倍。</li>
+</ul>
+<p>可以通过GC Easy对GC日志的分析结果来决定虚拟机堆内存大小和元空间大小，如下示例：</p>
+<p><strong>1. 首先，通过GC Easy对调优前程序GC日志的分析结果得出调优目标；</strong></p>
+<p>从下图中我们可以看到新生代分配内存为<code>642.5mb</code>，新生代实际使用内存为<code>642.45mb</code>；老年代分配内存为<code>117.5mb</code>，老年代实际使用内存为<code>83.17mb</code>；元空间分配内存为<code>1076mb</code>，元空间实际使用内存为<code>55.48mb</code>。（调优目标：元空间的大小设置不合理，利用率低）</p>
+<a href="jvm-memory-size-before.png" class="gallery-item"><img src="jvm-memory-size-before.png"></a>
+
+<p>从下图我们可以看到GC的吞吐量为<code>99.044%</code>，GC平均暂停时间为<code>60.0 ms</code>，GC最大暂停时间为<code>280 ms</code>。<br><a href="key-before.png" class="gallery-item"><img src="key-before.png"></a></p>
+<p>从下图中我们可以看到在程序运行的过程中发生了3次Full GC，原因是<code>Metadata GC Threshold</code>，本质上是元空间达到阈值需要扩容时触发了Full GC。（调优目标：Full GC很耗时，应尽可能避免Full GC）</p>
+<a href="graph-before.png" class="gallery-item"><img src="graph-before.png"></a>
+
+<p>从下图中我们可以看到在程序运行的过程中共发生了<code>28</code>次GC，总耗时<code>1 sec 680 ms</code>；Minor GC发生了<code>25</code>次，总耗时<code>1 sec 200 ms</code>；Full GC发生了<code>3</code>次，总耗时<code>480 ms</code>.</p>
+<a href="total-before.png" class="gallery-item"><img src="total-before.png"></a>
+
+<p><strong>2. 然后，根据调优目标调整虚拟机参数；</strong></p>
+<p>将整堆内存设置为老年代实际使用内存的4倍，即<code>83.17mb * 4 ≈ 320mb</code>；将新生代设置为老年代实际使用内存的1.5倍，即<code>83.17mb * 1.5 ≈ 120mb</code>；将元空间设置为元空间实际使用内存的2倍，即<code>55.48mb * 2 ≈ 120mb</code>。虚拟机参数如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">-Xms320m -Xmx320m -Xmn120m -XX:MetaspaceSize&#x3D;120m -XX:MaxMetaspaceSize&#x3D;120m</code></pre>
+
+<p><strong>3. 最后，通过GC Easy对调优后程序GC日志的分析结果验证方案。</strong></p>
+<p>从下图中我们可以看到新生代分配内存为<code>120mb</code>，新生代实际使用内存为<code>113.53mb</code>；老年代分配内存为<code>200mb</code>，老年代实际使用内存为<code>173.85mb</code>；元空间分配内存为<code>120mb</code>，元空间实际使用内存为<code>n/a</code>。</p>
+<a href="jvm-memory-size-after.png" class="gallery-item"><img src="jvm-memory-size-after.png"></a>
+
+<p>从下图我们可以看到GC的吞吐量为<code>97.451%</code>，GC平均暂停时间为<code>13.5 ms</code>，GC最大暂停时间为<code>40.0 ms</code>。吞吐量下降是由于调优后新生代分配的内存由<code>642.5mb</code>变为了<code>120mb</code>，需要更多次的Minor GC来清除垃圾；GC平均暂停时间下降是由于调优后并未发生Full GC。</p>
+<a href="key-after.png" class="gallery-item"><img src="key-after.png"></a>
+
+<p>从下图中我们可以看到在程序运行的过程中未发生过FullGC。</p>
+<a href="graph-after.png" class="gallery-item"><img src="graph-after.png"></a>
+
+<p>从下图中我们可以看到在程序运行的过程中共发生了<code>89</code>次GC，总耗时<code>1 sec 200 ms</code>；Minor GC发生了<code>89</code>次，总耗时<code>1 sec 200 ms</code>；Full GC发生了<code>0</code>次，总耗时<code>0 ms</code>.</p>
+<a href="total-after.png" class="gallery-item"><img src="total-after.png"></a>
+
+
+<h3 id="如何为虚拟机指定合适的Java虚拟机栈大小？">3.2. 如何为虚拟机指定合适的Java虚拟机栈大小？</h3><p>通过虚拟机参数<code>-Xss1m</code>设置线程堆栈的大小为1MB即可。</p>
+<h3 id="如何为虚拟机选择合适的垃圾收集器？">3.3. 如何为虚拟机选择合适的垃圾收集器？</h3><ul>
+<li>吞吐量优先：选用Parallel Scavenge搭配Parallel Old，虚拟机参数为<code>-XX:+UseParallelGC</code>。</li>
+<li>响应时间优先：选用ParNew搭配CMS，虚拟机参数为<code>-XX:+UseConcMarkSweepGC</code>。</li>
+<li>全功能但不全能：选用G1，虚拟机参数为<code>-XX:+UseG1GC</code>。</li>
+</ul>
+<h3 id="程序发生内存溢出如何排查？">3.4. 程序发生内存溢出如何排查？</h3><ol>
+<li>在启动应用程序时，需要打开虚拟机参数<code>-XX:+HeapDumpOnOutOfMemoryError</code>，以便在发生内存溢出时转储堆的内存快照文件。</li>
+<li>使用MAT等工具分析堆的内存快照文件，排查是否发生了内存泄漏；如果发生了内存泄漏，需要排查并修复相应的代码。 </li>
+<li>排查堆的内存空间是否分配的不合理；如果不合理，则需要调节虚拟机参数。</li>
+</ol>
+<h3 id="程序发生死锁如何排查？">3.5. 程序发生死锁如何排查？</h3><p>以两个线程死锁为例，线程A获取到锁m，并尝试获取锁n；而线程B获取到锁n，并尝试获取锁m；此时线程A和线程B由于永远获取不到各自所需的锁而产生死锁。</p>
+<p><strong>1. 首先，通过<code>jps -l</code>命令获取指定Java进程的进程ID；</strong></p>
+<pre class="line-numbers language-none"><code class="language-none">$ jps -l
+11840 com.remeio.upsnippet.jvm.gc.DeadLockTest
+4772 sun.tools.jps.Jps</code></pre>
+
+<p><strong>2. 然后，通过<code>jstack &lt;pid&gt;</code>命令查看当前Java进程的线程状态。</strong></p>
+<a href="/assert/puml/63efbd71fedc0a5c7f86faa9c2d80950738d16e2d8b8676d44349f0d8f27f43e.svg" class="gallery-item"><img src="/assert/puml/63efbd71fedc0a5c7f86faa9c2d80950738d16e2d8b8676d44349f0d8f27f43e.svg"></a>
+
+
+<p>从下面打印的信息中我们可以看到：</p>
+<ul>
+<li>线程<code>Thread-1</code>的状态为<code>BLOCKED</code>，其持有锁<code>0x000000076bcae728</code>，并且正在等待锁<code>0x000000076bcae718</code>。</li>
+<li>线程<code>Thread-2</code>的状态也为<code>BLOCKED</code>，其持有锁<code>0x000000076bcae718</code>，并且正在等待锁<code>0x000000076bcae728</code>。</li>
+<li>线程<code>Thread-1</code>和线程<code>Thread-2</code>产生了死锁。</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">$ jstack -l 11840
+...
+
+&quot;Thread-1&quot; #13 prio&#x3D;5 os_prio&#x3D;0 tid&#x3D;0x000002a338f87000 nid&#x3D;0x59b8 waiting for monitor entry [0x000000e0786fe000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+        at com.remeio.upsnippet.jvm.gc.DeadLockTest$2.run(DeadLockTest.java:36)
+        - waiting to lock &lt;0x000000076bcae718&gt; (a java.lang.Object)
+        - locked &lt;0x000000076bcae728&gt; (a java.lang.Object)
+        at java.lang.Thread.run(Thread.java:750)
+
+   Locked ownable synchronizers:
+        - None
+
+&quot;Thread-0&quot; #12 prio&#x3D;5 os_prio&#x3D;0 tid&#x3D;0x000002a338f84000 nid&#x3D;0x8c94 waiting for monitor entry [0x000000e0785ff000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+        at com.remeio.upsnippet.jvm.gc.DeadLockTest$1.run(DeadLockTest.java:20)
+        - waiting to lock &lt;0x000000076bcae728&gt; (a java.lang.Object)
+        - locked &lt;0x000000076bcae718&gt; (a java.lang.Object)
+        at java.lang.Thread.run(Thread.java:750)
+
+   Locked ownable synchronizers:
+        - None
+		
+...
+
+JNI global references: 12
+
+
+Found one Java-level deadlock:
+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+&quot;Thread-1&quot;:
+  waiting to lock monitor 0x000002a336f2ba08 (object 0x000000076bcae718, a java.lang.Object),
+  which is held by &quot;Thread-0&quot;
+&quot;Thread-0&quot;:
+  waiting to lock monitor 0x000002a336f28f68 (object 0x000000076bcae728, a java.lang.Object),
+  which is held by &quot;Thread-1&quot;
+
+Java stack information for the threads listed above:
+&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+&quot;Thread-1&quot;:
+        at com.remeio.upsnippet.jvm.gc.DeadLockTest$2.run(DeadLockTest.java:36)
+        - waiting to lock &lt;0x000000076bcae718&gt; (a java.lang.Object)
+        - locked &lt;0x000000076bcae728&gt; (a java.lang.Object)
+        at java.lang.Thread.run(Thread.java:750)
+&quot;Thread-0&quot;:
+        at com.remeio.upsnippet.jvm.gc.DeadLockTest$1.run(DeadLockTest.java:20)
+        - waiting to lock &lt;0x000000076bcae728&gt; (a java.lang.Object)
+        - locked &lt;0x000000076bcae718&gt; (a java.lang.Object)
+        at java.lang.Thread.run(Thread.java:750)
+
+Found 1 deadlock.</code></pre>
+
+<p><strong>3. 找到产生死锁的代码，进行修改。</strong></p>
+<p>从下面打印的信息中我们可以看到，产生死锁的代码在：</p>
+<ul>
+<li><code>com.remeio.upsnippet.jvm.gc.DeadLockTest$1.run(DeadLockTest.java:20)</code></li>
+<li><code>com.remeio.upsnippet.jvm.gc.DeadLockTest$2.run(DeadLockTest.java:36)</code></li>
+</ul>
+<p>找到对应的代码，进行修改即可。</p>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/1840753212/">上一篇：什么是垃圾回收及有哪些垃圾收集器？</a>
+    <a href="/post/1284794007/">下一篇：Java集合框架中List接口有哪些实现？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%90%86%E8%AE%BA"><span class="toc-text">1. 调优理论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 调优的过程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E6%89%8B%E6%AE%B5"><span class="toc-text">2. 调优手段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%82%E6%95%B0%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">2.1. 虚拟机参数有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK%E5%B7%A5%E5%85%B7%E5%8C%85%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A5%E5%85%B7%EF%BC%9F"><span class="toc-text">2.2. JDK工具包中有哪些工具？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E5%8F%8A%E5%88%86%E6%9E%90%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84GC%E6%97%A5%E5%BF%97%EF%BC%9F"><span class="toc-text">2.3. 如何打印及分析虚拟机的GC日志？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E4%BC%98%E6%A1%88%E4%BE%8B"><span class="toc-text">3. 调优案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84%E5%A0%86%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.1. 如何为虚拟机指定合适的堆内存大小和元空间大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%8C%87%E5%AE%9A%E5%90%88%E9%80%82%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%A4%A7%E5%B0%8F%EF%BC%9F"><span class="toc-text">3.2. 如何为虚拟机指定合适的Java虚拟机栈大小？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%9F"><span class="toc-text">3.3. 如何为虚拟机选择合适的垃圾收集器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.4. 程序发生内存溢出如何排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%8F%91%E7%94%9F%E6%AD%BB%E9%94%81%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">3.5. 程序发生死锁如何排查？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

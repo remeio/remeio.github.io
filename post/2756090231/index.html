@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Bean在Spring中是如何完成依赖注入的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-text">1.1. 什么是依赖注入？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BA%86%E8%A7%A3%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9F"><span class="toc-text">1.2. 为什么要了解依赖注入的原理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-text">1.3. 什么时候会发生依赖注入？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E5%9C%A8Spring%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E6%8F%8F%E8%BF%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">1.4. 依赖注入在Spring中是如何描述的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. 自动装配注解依赖注入详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96Bean%E7%9A%84%E6%B3%A8%E5%85%A5%E5%85%83%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-text">2.1. 如何获取Bean的注入元数据？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. 自动装配注解的字段注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. 自动装配注解的方法注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%9E%84%E9%80%A0%E5%99%A8%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. 自动装配注解的构造器注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E5%93%AA%E7%A7%8D%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="toc-text">2.5. 推荐使用哪种依赖注入方式？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E6%B3%A8%E8%A7%A3%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. 通用注解依赖注入详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96Bean%E7%9A%84%E6%B3%A8%E5%85%A5%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-text">3.1. 如何获取Bean的注入元数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resource%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%E5%92%8C%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. @Resource注解的字段注入和方法注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Autowired%E5%92%8C-Resouce%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">3.3. @Autowired和@Resouce有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E4%BE%9D%E8%B5%96%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%AF%B9%E5%BA%94%E7%9A%84%E4%BE%9D%E8%B5%96%EF%BC%9F"><span class="toc-text">4. 如何解析依赖描述符对应的依赖？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1. 解析特殊类型的依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E5%BB%BA%E8%AE%AE%E5%80%BC%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-text">4.2. 解析建议值的依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E5%A4%9A%E5%80%BC%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-text">4.3. 解析多值类型的依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%BB%A1%E8%B6%B3%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%9D%A1%E4%BB%B6%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%80%99%E9%80%89%E8%80%85%E5%88%97%E8%A1%A8"><span class="toc-text">4.4. 获取满足自动装配条件的自动装配候选者列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%80%99%E9%80%89%E8%80%85%E5%88%97%E8%A1%A8%E4%B8%AD%E9%80%89%E4%B8%BE%E6%9C%80%E7%BB%88%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%80%99%E9%80%89%E8%80%85"><span class="toc-text">4.5. 从自动装配候选者列表中选举最终的自动装配候选者</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E6%A0%87%E6%B3%A8%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-text">5.1. 如何实现自定义依赖注入方式标注注入？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/SpringFramework">> SpringFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>Bean在Spring中是如何完成依赖注入的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-07-25 19:59，字数：4.7k，预计阅读：18分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:400px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;Bean的依赖注入&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;背景&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是依赖注入？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;为什么要了解依赖注入的原理？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;什么时候会发生依赖注入？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;依赖注入在Spring中是如何描述的？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[6,7]},&quot;v&quot;:&quot;自动装配注解依赖注入&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;如何获取Bean的注入元数据？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;自动装配注解的字段注入是如何实现的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;自动装配注解的方法注入是如何实现的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;自动装配注解的构造器注入是如何实现的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;推荐使用哪种依赖注入方式？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[12,13]},&quot;v&quot;:&quot;通用注解依赖注入&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;如何获取Bean的注入元数据&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15],&quot;f&quot;:true},&quot;v&quot;:&quot;@Resource注解的字段注入和方法注入是如何实现的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16],&quot;f&quot;:true},&quot;v&quot;:&quot;@Autowired和@Resouce有什么区别？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[16,17]},&quot;v&quot;:&quot;如何解析依赖描述符对应的依赖？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[17,18],&quot;f&quot;:true},&quot;v&quot;:&quot;解析特殊类型的依赖&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19],&quot;f&quot;:true},&quot;v&quot;:&quot;解析建议值的依赖&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[19,20],&quot;f&quot;:true},&quot;v&quot;:&quot;解析多值类型的依赖&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[20,21],&quot;f&quot;:true},&quot;v&quot;:&quot;获取满足自动装配条件的自动装配候选者列表&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22],&quot;f&quot;:true},&quot;v&quot;:&quot;从自动装配候选者列表中选举最终的自动装配候选者&quot;}]}]}"/>
+</div>
+
+
+<h2 id="背景">1. 背景</h2><h3 id="什么是依赖注入？">1.1. 什么是依赖注入？</h3><p>宽泛地讲，依赖注入（Dependency Inject，DI）是控制反转（Inversion of Control，IoC）的一种实现方式，本质上就是将依赖的创建和管理委派给IoC容器，使用者只需要声明要注入的依赖便可完成依赖的获取。在日常开发中，最常使用的Spring注解是<code>@Component</code>和<code>@Autowired</code>（或<code>@Resource</code>），前者将Bean注册到Spring的IoC容器中，后者完成Bean的依赖注入。依赖注入有字段注入，方法注入和构造器注入三种方式。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Component
+public class Client &#123;
+
+	&#x2F;&#x2F; Dependency Inject
+	@Resource
+	private Dependency dependency;
+&#125;</code></pre>
+
+<p>另外，依赖查找（Dependency Lookup）也是控制反转的一种实现方式，不过相比于依赖注入，使用者需要去IoC容器中主动查找所需的依赖，会耦合容器的API，如<code>BeanFactory#getBean</code>。依赖查找有按名称查找，按类型查找等方式。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Component
+public class Client &#123;
+
+	public Dependency getDependency() &#123;
+		&#x2F;&#x2F; Dependency Lookup
+		return beanFactory.getBean(Dependency.class);
+	&#125;
+&#125;</code></pre>
+
+<h3 id="为什么要了解依赖注入的原理？">1.2. 为什么要了解依赖注入的原理？</h3><p>作为使用者，使用框架是为了简化开发，通常只需要关心框架是如何使用的而并不需要关心框架是如何实现的。那为什么还要去了解依赖注入的原理？主要有以下几个原因，也是阅读源码的原因：</p>
+<ul>
+<li>学习框架的设计思想和设计模式，提高工程抽象和建模能力。</li>
+<li>把源码当做文档，通过源码了解框架用法和扩展点。如下文中的自定义依赖注入方式。</li>
+<li>为排查问题提供原理支持。如依赖注入时抛出<code>NoUniqueBeanDefinitionException</code>异常如何解决。</li>
+</ul>
+<blockquote>
+<p>作为一个专业的赛车手，有必要了解赛车的发动机是怎么工作的。</p>
+</blockquote>
+<h3 id="什么时候会发生依赖注入？">1.3. 什么时候会发生依赖注入？</h3><p>作为使用者，通过在Bean的字段，方法或构造器上标注特定注解（如<code>@Autowired</code>，<code>@Resource</code>等）的方式来告知IoC容器此处需要依赖注入，并希望在使用Bean的时候其依赖注入已然完成。</p>
+<p>作为实现者，Bean的字段注入或方法注入发生在设置Bean的属性的过程中，也就是Bean的实例化之后，Bean的初始化之前；Bean的构造器注入则发生在实例化Bean的过程中；具体流程如下：</p>
+<ol>
+<li>实例化Bean；<ul>
+<li>获取候选构造器</li>
+<li>构造器注入</li>
+</ul>
+</li>
+<li>设置Bean的属性；<ul>
+<li>字段注入和方法注入</li>
+</ul>
+</li>
+<li>初始化Bean。</li>
+</ol>
+<p>当调用<code>BeanFactory#getBean</code>方法获取Bean的时候，会执行一系列Bean后置处理器的方法，其中就包括完成依赖注入的Bean后置处理器，对于<code>@Autowired</code>，<code>@Value</code>，<code>@Inject</code>等自动装配注解而言，对应的Bean后置处理器是<code>AutowiredAnnotationBeanPostProcessor</code>，具体方法如下：</p>
+<ul>
+<li>字段注入和方法注入：<code>AutowiredAnnotationBeanPostProcessor#postProcessProperties</code>。</li>
+<li>构造器注入前获取候选构造器：<code>AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors</code>。</li>
+</ul>
+<p>对于<code>@Resource</code>，<code>@EJB</code>等通用注解而言，对应的Bean后置处理器是<code>CommonAnnotationBeanPostProcessor</code>，具体方法如下。</p>
+<ul>
+<li>字段注入和方法注入：<code>CommonAnnotationBeanPostProcessor#postProcessProperties</code>。</li>
+</ul>
+<p>总的来看，依赖注入发生在实例化Bean和设置Bean的属性两大步骤中，依赖注入的具体实现则在相应的Bean后置处理器中，依赖注入发生的时机如下流程图：</p>
+<a href="/assert/puml/9046849fb1c426233a0b3daf65b694499b4ab1f11ff80914bde2cbc189edf1df.svg" class="gallery-item"><img src="/assert/puml/9046849fb1c426233a0b3daf65b694499b4ab1f11ff80914bde2cbc189edf1df.svg"></a>
+
+
+<h3 id="依赖注入在Spring中是如何描述的？">1.4. 依赖注入在Spring中是如何描述的？</h3><p>上文我们说到可以通过在Bean的字段，方法或构造器上标注特定注解（如<code>@Autowired</code>，<code>@Resource</code>等）的方式来告知IoC容器此处需要依赖注入，那在Spring中是如何描述这些需要依赖注入的地方的呢？Spring使用注入元素<code>InjectElement</code>来描述Bean中每个需要依赖注入的地方，并使用注入元数据<code>InjectMetadata</code>来组合Bean中所有的注入元素，类图如下：</p>
+<a href="/assert/puml/28e4b465ce1ffc14f9a68f5a187d29743dd8700d6ca233a13611cb04e2b88241.svg" class="gallery-item"><img src="/assert/puml/28e4b465ce1ffc14f9a68f5a187d29743dd8700d6ca233a13611cb04e2b88241.svg"></a>
+
+<p>从类图中我们可以看到，注入元素<code>InjectElement</code>中有一个<code>InjectElement#inject</code>方法，其提供了字段注入和方法注入的默认实现。</p>
+<ul>
+<li>如果想要实现字段注入和方法注入，则需要重写<code>InjectElement#getResourceToInject</code>方法。</li>
+<li>如果想要完全自定义依赖注入，则需要重写<code>InjectElement#inject</code>方法。</li>
+</ul>
+<p>从类图中我们可以看到，注入元素<code>InjectElement</code>有以下子类：</p>
+<ul>
+<li><code>AutowiredElement</code>：维护了依赖是否必选<code>required</code>属性，使用自动装配的方式实现依赖注入。<ul>
+<li><code>AutowiredFieldElement</code>：重写了<code>InjectElement#inject</code>方法，实现了<code>@Autowired</code>，<code>@Inject</code>等自动装配注解的字段注入。</li>
+<li><code>AutowiredMethodElement</code>：重写了<code>InjectElement#inject</code>方法，实现了<code>@Autowired</code>，<code>@Inject</code>等自动装配注解的方法注入。</li>
+</ul>
+</li>
+<li><code>LookupElement</code>：维护了依赖名称<code>name</code>等属性，使用依赖查找的方式实现依赖注入。<ul>
+<li><code>EjbRefElement</code>：重写了<code>InjectElement#getResourceToInject</code>方法，实现了<code>@Ejb</code>注解的字段注入和方法注入。</li>
+<li><code>ResourceElement</code>：重写了<code>InjectElement#getResourceToInject</code>方法，实现了<code>@Resource</code>注解的字段注入和方法注入。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><code>InjectElement</code>使用了模板方法模式，子类可通过重写<code>InjectElement#getResourceToInject</code>方法来实现不同的依赖注入方式。<br><code>InjectMetadata</code>使用了组合模式，其维护了Bean进行依赖注入所需的<code>InjectElement</code>列表，当对Bean进行依赖注入时，<code>InjectMetadata#inject</code>方法会依次调用每个<code>InjectElement</code>的<code>InjectElement#inject</code>方法来进行依赖注入。</p>
+</blockquote>
+<h2 id="自动装配注解依赖注入详解">2. 自动装配注解依赖注入详解</h2><p>使用<code>@Autowired</code>，<code>@Value</code>，<code>@Inject</code>等自动装配注解完成依赖注入的流程图如下：</p>
+<a href="/assert/puml/be06d03d89db45dc9ca6fbde6689e548b35cdc7d98f9b13cc1d195591825bb6b.svg" class="gallery-item"><img src="/assert/puml/be06d03d89db45dc9ca6fbde6689e548b35cdc7d98f9b13cc1d195591825bb6b.svg"></a>
+
+<h3 id="如何获取Bean的注入元数据？">2.1. 如何获取Bean的注入元数据？</h3><p>当调用自动装配Bean后置处理器的<code>AutowiredAnnotationBeanPostProcessor#postProcessProperties</code>方法时，会获取该Bean的注入元数据，为后续的依赖注入做准备。获取Bean的注入元数据的流程如下：</p>
+<ol>
+<li>首先，会调用<code>ReflectionUtils#doWithLocalFields</code>方法通过反射的方式执行依次遍历该Bean的各个字段<code>Field</code>，来构建自动装配字段注入元素<code>AutowiredFieldElement</code>；</li>
+<li>而后，会调用<code>ReflectionUtils#doWithLocalMethods</code>方法通过反射的方式依次遍历该Bean的各个方法<code>Method</code>，来构建自动装配方法注入元素<code>AutowiredMethodElement</code>；</li>
+<li>最后，组合所有的注入元素构建注入元数据<code>InjectMetadata</code>并返回。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>AutowiredAnnotationBeanPostProcessor#findAutowiringMetadata</code>。</p>
+</blockquote>
+<h3 id="自动装配注解的字段注入是如何实现的？">2.2. 自动装配注解的字段注入是如何实现的？</h3><p>在获取到Bean的注入元数据<code>InjectMetadata</code>后，会依次调用注入元素<code>InjectElement</code>的<code>InjectElement#inject</code>方法来完成依赖注入。其中自动装配字段注入元素<code>AutowiredFieldElement</code>的<code>AutowiredFieldElement#inject</code>方法的流程如下：</p>
+<ol>
+<li>首先，根据字段<code>Field</code>构建依赖描述符<code>DependencyDescriptor</code>；</li>
+<li>而后，通过<code>AutowireCapableBeanFactory#resolveDependency</code>解析依赖描述符<code>DependencyDescriptor</code>所对应的依赖；</li>
+<li>最后，将解析到的依赖通过反射的方式<code>Field#set</code>设置到Bean中，实现字段注入。<a href="/assert/puml/bd4bd1f9e85805d675c080bfbf5afea3c8277df617bc6f00dd72a48a9eceade6.svg" class="gallery-item"><img src="/assert/puml/bd4bd1f9e85805d675c080bfbf5afea3c8277df617bc6f00dd72a48a9eceade6.svg"></a>
+<blockquote>
+<p>对应源码所在位置：<code>AutowiredAnnotationBeanPostProcessor.AutowiredFieldElement#inject</code>。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="自动装配注解的方法注入是如何实现的？">2.3. 自动装配注解的方法注入是如何实现的？</h3><p>在获取到Bean的注入元数据<code>InjectMetadata</code>后，会依次调用注入元素<code>InjectElement</code>的<code>InjectElement#inject</code>方法来完成依赖注入。其中自动装配方法注入元素<code>AutowiredMethodElement</code>的<code>AutowiredMethodElement#inject</code>方法的流程如下：</p>
+<ol>
+<li>首先，根据方法<code>Method</code>中的参数依次构建依赖描述符<code>DependencyDescriptor</code>；</li>
+<li>而后，通过<code>AutowireCapableBeanFactory#resolveDependency</code>解析每个依赖描述符<code>DependencyDescriptor</code>所对应的依赖；</li>
+<li>最后，当所有的方法参数所对应的依赖解析完成后，通过反射的方式<code>Method#invoke</code>调用注入方法，实现方法注入。<a href="/assert/puml/4875316227988a93990df45d54bfecbdb346810cc40c5fa3949336b0fcccbcf3.svg" class="gallery-item"><img src="/assert/puml/4875316227988a93990df45d54bfecbdb346810cc40c5fa3949336b0fcccbcf3.svg"></a></li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>AutowiredAnnotationBeanPostProcessor.AutowiredMethodElement#inject</code>。</p>
+</blockquote>
+<h3 id="自动装配注解的构造器注入是如何实现的？">2.4. 自动装配注解的构造器注入是如何实现的？</h3><ol>
+<li>在创建Bean实例的时候，也就是使用<code>AbstractAutowireCapableBeanFactory#createBeanInstance</code>方法的时候，会调用<code>SmartInstantiationAwareBeanPostProcessor#determineCandidateConstructors</code>来获取自动装配构造器候选者列表；</li>
+<li>如果自动装配构造器候选者列表不为空，则会通过<code>ConstructorResolver#autowireConstructor</code>方法从列表中选举最终的自动装配构造器候选者并实例化Bean。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors</code>。</li>
+<li><code>ConstructorResolver#autowireConstructor</code>。</li>
+</ul>
+</blockquote>
+<h3 id="推荐使用哪种依赖注入方式？">2.5. 推荐使用哪种依赖注入方式？</h3><ol>
+<li>对于字段注入而言，编码最简单，也是开发中最常用，可以解决循环依赖的问题；</li>
+<li>对于方法注入而言，可以解决循环依赖的问题，常用于注入可选依赖；但编码会显得臃肿；</li>
+<li>对于构造器注入而言（Spring官方推荐使用），常用于注入必选依赖，能够保证依赖注入的顺序；但不能解决循环依赖的问题，且当要注入的依赖过多时，构造器方法会有过多参数，应该考虑类的设计是否合理。</li>
+</ol>
+<p>如果需要注入的依赖较少或强调是必选依赖，则使用构造器注入；如果需要强调是可选依赖，则使用方法注入；否者，使用字段注入。在同一个Bean中也可同时使用以上三种依赖注入的方式。</p>
+<h2 id="通用注解依赖注入详解">3. 通用注解依赖注入详解</h2><p>使用<code>@Resource</code>，<code>@Ejb</code>等通用注解完成依赖注入的流程图如下：</p>
+<a href="/assert/puml/b38a6b1558b3d3bb616c2b539dd6ceda1b6663894fe9590371f5c96bb467dad1.svg" class="gallery-item"><img src="/assert/puml/b38a6b1558b3d3bb616c2b539dd6ceda1b6663894fe9590371f5c96bb467dad1.svg"></a>
+<h3 id="如何获取Bean的注入元数据">3.1. 如何获取Bean的注入元数据</h3><p>当调用自动装配Bean后置处理器的<code>CommonAnnotationBeanPostProcessor#postProcessProperties</code>方法时，会获取该Bean的注入元数据，为后续的依赖注入做准备。获取Bean的注入元数据的流程如下：</p>
+<ol>
+<li>首先，会调用<code>ReflectionUtils#doWithLocalFields</code>方法通过反射的方式执行依次遍历该Bean的各个字段<code>Field</code>，来构建注入元素<code>EjbRefElement</code>或<code>ResourceElement</code>；</li>
+<li>而后，会调用<code>ReflectionUtils#doWithLocalMethods</code>方法通过反射的方式依次遍历该Bean的各个方法<code>Method</code>，来构建注入元素<code>EjbRefElement</code>或<code>ResourceElement</code>；</li>
+<li>最后，组合所有的注入元素构建注入元数据<code>InjectMetadata</code>并返回。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>CommonAnnotationBeanPostProcessor#findResourceMetadata</code>。</p>
+</blockquote>
+<h3 id="Resource注解的字段注入和方法注入是如何实现的？">3.2. @Resource注解的字段注入和方法注入是如何实现的？</h3><p>在获取到Bean的注入元数据<code>InjectMetadata</code>后，会依次调用注入元素<code>InjectElement</code>的<code>InjectElement#inject</code>方法来完成依赖注入。以通用注解中的<code>@Resource</code>注解为例，其对应的资源注入元素<code>ResourceElement</code>的<code>ResourceElement#inject</code>方法的流程如下：</p>
+<ol>
+<li>首先，会判断当前注入元素来源于字段还是方法；</li>
+<li>如果是字段<code>Field</code>的话，会通过<code>ResourceElement#getResourceToInject</code>方法获取资源，并通过反射的方式<code>Field#set</code>设置到Bean中，实现字段注入；</li>
+<li>如果是方法<code>Method</code>的话，会通过<code>ResourceElement#getResourceToInject</code>方法获取资源，并通过反射的方式<code>Method#invoke</code>调用注入方法，实现方法注入。</li>
+</ol>
+<a href="/assert/puml/7c31f73096de93603ad61eb3d8da9d4b10493e23bc3e749cc628c2027a201cdc.svg" class="gallery-item"><img src="/assert/puml/7c31f73096de93603ad61eb3d8da9d4b10493e23bc3e749cc628c2027a201cdc.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>ResourceElement#inject</code>。</p>
+</blockquote>
+<p>资源注入元素获取资源的<code>ResourceElement#getResourceToInject</code>方法的实现逻辑如下图：</p>
+<a href="/assert/puml/a6833fa8966822cf956a25ce1e1eaa36e220e0636055caeb156faff7f4f6588d.svg" class="gallery-item"><img src="/assert/puml/a6833fa8966822cf956a25ce1e1eaa36e220e0636055caeb156faff7f4f6588d.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>CommonAnnotationBeanPostProcessor#getResource</code>。</p>
+</blockquote>
+<h3 id="Autowired和-Resouce有什么区别？">3.3. @Autowired和@Resouce有什么区别？</h3><ol>
+<li>从实现上看，<code>@Autowired</code>是Spring提供的注解，由<code>AutowiredAnnotationBeanPostProcessor</code>实现依赖注入逻辑；<code>@Resource</code>是JSR提供的注解，由<code>CommonAnnotationBeanPostProcessor</code>实现依赖注入逻辑；</li>
+<li>从使用上看，<code>@Autowired</code>支持字段注入，方法注入和构造器注入；<code>@Resource</code>支持字段注入和方法注入，不支持构造器注入；</li>
+<li>从依赖的获取方式上看，<code>@Autowired</code>根据类型进行依赖的获取；而<code>@Resource</code>会先尝试通过名称进行依赖的获取，未获取到则通过类型进行依赖的获取。</li>
+</ol>
+<h2 id="如何解析依赖描述符对应的依赖？">4. 如何解析依赖描述符对应的依赖？</h2><p>依赖描述符<code>DependencyDescriptor</code>用来描述被注入的依赖的信息，包括字段，方法参数或构造器参数，是否必须，依赖的类型等信息。根据依赖描述符解析依赖的方法是<code>AutowireCapableBeanFactory#resolveDependency</code>，由<code>DefaultListableBeanFactory#resolveDependency</code>实现。类图如下：</p>
+<a href="/assert/puml/98ef1052261b6c0a7dda57fc55c210bcb74efed3c02e6724cefc1dd426ab45ba.svg" class="gallery-item"><img src="/assert/puml/98ef1052261b6c0a7dda57fc55c210bcb74efed3c02e6724cefc1dd426ab45ba.svg"></a>
+
+<h3 id="解析特殊类型的依赖">4.1. 解析特殊类型的依赖</h3><ol>
+<li>对于类型为<code>Optional</code>的依赖，会构建一个<code>required</code>属性为<code>false</code>的<code>NestedDependencyDescriptor</code>依赖描述符，然后解析依赖后构建<code>Optional</code>对象并返回；</li>
+<li>对于类型为<code>ObjectFactory</code>或<code>ObjectProvider</code>的依赖，会构建<code>DependencyObjectProvider</code>对象并返回；在调用<code>DependencyObjectProvider#getObject</code>等方法时，才会解析依赖，是延迟依赖注入的一种实现方式；</li>
+<li>对于类型为<code>Provider</code>的依赖，会构建<code>Jsr330Provider</code>对象并返回，其是<code>DependencyObjectProvider</code>的子类；在调用<code>Jsr330Provider#get</code>方法时，会调用父类的<code>DependencyObjectProvider#getObject</code>方法，才会解析依赖，是延迟依赖注入的一种实现方式；</li>
+<li>对于标注了<code>@Lazy</code>注解的依赖，会构建延迟依赖注入代理对象并返回；在使用代理对象时，才会解析依赖，是延迟依赖注入的一种实现方式。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>DefaultListableBeanFactory#resolveDependency</code>。</p>
+</blockquote>
+<h3 id="解析建议值的依赖">4.2. 解析建议值的依赖</h3><p>对于标注了<code>@Value</code>注解的依赖，处理逻辑如下：</p>
+<ol>
+<li>通过<code>QualifierAnnotationAutowireCandidateResolver#extractValue</code>方法获取<code>@Value</code>注解的<code>value</code>属性；</li>
+<li>通过<code>StringValueResolver#resolveStringValue</code>方法替换占位符；</li>
+<li>通过<code>BeanExpressionResolver#evaluate</code>方法解析<code>SpringEL</code>表达式；</li>
+<li>通过<code>TypeConverter#convertIfNecessary</code>方法进行类型转换并返回。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>DefaultListableBeanFactory#resolveDependency</code>。</p>
+</blockquote>
+<h3 id="解析多值类型的依赖">4.3. 解析多值类型的依赖</h3><ol>
+<li>对于依赖描述符类型为<code>StreamDependencyDescriptor</code>的依赖，会先获取自动装配候选者，然后构建排序后的<code>Stream</code>对象并返回；</li>
+<li>对于类型为<code>Array</code>的依赖，会先获取自动装配候选者，然后构建排序后的<code>Array</code>对象并返回；</li>
+<li>对于类型为<code>Collection</code>的依赖，会先获取自动装配候选者，然后构建排序后的<code>Collection</code>对象并返回；</li>
+<li>对于类型为<code>Map</code>的依赖，会先获取自动装配候选者，然后构建<code>Map</code>对象并返回。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>DefaultListableBeanFactory#resolveMultipleBeans</code>。</p>
+</blockquote>
+<h3 id="获取满足自动装配条件的自动装配候选者列表">4.4. 获取满足自动装配条件的自动装配候选者列表</h3><ol>
+<li>从<code>DefaultListableBeanFactory#resolvableDependencies</code>内建依赖中获取满足自动装配条件的候选者，并添加到自动装配候选者列表中；</li>
+<li>从<code>BeanFactoryUtils#beanNamesForTypeIncludingAncestors</code>类型匹配的Bean名称中获取满足自动装配条件的候选者，并添加到自动装配候选者列表中；</li>
+<li>如果自动装配候选者列表为空，则获取满足自身注入自动装配条件的候选者，并添加到自动装配候选者列表中。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>DefaultListableBeanFactory#findAutowireCandidates</code>。</li>
+<li><code>DefaultListableBeanFactory#isAutowireCandidate</code>。</li>
+</ul>
+</blockquote>
+<h3 id="从自动装配候选者列表中选举最终的自动装配候选者">4.5. 从自动装配候选者列表中选举最终的自动装配候选者</h3><ol>
+<li>选举标注了<code>@Primary</code>的自动装配候选者作为最终的自动装配候选者；</li>
+<li>如果还未选举出来，则选举<code>AnnotationAwareOrderComparator#getPriority</code>优先级最高的自动装配候选者作为最终的自动装配候选者；</li>
+<li>如果还未选举出来，则选举内建依赖名称或依赖的名称同自动装配候选者的Bean名称相同的自动装配候选者作为最终的自动装配候选者。</li>
+<li>如果还未选举出来，返回<code>null</code>作为最终的自动装配候选者。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>DefaultListableBeanFactory#determineAutowireCandidate</code>。</p>
+</blockquote>
+<h2 id="实战">5. 实战</h2><h3 id="如何实现自定义依赖注入方式标注注入？">5.1. 如何实现自定义依赖注入方式标注注入？</h3><p>我们定义一种注入方式为标注注入，标注注入是指将标注特定注解的依赖通过标注注入的方式注入到Bean中。标注注入使用的注解我们定义为<code>@Marked</code>，标注在依赖上的测试注解我们定义为<code>@Print</code>，首先来看预期效果：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import com.remeio.upsnippet.spring.di.markinject.Marked;
+import com.remeio.upsnippet.spring.di.markinject.MarkedAnnotationBeanPostProcessor;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.Set;
+
+@Configuration
+public class MarkInjectTest &#123;
+
+    @Marked(Print.class)
+    private Set&lt;Printable&gt; printables;
+
+    @PostConstruct
+    public void init() &#123;
+        final String message &#x3D; &quot;Hello, world&quot;;
+        printables.forEach(e -&gt; e.print(message));
+    &#125;
+
+    public static void main(String[] args) &#123;
+        AnnotationConfigApplicationContext context &#x3D; new AnnotationConfigApplicationContext();
+        context.scan(MarkInjectTest.class.getPackage().getName());
+        context.register(MarkedAnnotationBeanPostProcessor.class);
+        context.refresh();
+    &#125;
+&#125;</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import org.springframework.stereotype.Component;
+
+@Print
+@Component
+public class ConsolePrint implements Printable &#123;
+    @Override
+    public void print(String message) &#123;
+        System.out.println(message);
+    &#125;
+&#125;</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Print
+@Component
+@Slf4j
+public class LogPrint implements Printable &#123;
+
+    @Override
+    public void print(String message) &#123;
+        log.info(&quot;&#123;&#125;&quot;, message);
+    &#125;
+&#125;</code></pre>
+<p>我们将所有标注了<code>@Print</code>注解且类型是<code>Printable</code>的Bean通过标注注入的方式注入到了<code>MarkInjectTest</code>的字段<code>printables</code>中，运行结果如下。</p>
+<pre class="line-numbers language-none"><code class="language-none">[com.remeio.upsnippet.spring.di.markinject.test.ConsolePrint] : Hello, world
+Hello, world</code></pre>
+
+<p>实现逻辑在<code>MarkedAnnotationBeanPostProcessor#postProcessProperties</code>方法中，实现逻辑如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import java.lang.annotation.*;
+
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Marked &#123;
+
+    Class&lt;? extends Annotation&gt; value();
+&#125;
+</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.annotation.InjectionMetadata;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.MergedAnnotation;
+import org.springframework.core.annotation.MergedAnnotations;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Component
+public class MarkedAnnotationBeanPostProcessor implements InstantiationAwareBeanPostProcessor, BeanFactoryAware &#123;
+
+    protected final Log logger &#x3D; LogFactory.getLog(getClass());
+
+    private final Set&lt;Class&lt;? extends Annotation&gt;&gt; annotationTypes &#x3D; new LinkedHashSet&lt;&gt;();
+
+    private ConfigurableListableBeanFactory beanFactory;
+
+
+    public MarkedAnnotationBeanPostProcessor() &#123;
+        this.annotationTypes.add(Marked.class);
+    &#125;
+
+    public MarkedAnnotationBeanPostProcessor(Set&lt;Class&lt;? extends Annotation&gt;&gt; annotationTypes) &#123;
+        this.annotationTypes.addAll(annotationTypes);
+    &#125;
+
+    @Override
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException &#123;
+        InjectionMetadata metadata &#x3D; findAnnotationInjectMetadata(bean.getClass());
+        try &#123;
+            metadata.inject(bean, beanName, pvs);
+        &#125; catch (BeanCreationException ex) &#123;
+            throw ex;
+        &#125; catch (Throwable ex) &#123;
+            throw new BeanCreationException(beanName, &quot;Injection of mark dependencies failed&quot;, ex);
+        &#125;
+        return pvs;
+    &#125;
+
+    private InjectionMetadata findAnnotationInjectMetadata(Class&lt;?&gt; clazz) &#123;
+        if (!AnnotationUtils.isCandidateClass(clazz, this.annotationTypes)) &#123;
+            return InjectionMetadata.EMPTY;
+        &#125;
+        List&lt;InjectionMetadata.InjectedElement&gt; elements &#x3D; new ArrayList&lt;&gt;();
+        Class&lt;?&gt; targetClass &#x3D; clazz;
+
+        do &#123;
+            final List&lt;InjectionMetadata.InjectedElement&gt; currElements &#x3D; new ArrayList&lt;&gt;();
+
+            ReflectionUtils.doWithLocalFields(targetClass, field -&gt; &#123;
+                MergedAnnotation&lt;?&gt; ann &#x3D; findAutowiredAnnotation(field);
+                if (ann !&#x3D; null) &#123;
+                    if (Modifier.isStatic(field.getModifiers())) &#123;
+                        if (logger.isInfoEnabled()) &#123;
+                            logger.info(&quot;Mark annotation is not supported on static fields: &quot; + field);
+                        &#125;
+                        return;
+                    &#125;
+                    currElements.add(new MarkFieldInjectElement(field, ann));
+                &#125;
+            &#125;);
+
+
+            elements.addAll(0, currElements);
+            targetClass &#x3D; targetClass.getSuperclass();
+        &#125;
+        while (targetClass !&#x3D; null &amp;&amp; targetClass !&#x3D; Object.class);
+
+        return InjectionMetadata.forElements(elements, clazz);
+
+    &#125;
+
+    private MergedAnnotation&lt;?&gt; findAutowiredAnnotation(AccessibleObject ao) &#123;
+        MergedAnnotations annotations &#x3D; MergedAnnotations.from(ao);
+        for (Class&lt;? extends Annotation&gt; type : this.annotationTypes) &#123;
+            MergedAnnotation&lt;?&gt; annotation &#x3D; annotations.get(type);
+            if (annotation.isPresent()) &#123;
+                return annotation;
+            &#125;
+        &#125;
+        return null;
+    &#125;
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException &#123;
+        this.beanFactory &#x3D; (ConfigurableListableBeanFactory) beanFactory;
+    &#125;
+
+    private class MarkFieldInjectElement extends InjectionMetadata.InjectedElement &#123;
+
+        private final MergedAnnotation&lt;? extends Annotation&gt; mergedAnnotation;
+
+        protected MarkFieldInjectElement(Field field, MergedAnnotation&lt;? extends Annotation&gt; mergedAnnotation) &#123;
+            super(field, null);
+            this.mergedAnnotation &#x3D; mergedAnnotation;
+        &#125;
+
+        @Override
+        protected void inject(Object bean, String requestingBeanName, PropertyValues pvs) throws Throwable &#123;
+            Field field &#x3D; (Field) this.member;
+            Object value &#x3D; resolveFieldValue();
+            if (value !&#x3D; null) &#123;
+                ReflectionUtils.makeAccessible(field);
+                field.set(bean, value);
+            &#125;
+        &#125;
+
+        @Nullable
+        private Object resolveFieldValue() &#123;
+            DependencyDescriptor descriptor &#x3D; new DependencyDescriptor((Field) this.member, false);
+            Class&lt;?&gt; elementType &#x3D; descriptor.getResolvableType().asCollection().resolveGeneric();
+
+            final Class&lt;? extends Annotation&gt; annotationType &#x3D; (Class&lt;? extends Annotation&gt;) this.mergedAnnotation.getClass(&quot;value&quot;);
+            String[] beanNames &#x3D; BeanFactoryUtils.beanNamesForAnnotationIncludingAncestors(beanFactory, annotationType);
+            if (beanNames.length &#x3D;&#x3D; 0) &#123;
+                return null;
+            &#125;
+            List&lt;?&gt; result &#x3D; Arrays.stream(beanNames)
+                    .filter(e -&gt; beanFactory.isTypeMatch(e, elementType))
+                    .map(e -&gt; beanFactory.getBean(e, elementType))
+                    .collect(Collectors.toList());
+            return beanFactory.getTypeConverter().convertIfNecessary(result, descriptor.getDependencyType());
+        &#125;
+    &#125;
+&#125;</code></pre></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/4227148998/">上一篇：Bean在Spring中是如何被创建的？</a>
+    <a href="/post/556202715/">下一篇：如何自定义类加载器及如何打破双亲委派模型？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-text">1.1. 什么是依赖注入？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BA%86%E8%A7%A3%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9F"><span class="toc-text">1.2. 为什么要了解依赖注入的原理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-text">1.3. 什么时候会发生依赖注入？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E5%9C%A8Spring%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E6%8F%8F%E8%BF%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">1.4. 依赖注入在Spring中是如何描述的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. 自动装配注解依赖注入详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96Bean%E7%9A%84%E6%B3%A8%E5%85%A5%E5%85%83%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-text">2.1. 如何获取Bean的注入元数据？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. 自动装配注解的字段注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. 自动装配注解的方法注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E8%A7%A3%E7%9A%84%E6%9E%84%E9%80%A0%E5%99%A8%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. 自动装配注解的构造器注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E5%93%AA%E7%A7%8D%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="toc-text">2.5. 推荐使用哪种依赖注入方式？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E6%B3%A8%E8%A7%A3%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. 通用注解依赖注入详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96Bean%E7%9A%84%E6%B3%A8%E5%85%A5%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-text">3.1. 如何获取Bean的注入元数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Resource%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AD%97%E6%AE%B5%E6%B3%A8%E5%85%A5%E5%92%8C%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. @Resource注解的字段注入和方法注入是如何实现的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Autowired%E5%92%8C-Resouce%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">3.3. @Autowired和@Resouce有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E4%BE%9D%E8%B5%96%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%AF%B9%E5%BA%94%E7%9A%84%E4%BE%9D%E8%B5%96%EF%BC%9F"><span class="toc-text">4. 如何解析依赖描述符对应的依赖？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-text">4.1. 解析特殊类型的依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E5%BB%BA%E8%AE%AE%E5%80%BC%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-text">4.2. 解析建议值的依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E5%A4%9A%E5%80%BC%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%9D%E8%B5%96"><span class="toc-text">4.3. 解析多值类型的依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%BB%A1%E8%B6%B3%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%9D%A1%E4%BB%B6%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%80%99%E9%80%89%E8%80%85%E5%88%97%E8%A1%A8"><span class="toc-text">4.4. 获取满足自动装配条件的自动装配候选者列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%80%99%E9%80%89%E8%80%85%E5%88%97%E8%A1%A8%E4%B8%AD%E9%80%89%E4%B8%BE%E6%9C%80%E7%BB%88%E7%9A%84%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%80%99%E9%80%89%E8%80%85"><span class="toc-text">4.5. 从自动装配候选者列表中选举最终的自动装配候选者</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E6%A0%87%E6%B3%A8%E6%B3%A8%E5%85%A5%EF%BC%9F"><span class="toc-text">5.1. 如何实现自定义依赖注入方式标注注入？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

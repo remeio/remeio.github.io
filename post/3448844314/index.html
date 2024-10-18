@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Bean在Spring中是如何表示的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2. 如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFBeanDefinition%EF%BC%9F"><span class="toc-text">3.1. 什么是BeanDefinition？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">3.2. BeanDefinition有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8B%86%E5%88%86%E5%87%BA%E8%BF%99%E4%B9%88%E5%A4%9A%E7%9A%84BeanDefinition%EF%BC%9F"><span class="toc-text">3.3. 为什么要拆分出这么多的BeanDefinition？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BeanDefinition%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90"><span class="toc-text">4. BeanDefinition源码剖析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E6%9E%84%E9%80%A0%E5%99%A8%E5%8F%82%E6%95%B0%EF%BC%9F"><span class="toc-text">4.1. 如何表示构造器参数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%B1%9E%E6%80%A7%E5%80%BC%EF%BC%9F"><span class="toc-text">4.2. 如何表示属性值？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E7%9A%84BeanDefinition%EF%BC%9F"><span class="toc-text">4.3. 如何实现通用的BeanDefinition？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8E%E6%B3%A8%E8%A7%A3%E7%9A%84%E9%80%9A%E7%94%A8BeanDefinition"><span class="toc-text">4.4. 如何实现基于注解的通用BeanDefinition</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87BeanDefinitionBuilder%E7%BC%96%E7%A8%8B%E5%BC%8F%E5%88%9B%E5%BB%BA%E5%B9%B6%E6%B3%A8%E5%86%8C%E4%B8%80%E4%B8%AABeanDefinition%EF%BC%9F"><span class="toc-text">5.1. 如何通过BeanDefinitionBuilder编程式创建并注册一个BeanDefinition？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E6%B3%A8%E5%86%8CBeanDefinition%E7%9A%84%E6%96%B9%E5%BC%8F%E4%BC%9A%E6%9E%84%E5%BB%BA%E5%93%AA%E7%A7%8D%E7%B1%BB%E5%9E%8B%E7%9A%84BeanDefinition%EF%BC%9F"><span class="toc-text">5.2. 使用不同注册BeanDefinition的方式会构建哪种类型的BeanDefinition？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/SpringFramework">> SpringFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>Bean在Spring中是如何表示的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-07-05 00:24，字数：2.9k，预计阅读：12分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:300px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;BeanDefinition&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;概念&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是BeanDefinition？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;BeanDefinition有哪些分类？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;为什么要拆分出这么多的BeanDefinition？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[6,7]},&quot;v&quot;:&quot;源码剖析&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;如何表示构造器参数？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;如何表示属性值？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;如何实现通用的BeanDefinition？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;如何实现基于注解的通用BeanDefinition&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[11,12]},&quot;v&quot;:&quot;实战&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;如何通过BeanDefinitionBuilder编程式创建并注册一个BeanDefinition？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;使用不同注册BeanDefinition的方式会构建哪种类型的BeanDefinition？&quot;}]}]}"/>
+</div>
+
+
+<blockquote>
+<p>Spring相当于一个画笔，你可以通过调节画笔的各项参数（Bean的配置项），如笔的粗细，颜色等，来帮我们画出多姿多彩的画（Bean）。那让我们一起来看看这个画笔有哪些参数？</p>
+</blockquote>
+<h2 id="背景">1. 背景</h2><p>为什么要搞清楚Bean在Spring中是如何表示的，主要有以下两个方面的原因：</p>
+<ol>
+<li>对于使用者来说，在使用XML或注解配置Bean时，需要知道有哪些配置项，才能进行配置；</li>
+<li>对于开发者来说，在Spring处理Bean的过程中，会依赖Bean在Spring中的表示，是阅读源码的前置知识。</li>
+</ol>
+<h2 id="如果让你设计，你会如何设计？">2. 如果让你设计，你会如何设计？</h2><p>我们使用Spring是为了让Spring帮我们创建和管理依赖（也就是Bean）。那创建一个依赖需要哪些配置项呢？不难想到以下这些配置项：</p>
+<ul>
+<li>类的名称</li>
+<li>属性的值，如果有的话</li>
+<li>构造器参数的值，如果有的话</li>
+</ul>
+<p>如果说我们还需要Spring帮我们做一些额外动作，如在Bean创建时或销毁时分别执行某个特定方法，我们可以添加以下这些配置项：</p>
+<ul>
+<li>初始化方法</li>
+<li>销毁方法</li>
+</ul>
+<p>如果说我们并不仅限于使用构造器或属性的方式去创建一个依赖，而是通过工厂的方式去创建依赖，我们可以添加以下这些配置项：</p>
+<ul>
+<li>factory-bean，用于指定工厂</li>
+<li>factory-method，用于指定工厂中创建Bean的方法</li>
+<li>…</li>
+</ul>
+<p>不难发现，对于开发者来说，当我们需要实现更多的功能，就需要更多的配置项，对Bean的表示也就越复杂；而对于使用者来说，也就有了更多可配置的地方。</p>
+<p>Spring为了更好更全面地满足用户的需求，添加了许多不常用的功能，这样的好处是复杂度转移给了Spring的开发者，而使用者只需要关注自己的业务，然后根据业务做相应的配置即可，这也是一个成熟的企业级框架的设计思想。</p>
+<blockquote>
+<p>为什么会有越来越多的配置项？拿手机的设置为例，起初可能只能简简单单的设置下壁纸，蓝牙等，随着需求的增加，现在的手机可以设置WIFI，静音模式等，本质上是为用户提供更定制化的功能。试想如果你的手机设置不支持设置WIFI，那是多么悲惨的一件事。</p>
+</blockquote>
+<h2 id="Spring是如何设计的？">3. Spring是如何设计的？</h2><h3 id="什么是BeanDefinition？">3.1. 什么是BeanDefinition？</h3><p>同我们上面的设计类似，Spring在我们设计的基础上，还维护了如是否延迟初始化、作用域、所需依赖等配置项。Spring使用<code>BeanDefinition</code>来表示Bean，类图如下：</p>
+<a href="/assert/puml/cc7be24c73a5bfa2a4c7066c2ccf6333daff5e3341cf3ca676ff5c0da22f69c9.svg" class="gallery-item"><img src="/assert/puml/cc7be24c73a5bfa2a4c7066c2ccf6333daff5e3341cf3ca676ff5c0da22f69c9.svg"></a>
+
+<p>从继承关系上来看，<code>BeanDefinition</code>继承了以下接口：</p>
+<ul>
+<li><p><code>BeanMetadataElement</code>接口，用于返回Bean的元数据来源于哪里，也就是这个Bean的配置信息最初是在哪里设置的，比如是在XML中，还是在配置类中。</p>
+</li>
+<li><p><code>AttributeAccessor</code>接口，用于记录一些内部的属性以供后续Spring处理<code>BeanDefinition</code>的过程中使用。</p>
+</li>
+</ul>
+<h3 id="BeanDefinition有哪些分类？">3.2. BeanDefinition有哪些分类？</h3><p>为了满足不同的场景，Spring提供了不同类型的<code>BeanDefinition</code>，如下：</p>
+<ul>
+<li><code>AbstractBeanDefinition</code>，是所有<code>BeanDefinition</code>实现类的父类。</li>
+<li>当Spring容器内部处理Bean定义时，使用<code>RootBeanDefinition</code>。</li>
+<li>当使用XML注册Bean定义时，使用<code>GenericBeanDefinition</code>。</li>
+<li>当使用组件扫描注册Bean定义时，使用<code>ScannedGenericBeanDefinition</code>。</li>
+<li>当使用编程式注册Bean定义时，使用<code>AnnotatedGenericBeanDefinition</code>。</li>
+<li>当使用配置类的<code>@Bean</code>注册Bean定义时，使用<code>ConfigurationClassBeanDefinition</code>。</li>
+</ul>
+<a href="/assert/puml/4be4db1e948781bb095cc5286d6a392fba47f989698b653c1820d4f29faaf3b9.svg" class="gallery-item"><img src="/assert/puml/4be4db1e948781bb095cc5286d6a392fba47f989698b653c1820d4f29faaf3b9.svg"></a>
+<h3 id="为什么要拆分出这么多的BeanDefinition？">3.3. 为什么要拆分出这么多的BeanDefinition？</h3><p>从需求上来看，起初Spring只能通过XML配置文件注册Bean定义，使用的是<code>RootBeanDefinition</code>的继承体系；后来为了能够通过注解注册Bean定义，在Spring2.5引入了<code>GenericBeanDefinition</code>的继承体系。</p>
+<p>从设计上来看，<code>BeanDefinition</code>的不同的子类适用于不同的场景，如当使用注解的方式注册Bean定义时，需要携带所标注注解的信息（也就是<code>AnnotationMetadata</code>），自然也就需要引入新的实现类。</p>
+<blockquote>
+<p>汽车，公交车，货车虽然都是车，但有着不同的适用场景。想象一下一个货车拉了一满车的人，也能拉，就是不太合适。</p>
+</blockquote>
+<h2 id="BeanDefinition源码剖析">4. BeanDefinition源码剖析</h2><h3 id="如何表示构造器参数？">4.1. 如何表示构造器参数？</h3><p>从设计上来看，构造器参数无非就参数的下标，及参数的值两部分。</p>
+<p>我们可以通过维护一个<code>Map</code>来维护多个构造器参数，键就代表参数的下标，值就代表参数的值；另外还需要额外添加一个<code>List</code>来维护泛型参数。</p>
+<a href="/assert/puml/40d14690fc2553480ae06b0026209d1fc86fb0f4d361d3389c8b5d2aff6031de.svg" class="gallery-item"><img src="/assert/puml/40d14690fc2553480ae06b0026209d1fc86fb0f4d361d3389c8b5d2aff6031de.svg"></a>
+<blockquote>
+<p><code>ConstructorArgumentValues#ConstructorArgumentValues(ConstructorArgumentValues)</code> 使用了原型模式，提供了同类型构造器以深拷贝对象。</p>
+</blockquote>
+<h3 id="如何表示属性值？">4.2. 如何表示属性值？</h3><p>从设计上来看，属性值无非就属性的名称，及属性的值两部分。</p>
+<p>我们可以通过<code>PropertyValue</code>类来代表一个属性值，其包含了属性的名称，属性的值，转换后的值，以及是否已被转换等字段。</p>
+<a href="/assert/puml/d5aa5998658d10c010f625108be5642b4032db12e1b883e98fbd6aaf7021f35e.svg" class="gallery-item"><img src="/assert/puml/d5aa5998658d10c010f625108be5642b4032db12e1b883e98fbd6aaf7021f35e.svg"></a>
+<p>为了方便维护多个属性值，我们可以通过<code>MutablePropertyValues</code>来持有一个<code>PropertyValue</code>的列表。为了方便对属性值的遍历，我们可以实现了<code>PropertyValues</code>接口，本质也是一个<code>PropertyValue</code>的迭代器。</p>
+<a href="/assert/puml/774e600589cd91ee38432136c3cdfacfb708950a8f26751dcd134c3f0d8c949a.svg" class="gallery-item"><img src="/assert/puml/774e600589cd91ee38432136c3cdfacfb708950a8f26751dcd134c3f0d8c949a.svg"></a>
+
+<blockquote>
+<p><code>MutablePropertyValues</code>使用了迭代器模式，方便对多个属性值进行遍历；并维护了多个属性值为其提供统一的访问操作，也是一种组合模式。</p>
+</blockquote>
+<h3 id="如何实现通用的BeanDefinition？">4.3. 如何实现通用的BeanDefinition？</h3><p><code>BeanDefinition</code>的通用抽象实现是<code>AbstractBeanDefinition</code>，也是所有<code>BeanDefinition</code>实现类的父类，维护了Bean定义相关的配置信息，也提供了对其进行设置和获取的方法。</p>
+<a href="/assert/puml/841ce442ac328608395c061a6f8505794ee14ec1617a3358e3a992b19f8894c3.svg" class="gallery-item"><img src="/assert/puml/841ce442ac328608395c061a6f8505794ee14ec1617a3358e3a992b19f8894c3.svg"></a>
+
+
+<h3 id="如何实现基于注解的通用BeanDefinition">4.4. 如何实现基于注解的通用BeanDefinition</h3><p>基于注解的通用<code>BeanDefinition</code>是<code>AnnotatedGenericBeanDefinition</code>，其维护了标注在该类或方法上的注解信息。类图如下：</p>
+<a href="/assert/puml/0da2ebc5f108b9bd963a7da6396f51042cb42d7720c19e5fb25bf086e3812618.svg" class="gallery-item"><img src="/assert/puml/0da2ebc5f108b9bd963a7da6396f51042cb42d7720c19e5fb25bf086e3812618.svg"></a>
+<ul>
+<li><code>AnnotatedTypeMetadata</code>代表了标注注解的元数据</li>
+<li><code>ClassMetadata</code>代表了类的元数据，如类的名称等</li>
+<li><code>MethodMetadata</code>代表了单个方法的元数据，如方法的名称等，其继承了<code>AnnotatedTypeMetadata</code>接口</li>
+<li><code>AnnotationMetadata</code>是一个组合接口，代表了标注注解的元数据，类的元数据和多个方法的元数据。</li>
+</ul>
+<blockquote>
+<p>我们可以通过<code>BeanDefinitionBuilder</code>来构建各种类型的<code>BeanDefinition</code>，如<code>GenericBeanDefinition</code>，<code>RootBeanDefinition</code>，和<code>ChildBeanDefinition</code>。<code>BeanDefinitionBuilder</code>使用了Builder模式</p>
+</blockquote>
+<h2 id="实战">5. 实战</h2><h3 id="如何通过BeanDefinitionBuilder编程式创建并注册一个BeanDefinition？">5.1. 如何通过BeanDefinitionBuilder编程式创建并注册一个BeanDefinition？</h3><p>我们使用<code>BeanDefinitionBuilder</code>编程式创建一个<code>TestBean</code>的<code>BeanDefinition</code>，并注册到<code>BeanFactory</code>中去，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+
+@Slf4j
+public class BeanDefinitionBuilderTest &#123;
+    public static void main(String[] args) &#123;
+        testBeanDefinitionBuilder();
+    &#125;
+
+    public static void testBeanDefinitionBuilder() &#123;
+        &#x2F;&#x2F; 使用 Builder 模式编程式声明一个 BeanDefinition
+        final BeanDefinition beanDefinition &#x3D; BeanDefinitionBuilder
+                .genericBeanDefinition(TestBean.class)
+                .addPropertyValue(&quot;name&quot;, &quot;foo&quot;)
+                .addPropertyValue(&quot;age&quot;, 1)
+                .setScope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+                .setInitMethodName(&quot;initialize&quot;)
+                .getBeanDefinition();
+
+        final DefaultListableBeanFactory beanFactory &#x3D; new DefaultListableBeanFactory();
+        &#x2F;&#x2F; 注册 BeanDefinition
+        beanFactory.registerBeanDefinition(&quot;testBean&quot;, beanDefinition);
+
+        &#x2F;&#x2F; 获取 Bean
+        final Object bean &#x3D; beanFactory.getBean(&quot;testBean&quot;);
+        printBeanInfo(&quot;BeanDefinitionBuilder&quot;, beanDefinition, bean);
+    &#125;
+
+    private static void printBeanInfo(String from, BeanDefinition beanDefinition, Object bean) &#123;
+        log.info(&quot;Loaded from: &#123;&#125;, bean definition type: &#123;&#125;, bean definition: &#123;&#125;, bean: &#123;&#125;&quot;, from, beanDefinition.getClass(), beanDefinition, bean);
+    &#125;
+&#125;
+</code></pre>
+<p>运行结果如下，其实通过<code>BeanDefinitionBuilder</code>编程式创建并注册一个<code>BeanDefinition</code>在日常开发中并不常用，<code>BeanDefinition</code>的创建和注册工作通常由Spring帮我们完成，我们只需要关注Bean是如何配置的即可。</p>
+<pre class="line-numbers language-none"><code class="language-none">TestBean(name&#x3D;foo, age&#x3D;1) had initialized
+Loaded from: BeanDefinitionBuilder, bean definition type: class org.springframework.beans.factory.support.GenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestBean]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;initialize; destroyMethodName&#x3D;null, bean: TestBean(name&#x3D;foo, age&#x3D;1)</code></pre>
+
+<h3 id="使用不同注册BeanDefinition的方式会构建哪种类型的BeanDefinition？">5.2. 使用不同注册BeanDefinition的方式会构建哪种类型的BeanDefinition？</h3><p>我们编写一些测试方法，分别以XML的方式，编程式注册的方式，组件扫描的方式，配置类的@Bean的方式来注册<code>BeanDefinition</code>，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+@Slf4j
+public class BeanDefinitionTypeTest &#123;
+
+    public static void main(String[] args) &#123;
+        testGenericBeanDefinition();
+        testAnnotatedGenericBeanDefinition();
+        testScannedGenericBeanDefinition();
+        testConfigurationClassBeanDefinition();
+    &#125;
+
+    public static void testGenericBeanDefinition() &#123;
+        &#x2F;&#x2F; 使用XML的方式
+        ClassPathXmlApplicationContext context &#x3D; new ClassPathXmlApplicationContext(BeanDefinitionTypeTest.class.getPackage().getName().replace(&quot;.&quot;, &quot;&#x2F;&quot;) + &quot;&#x2F;beans.xml&quot;);
+        context.refresh();
+
+        final BeanDefinition beanDefinition &#x3D; context.getBeanFactory().getBeanDefinition(&quot;testBean&quot;);
+        final TestBean bean &#x3D; context.getBean(TestBean.class);
+        printBeanInfo(&quot;XML&quot;, beanDefinition, bean);
+    &#125;
+
+    public static void testAnnotatedGenericBeanDefinition() &#123;
+        &#x2F;&#x2F; 使用编程式注册的方式
+        AnnotationConfigApplicationContext context &#x3D; new AnnotationConfigApplicationContext();
+        context.register(TestComponent.class);
+        context.refresh();
+
+        final BeanDefinition beanDefinition &#x3D; context.getBeanFactory().getBeanDefinition(&quot;testComponent&quot;);
+        final TestComponent bean &#x3D; context.getBean(TestComponent.class);
+        printBeanInfo(&quot;Programming&quot;, beanDefinition, bean);
+    &#125;
+
+    public static void testScannedGenericBeanDefinition() &#123;
+        &#x2F;&#x2F; 使用组件扫描的方式
+        AnnotationConfigApplicationContext context &#x3D; new AnnotationConfigApplicationContext();
+        context.scan(BeanDefinitionTypeTest.class.getPackage().getName());
+        context.refresh();
+        final BeanDefinition beanDefinition &#x3D; context.getBeanFactory().getBeanDefinition(&quot;testComponent&quot;);
+        final TestComponent bean &#x3D; context.getBean(TestComponent.class);
+        printBeanInfo(&quot;Scan&quot;, beanDefinition, bean);
+    &#125;
+
+
+    public static void testConfigurationClassBeanDefinition() &#123;
+        &#x2F;&#x2F; 使用配置类的@Bean的方式
+        AnnotationConfigApplicationContext context &#x3D; new AnnotationConfigApplicationContext();
+        context.register(TestConfiguration.class);
+        context.refresh();
+
+        final BeanDefinition beanDefinition &#x3D; context.getBeanFactory().getBeanDefinition(&quot;testBean&quot;);
+        final TestBean bean &#x3D; context.getBean(TestBean.class);
+        printBeanInfo(&quot;@Bean&quot;, beanDefinition, bean);
+    &#125;
+
+    private static void printBeanInfo(String from, BeanDefinition beanDefinition, Object bean) &#123;
+        log.info(&quot;Loaded from: &#123;&#125;, bean definition type: &#123;&#125;, bean definition: &#123;&#125;, bean: &#123;&#125;&quot;, from, beanDefinition.getClass(), beanDefinition, bean);
+    &#125;
+&#125;</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Data
+@Slf4j
+@Data
+public class TestBean &#123;
+
+    private String name;
+
+    private int age;
+
+    public void initialize() &#123;
+        log.info(this + &quot; had initialized&quot;);
+    &#125;
+&#125;</code></pre>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&quot;
+       xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;
+       xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&#x2F;spring-beans.xsd&quot;&gt;
+    &lt;bean id&#x3D;&quot;testBean&quot; class&#x3D;&quot;com.remeio.upsnippet.spring.beandefinition.TestBean&quot;&gt;
+        &lt;property name&#x3D;&quot;name&quot; value&#x3D;&quot;foo&quot;&#x2F;&gt;
+        &lt;property name&#x3D;&quot;age&quot; value&#x3D;&quot;1&quot;&#x2F;&gt;
+    &lt;&#x2F;bean&gt;
+&lt;&#x2F;beans&gt;</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+@Component
+@Slf4j
+public class TestComponent &#123;
+
+&#125;
+</code></pre>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class TestConfiguration &#123;
+
+    @Bean
+    public TestBean testBean() &#123;
+        return new TestBean();
+    &#125;
+&#125;</code></pre>
+<p>运行结果如下，不难看出当使用不同的方式注册<code>BeanDefinition</code>时，其最终使用的<code>BeanDefinition</code>的实现类也不同。</p>
+<pre class="line-numbers language-none"><code class="language-none">Loaded from: XML, bean definition type: class org.springframework.beans.factory.support.GenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestBean]; scope&#x3D;; abstract&#x3D;false; lazyInit&#x3D;false; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;null; destroyMethodName&#x3D;null; defined in class path resource [com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;beans.xml], bean: TestBean(name&#x3D;foo, age&#x3D;1)
+Loaded from: Programming, bean definition type: class org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestComponent]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;null; destroyMethodName&#x3D;null, bean: com.remeio.upsnippet.spring.beandefinition.TestComponent@78b729e6
+Loaded from: Scan, bean definition type: class org.springframework.context.annotation.ScannedGenericBeanDefinition, bean definition: Generic bean: class [com.remeio.upsnippet.spring.beandefinition.TestComponent]; scope&#x3D;singleton; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;0; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;null; factoryMethodName&#x3D;null; initMethodName&#x3D;null; destroyMethodName&#x3D;null; defined in file [D:\project\remeio\upsnippet\upsnippet-spring\target\classes\com\remeio\upsnippet\spring\beandefinition\TestComponent.class], bean: com.remeio.upsnippet.spring.beandefinition.TestComponent@5b8dfcc1
+Loaded from: @Bean, bean definition type: class org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader$ConfigurationClassBeanDefinition, bean definition: Root bean: class [null]; scope&#x3D;; abstract&#x3D;false; lazyInit&#x3D;null; autowireMode&#x3D;3; dependencyCheck&#x3D;0; autowireCandidate&#x3D;true; primary&#x3D;false; factoryBeanName&#x3D;testConfiguration; factoryMethodName&#x3D;testBean; initMethodName&#x3D;null; destroyMethodName&#x3D;(inferred); defined in com.remeio.upsnippet.spring.beandefinition.TestConfiguration, bean: TestBean(name&#x3D;null, age&#x3D;0)</code></pre>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/3461516926/">上一篇：如何使用Hexo搭建博客？</a>
+    <a href="/post/3238870166/">下一篇：Bean在Spring中是如何被加载的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2. 如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFBeanDefinition%EF%BC%9F"><span class="toc-text">3.1. 什么是BeanDefinition？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">3.2. BeanDefinition有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8B%86%E5%88%86%E5%87%BA%E8%BF%99%E4%B9%88%E5%A4%9A%E7%9A%84BeanDefinition%EF%BC%9F"><span class="toc-text">3.3. 为什么要拆分出这么多的BeanDefinition？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BeanDefinition%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90"><span class="toc-text">4. BeanDefinition源码剖析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E6%9E%84%E9%80%A0%E5%99%A8%E5%8F%82%E6%95%B0%EF%BC%9F"><span class="toc-text">4.1. 如何表示构造器参数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA%E5%B1%9E%E6%80%A7%E5%80%BC%EF%BC%9F"><span class="toc-text">4.2. 如何表示属性值？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E7%9A%84BeanDefinition%EF%BC%9F"><span class="toc-text">4.3. 如何实现通用的BeanDefinition？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%9F%BA%E4%BA%8E%E6%B3%A8%E8%A7%A3%E7%9A%84%E9%80%9A%E7%94%A8BeanDefinition"><span class="toc-text">4.4. 如何实现基于注解的通用BeanDefinition</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87BeanDefinitionBuilder%E7%BC%96%E7%A8%8B%E5%BC%8F%E5%88%9B%E5%BB%BA%E5%B9%B6%E6%B3%A8%E5%86%8C%E4%B8%80%E4%B8%AABeanDefinition%EF%BC%9F"><span class="toc-text">5.1. 如何通过BeanDefinitionBuilder编程式创建并注册一个BeanDefinition？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E6%B3%A8%E5%86%8CBeanDefinition%E7%9A%84%E6%96%B9%E5%BC%8F%E4%BC%9A%E6%9E%84%E5%BB%BA%E5%93%AA%E7%A7%8D%E7%B1%BB%E5%9E%8B%E7%9A%84BeanDefinition%EF%BC%9F"><span class="toc-text">5.2. 使用不同注册BeanDefinition的方式会构建哪种类型的BeanDefinition？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

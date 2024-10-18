@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    对象是如何创建的及是如何分配内存的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">1. 对象的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%9A%84%EF%BC%9F"><span class="toc-text">1.1. 对象是如何创建的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.2. 对象的内存分配方式有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">1.3. 如何解决内存分配的线程安全问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-text">2. 对象的内存分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%AF%B9%E8%B1%A1%E5%9C%A8%E5%A0%86%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. 新对象在堆中是如何分配内存的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3%E7%9A%84%E5%AF%B9%E8%B1%A1%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3%EF%BC%9F"><span class="toc-text">2.2. 新生代的对象什么时候进入老年代？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D%EF%BC%9F"><span class="toc-text">2.3. 什么是空间分配担保？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8F%91%E7%94%9FMinor-GC%E5%92%8CFull-GC%EF%BC%9F"><span class="toc-text">2.4. 什么时候发生Minor GC和Full GC？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%91%E7%B9%81%E5%8F%91%E7%94%9FFull-GC%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.5. 频繁发生Full GC的原因是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-text">3. 对象的内存布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. 对象的内存布局是怎样的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%9F"><span class="toc-text">3.2. 如何访问一个对象？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/JVM">> JVM</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>对象是如何创建的及是如何分配内存的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-09-09 18:00，字数：1.4k，预计阅读：5分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:250px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;对象的创建&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;生命周期&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;对象是如何创建的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;对象的内存分配方式有哪些？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;如何解决内存分配的线程安全问题？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[5,6]},&quot;v&quot;:&quot;内存分配&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;新对象在堆中是如何分配内存的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;新生代的对象什么时候进入老年代？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是空间分配担保？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;什么时候发生Minor GC和Full GC？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;频繁发生Full GC的原因是什么？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[11,12]},&quot;v&quot;:&quot;内存布局&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;对象的内存布局是怎样的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;如何访问一个对象？&quot;}]}]}"/>
+</div>
+
+
+<h2 id="对象的生命周期">1. 对象的生命周期</h2><h3 id="对象是如何创建的？">1.1. 对象是如何创建的？</h3><ol>
+<li>通过<code>new</code>指令或反射等方式创建新的对象；</li>
+<li>若该对象对应的类从未被加载过，则进行类的加载；</li>
+<li>在堆中（或栈上分配）为对象分配内存空间；</li>
+<li>初始化对象的内存空间为零值；</li>
+<li>为对象设置必要的信息，如类的元数据，对象的哈希码，GC分代年龄等；</li>
+<li>执行对象的构造器方法<code>&lt;init&gt;</code>。</li>
+</ol>
+<a href="/assert/puml/435487d215e0b5427da9c0644914253de58ba60bdac98fc68f58566941106731.svg" class="gallery-item"><img src="/assert/puml/435487d215e0b5427da9c0644914253de58ba60bdac98fc68f58566941106731.svg"></a>
+
+<h3 id="对象的内存分配方式有哪些？">1.2. 对象的内存分配方式有哪些？</h3><ul>
+<li>栈上分配：如果经过逃逸分析后发现该对象是非逃逸的小对象，可以尝试在栈帧中分配内存，以提高内存分配的效率。</li>
+<li>碰撞指针：适合连续的内存空间，如堆中的新生代。</li>
+<li>空闲列表：适合不连续的内存空间，如堆中的老年代。</li>
+</ul>
+<a href="/assert/puml/8f61580a3378dbfacd9cc13dbbd0253a074dc90653065cc5d5ad4bf005258364.svg" class="gallery-item"><img src="/assert/puml/8f61580a3378dbfacd9cc13dbbd0253a074dc90653065cc5d5ad4bf005258364.svg"></a>
+
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-server</code>：开启服务端模式。</li>
+<li><code>-XX:+DoEscapeAnalysis</code>：开启逃逸分析。</li>
+<li><code>-XX:+EliminateAllocations</code>：开启标量替换。</li>
+</ul>
+</blockquote>
+<h3 id="如何解决内存分配的线程安全问题？">1.3. 如何解决内存分配的线程安全问题？</h3><ol>
+<li>首先会从线程本地分配缓存区（Thread Local Allocation Buffer，TLAB）中分配内存，这块内存是每个线程私有的，不会有线程安全问题；</li>
+<li>如果在TLAB中分配不到内存，则使用CAS（Compare And Swap）乐观锁去堆内存中分配。</li>
+</ol>
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:+UseTLAB</code>：开启线程本地分配缓存区分配。</li>
+</ul>
+</blockquote>
+<h2 id="对象的内存分配">2. 对象的内存分配</h2><h3 id="新对象在堆中是如何分配内存的？">2.1. 新对象在堆中是如何分配内存的？</h3><ol>
+<li>首先判断新对象是否是大对象，如果是则直接在老年代为新对象分配内存（内存不足会进行一次Full GC，还不足会OOM）；</li>
+<li>否则判断新生代的Eden区的可用是否大于新对象大小，如果是则在新生代的Eden区为新对象分配内存；</li>
+<li>否则判断老年代的最大可用的连续空间是否大于新生代所有对象的总大小或老年代的最大可用的连续空间是否大于历代晋升老年代对象的平均大小，如果是则进行Minor GC，否则进行Full GC；</li>
+<li>最后再在新生代的Eden区为新对象分配内存（内存不足会OOM）。</li>
+</ol>
+<a href="/assert/puml/559c5a778ad24d82ed20ddc657b7a79f6fa76517bff4b5a9221ed02fbc127b04.svg" class="gallery-item"><img src="/assert/puml/559c5a778ad24d82ed20ddc657b7a79f6fa76517bff4b5a9221ed02fbc127b04.svg"></a>
+
+<h3 id="新生代的对象什么时候进入老年代？">2.2. 新生代的对象什么时候进入老年代？</h3><ul>
+<li>大对象直接进入老年代。</li>
+<li>超过最大年龄阈值的对象会进入老年代。</li>
+<li>如果Survivor区中相同年龄的对象的总大小大于Survivor区总大小的50%，大于等于该年龄的对象会进入老年代。</li>
+<li>Minor GC后，Survivor区容纳不了新生代存活的对象时会进入老年代。</li>
+</ul>
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:PretenureSizeThreshold</code>：指定大对象的阈值，默认为1MB。</li>
+<li><code>-XX:MaxTenuringThreshold</code>：指定进入老年代的年龄阈值，默认为15。</li>
+<li><code>-XX:TargetSurvivorRatio</code>：指定动态年龄判断的比例，默认为50。</li>
+</ul>
+</blockquote>
+<h3 id="什么是空间分配担保？">2.3. 什么是空间分配担保？</h3><p>空间分配担保是指在Minor GC前，会判断老年代的最大可用的连续空间是否大于新生代所有对象的总大小，或老年代的最大可用的连续空间是否大于历代晋升老年代对象的平均大小，如果是则进行Minor GC；否则空间分配担保失败，需要进行Full GC。</p>
+<p>空间分配担保的目的是确保Minor GC是安全的，避免在Minor GC后，存活的对象在老年代中没有足够的空间无法存放导致Full GC。</p>
+<h3 id="什么时候发生Minor-GC和Full-GC？">2.4. 什么时候发生Minor GC和Full GC？</h3><p>发生GC通常的原因是没有足够的可用内存来存放存活的对象，需要回收垃圾对象以释放内存空间。</p>
+<ul>
+<li>新生代空间不足且空间分配担保成功时，会发生Minor GC。</li>
+<li>新生代空间不足且空间分配担保失败时，会发生Full GC。</li>
+<li>老年代空间不足时，会发生Full GC。</li>
+<li>调用<code>System#gc</code>方法时，可能会发生Full GC。</li>
+</ul>
+<h3 id="频繁发生Full-GC的原因是什么？">2.5. 频繁发生Full GC的原因是什么？</h3><p>频繁发生Full GC的本质原因是老年代的可用内存不足，可能有以下几种情况：</p>
+<ul>
+<li>程序创建了过多的大对象。</li>
+<li>程序中存在内存泄漏，有大量需要回收但是未被回收的对象。</li>
+<li>程序中存在代码死循环，不断地创建对象。</li>
+<li>调用了<code>System#gc</code>方法。</li>
+</ul>
+<p>可用通过转储堆的内存快照文件来分析堆中对象的信息，以及可以观察GC日志来分析原因。</p>
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:+HeapDumpBeforeFullGC</code>：开启在Full GC前转储堆的内存快照文件。</li>
+<li><code>-XX:+PrintGCDetails</code>：开启打印GC详细信息。</li>
+</ul>
+</blockquote>
+<h2 id="对象的内存布局">3. 对象的内存布局</h2><h3 id="对象的内存布局是怎样的？">3.1. 对象的内存布局是怎样的？</h3><ol>
+<li>对象头<ul>
+<li>MarkWord：包括对象的hashcode，GC分代年龄，锁状态等。</li>
+<li>类型指针：指向类的元数据的指针，占8个字节（开启指针压缩的情况下占4个字节）。</li>
+<li>数组长度：只有数组对象才有，占4个字节。</li>
+</ul>
+</li>
+<li>实例数据</li>
+<li>对齐填充</li>
+</ol>
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:+UseCompressedClassPointers</code>：开启类指针压缩。</li>
+<li><code>-XX:+UseCompressedOops</code>：开启普通对象指针压缩。</li>
+</ul>
+</blockquote>
+<h3 id="如何访问一个对象？">3.2. 如何访问一个对象？</h3><ul>
+<li>句柄访问：通过句柄池中的指针访问对象，对象移动时，只需要修改句柄指向的指针。</li>
+<li>直接指针：通过指针直接访问对象，比句柄访问更快，也是Hotspot访问对象的方式。</li>
+</ul>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/948158994/">上一篇：运行时数据区有哪些部分组成？</a>
+    <a href="/post/1840753212/">下一篇：什么是垃圾回收及有哪些垃圾收集器？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">1. 对象的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%9A%84%EF%BC%9F"><span class="toc-text">1.1. 对象是如何创建的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.2. 对象的内存分配方式有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">1.3. 如何解决内存分配的线程安全问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="toc-text">2. 对象的内存分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%AF%B9%E8%B1%A1%E5%9C%A8%E5%A0%86%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. 新对象在堆中是如何分配内存的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3%E7%9A%84%E5%AF%B9%E8%B1%A1%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%BF%9B%E5%85%A5%E8%80%81%E5%B9%B4%E4%BB%A3%EF%BC%9F"><span class="toc-text">2.2. 新生代的对象什么时候进入老年代？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D%EF%BC%9F"><span class="toc-text">2.3. 什么是空间分配担保？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%8F%91%E7%94%9FMinor-GC%E5%92%8CFull-GC%EF%BC%9F"><span class="toc-text">2.4. 什么时候发生Minor GC和Full GC？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%91%E7%B9%81%E5%8F%91%E7%94%9FFull-GC%E7%9A%84%E5%8E%9F%E5%9B%A0%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.5. 频繁发生Full GC的原因是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-text">3. 对象的内存布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. 对象的内存布局是怎样的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%9F"><span class="toc-text">3.2. 如何访问一个对象？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    MySQL数据库如何调优？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98"><span class="toc-text">1. 数据库调优</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要数据库调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95%EF%BC%9F"><span class="toc-text">1.2. 如何进行数据库压力测试？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98%E7%9A%84%E6%89%8B%E6%AE%B5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.3. 数据库调优的手段有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%BA%E7%8E%B0%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%97%B6%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">1.4. 数据库出现性能问题时如何排查？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-text">2. 主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F"><span class="toc-text">2.1. 为什么需要主从复制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.2. 主从复制的原理是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E7%AD%96%E7%95%A5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">2.3. 主从复制的策略有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%BB%B6%E8%BF%9F%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">2.4. 如何解决主从复制延迟的问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="toc-text">3. 读写分离</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%EF%BC%9F"><span class="toc-text">3.1. 为什么需要读写分离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%9A%84%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">3.2. 实现读写分离的工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="toc-text">4. 分库分表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BD%95%E9%9C%80%E8%A6%81%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%EF%BC%9F"><span class="toc-text">4.1. 为何需要分库分表？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E7%AD%96%E7%95%A5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.2. 分库分表的策略有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%87%E7%89%87%E6%9C%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="toc-text">4.3. 数据切片有哪些方法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E7%BC%BA%E7%82%B9%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.4. 分库分表的缺点有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.5. 实现分库分表的工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4"><span class="toc-text">5. 高可用集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%EF%BC%9F"><span class="toc-text">5.1. 为什么需要高可用集群？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">5.2. 高可用集群方案有哪些问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%9F"><span class="toc-text">5.3. 如何实现自动故障转移？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">6. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/MySQL">> MySQL</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+      <a href="/tags/图解">图解</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>MySQL数据库如何调优？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2024-03-08 20:00，字数：989，预计阅读：3分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="数据库调优">1. 数据库调优</h2><h3 id="为什么需要数据库调优？">1.1. 为什么需要数据库调优？</h3><p>数据库调优是为了提高数据库的性能、降低接口的响应时间等。体现在以下几个指标：</p>
+<ul>
+<li>响应时间（Response Time，RT）</li>
+<li>每秒事务处理量（Transaction Per Second，TPS）</li>
+<li>每秒查询处理量（Query Per Second，QPS）</li>
+</ul>
+<h3 id="如何进行数据库压力测试？">1.2. 如何进行数据库压力测试？</h3><p>可以使用JMeter工具进行数据库压力测试。下图是使用主键查询和使用全表扫描查询的响应时间（RT）对比，可以看到使用主键查询有更短的响应时间。</p>
+<a href="RT.png" class="gallery-item"><img src="RT.png" style="width: 70%"></a>
+
+<p>下图是使用主键查询和使用全表扫描查询的每秒事务处理量（TPS）对比，可以看到使用主键查询有更高的每秒事务处理量。</p>
+<a href="TPS.png" class="gallery-item"><img src="TPS.png" style="width: 70%"></a>
+
+<h3 id="数据库调优的手段有哪些？">1.3. 数据库调优的手段有哪些？</h3><p>数据库调优<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 10.1 Optimization Overview](https://dev.mysql.com/doc/refman/8.0/en/optimize-overview.html)
+">[1]</span></a></sup>有以下几种手段：</p>
+<ul>
+<li>数据库层面：<ul>
+<li>修改数据库的配置，如设置合适的连接数、提高缓冲区的大小、开启慢查询日志等。</li>
+<li>采用高可用方案、提升硬件配置。</li>
+</ul>
+</li>
+<li>表层面：<ul>
+<li>为表字段选择合适的类型。</li>
+<li>创建合适的索引。</li>
+<li>适当冗余字段，减少连接查询。</li>
+</ul>
+</li>
+<li>SQL语句层面：<ul>
+<li>查看SQL语句的执行计划，优化SQL语句，避免全表扫描和索引失效。</li>
+<li>优化SQL语句，如LIMIT优化、子查询优化、小表驱动大表等。</li>
+</ul>
+</li>
+</ul>
+<h3 id="数据库出现性能问题时如何排查？">1.4. 数据库出现性能问题时如何排查？</h3><ol>
+<li>开启慢查询日志，定位查询慢的SQL语句；</li>
+<li>使用<code>EXPLAIN</code><sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html)">[2]</span></a></sup>命令看SQL语句的执行计划；</li>
+<li>优化SQL语句或者创建合适的索引。</li>
+</ol>
+<h2 id="主从复制">2. 主从复制</h2><h3 id="为什么需要主从复制？">2.1. 为什么需要主从复制？</h3><ul>
+<li>用来备份主库，保证数据的安全。</li>
+<li>支撑读写分离，提高性能。</li>
+<li>支撑故障转移，提高可用性。</li>
+</ul>
+<h3 id="主从复制的原理是什么？">2.2. 主从复制的原理是什么？</h3><p>由主库的IO线程生成binlog；由从库的IO线程生成中继日志relay log；最后由SQL线程重放SQL。</p>
+<h3 id="主从复制的策略有哪些？">2.3. 主从复制的策略有哪些？</h3><ul>
+<li>基于Pos主从复制。</li>
+<li>基于GTID主从复制。</li>
+<li>一主多从，一主多级从，互为主从。</li>
+<li>半同步复制机制。</li>
+</ul>
+<h3 id="如何解决主从复制延迟的问题？">2.4. 如何解决主从复制延迟的问题？</h3><p>主从复制延迟瓶颈在于磁盘IO和网络IO。</p>
+<ul>
+<li>修改从数据库的刷盘策略提高性能，降低安全性。</li>
+<li>多个从数据库，分散从库的读压力。</li>
+<li>从库使用多线程重放SQL。</li>
+</ul>
+<h2 id="读写分离">3. 读写分离</h2><h3 id="为什么需要读写分离？">3.1. 为什么需要读写分离？</h3><p>提高读的能力，分摊读压力。</p>
+<h3 id="实现读写分离的工具有哪些？">3.2. 实现读写分离的工具有哪些？</h3><ul>
+<li>atlas。</li>
+<li>MyCat。</li>
+<li>MySQL Proxy。</li>
+<li>MySQL Router。</li>
+<li>Sharding Sphere。</li>
+</ul>
+<h2 id="分库分表">4. 分库分表</h2><h3 id="为何需要分库分表？">4.1. 为何需要分库分表？</h3><p>突破MySQL单库单表的瓶颈，提高数据库的性能。</p>
+<h3 id="分库分表的策略有哪些？">4.2. 分库分表的策略有哪些？</h3><p>切分与聚合。</p>
+<ul>
+<li>垂直切分<ul>
+<li>垂直分库，按业务分库。</li>
+<li>垂直分表，大表拆小表。</li>
+</ul>
+</li>
+<li>水平切分<ul>
+<li>水平分库。</li>
+<li>水平分表。</li>
+</ul>
+</li>
+</ul>
+<h3 id="数据切片有哪些方法？">4.3. 数据切片有哪些方法？</h3><ul>
+<li>取模分片。</li>
+<li>按范围分片。</li>
+<li>按时间分片。</li>
+<li>按枚举值分片。</li>
+<li>自定义分片。</li>
+</ul>
+<h3 id="分库分表的缺点有哪些？">4.4. 分库分表的缺点有哪些？</h3><ul>
+<li>分库，业务间需要通过接口交互。</li>
+<li>整加事务管理难度。</li>
+</ul>
+<h3 id="实现分库分表的工具有哪些？">4.5. 实现分库分表的工具有哪些？</h3><ul>
+<li>Sharding Sphere。</li>
+<li>MyCat。</li>
+</ul>
+<h2 id="高可用集群">5. 高可用集群</h2><h3 id="为什么需要高可用集群？">5.1. 为什么需要高可用集群？</h3><p>完成自动的故障转移，提高系统的可用性。</p>
+<h3 id="高可用集群方案有哪些问题？">5.2. 高可用集群方案有哪些问题？</h3><ul>
+<li>主键冲突。</li>
+<li>热备节点。</li>
+<li>检查机制完善。</li>
+<li>数据一致性保证。</li>
+</ul>
+<h3 id="如何实现自动故障转移？">5.3. 如何实现自动故障转移？</h3><p><code>keepalived</code></p>
+<h2 id="参考文档">6. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/optimize-overview.html">MySQL :: MySQL 8.0 Reference Manual :: 10.1 Optimization Overview</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 10.8.2 EXPLAIN Output Format</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/104890545/">上一篇：MySQL数据库中有哪些锁？</a>
+    <a href="/post/2443049666/">下一篇：SQL语句如何优化及案例分析？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98"><span class="toc-text">1. 数据库调优</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98%EF%BC%9F"><span class="toc-text">1.1. 为什么需要数据库调优？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95%EF%BC%9F"><span class="toc-text">1.2. 如何进行数据库压力测试？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%B0%83%E4%BC%98%E7%9A%84%E6%89%8B%E6%AE%B5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">1.3. 数据库调优的手段有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%BA%E7%8E%B0%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98%E6%97%B6%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">1.4. 数据库出现性能问题时如何排查？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-text">2. 主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%9F"><span class="toc-text">2.1. 为什么需要主从复制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.2. 主从复制的原理是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E7%AD%96%E7%95%A5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">2.3. 主从复制的策略有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%BB%B6%E8%BF%9F%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">2.4. 如何解决主从复制延迟的问题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="toc-text">3. 读写分离</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%EF%BC%9F"><span class="toc-text">3.1. 为什么需要读写分离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%9A%84%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">3.2. 实现读写分离的工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8"><span class="toc-text">4. 分库分表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BD%95%E9%9C%80%E8%A6%81%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%EF%BC%9F"><span class="toc-text">4.1. 为何需要分库分表？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E7%AD%96%E7%95%A5%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.2. 分库分表的策略有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%87%E7%89%87%E6%9C%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="toc-text">4.3. 数据切片有哪些方法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E7%BC%BA%E7%82%B9%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.4. 分库分表的缺点有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">4.5. 实现分库分表的工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4"><span class="toc-text">5. 高可用集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%EF%BC%9F"><span class="toc-text">5.1. 为什么需要高可用集群？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-text">5.2. 高可用集群方案有哪些问题？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%9F"><span class="toc-text">5.3. 如何实现自动故障转移？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">6. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+</body>
+</html>

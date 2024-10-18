@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Spring MVC是如何分发HTTP请求的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%8F%91HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%EF%BC%9F"><span class="toc-text">2. Spring MVC是如何分发HTTP请求的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%89%A7%E8%A1%8C%E9%93%BE"><span class="toc-text">2.1. 获取给定请求的处理器执行链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">2.2. 获取给定处理器的处理器适配器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%89%8D%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.3. 拦截器前置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">2.4. 处理器适配器处理给定的请求和处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%BB%98%E8%AE%A4%E8%A7%86%E5%9B%BE%E5%90%8D%E7%A7%B0"><span class="toc-text">2.5. 应用默认视图名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.6. 拦截器后置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%88%86%E5%8F%91%E7%BB%93%E6%9E%9C"><span class="toc-text">2.7. 处理分发结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Controller%E5%92%8C-RequestMapping%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. @Controller和@RequestMapping是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1. 初始化处理器方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%BE%E5%88%B0%E7%BB%99%E5%AE%9ABean%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.1. 找到给定Bean的处理器和方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E6%B3%A8%E5%86%8C%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.2. 创建并注册处理器方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.2. 获取给定请求的处理器方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8-1"><span class="toc-text">3.3. 处理器适配器处理给定的请求和处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAServletInvocableHandlerMethod"><span class="toc-text">3.3.1. 创建ServletInvocableHandlerMethod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A7%A3%E6%9E%90%E5%8F%82%E6%95%B0"><span class="toc-text">3.3.2. 处理器方法参数解析器解析参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">3.3.3. 反射调用处理器的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%84%E7%90%86%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">3.3.4. 处理器方法返回值处理器处理返回值</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RequestBody%E5%92%8C-ResponseBody%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">4. @RequestBody和@ResponseBody是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RequestBody%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90"><span class="toc-text">4.1. @RequestBody参数解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ResponseBody%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-text">4.2. @ResponseBody返回值处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E6%AF%8F%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%EF%BC%9F"><span class="toc-text">5.1. 如何打印每个请求的执行时间？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%A0%B9%E6%8D%AEtoken%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">5.2. 如何实现根据token获取用户信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%93%8D%E5%BA%94%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%EF%BC%9F"><span class="toc-text">5.3. 如何实现响应信息的可视化？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/SpringFramework">> SpringFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>Spring MVC是如何分发HTTP请求的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-11-11 16:25，字数：3k，预计阅读：13分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:300px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;Spring MVC分发HTTP请求&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;分发HTTP请求&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;获取给定请求的处理器执行链&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;获取给定处理器的处理器适配器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;拦截器前置处理&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器适配器处理给定的请求和处理器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;应用默认视图名称&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;拦截器后置处理&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;处理分发结果&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[9,10]},&quot;v&quot;:&quot;@Controller和@RequestMapping&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;初始化处理器方法&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;找到给定Bean的处理器和方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;创建并注册处理器方法&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;获取给定请求的处理器方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器适配器处理给定的请求和处理器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[15,16],&quot;f&quot;:true},&quot;v&quot;:&quot;创建ServletInvocableHandlerMethod&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[16,17],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器方法参数解析器解析参数&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[17,18],&quot;f&quot;:true},&quot;v&quot;:&quot;反射调用处理器的方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:8,&quot;p&quot;:{&quot;lines&quot;:[18,19],&quot;f&quot;:true},&quot;v&quot;:&quot;处理器方法返回值处理器处理返回值&quot;}]}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[19,20]},&quot;v&quot;:&quot;@RequestBody和@ResponseBody&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[20,21],&quot;f&quot;:true},&quot;v&quot;:&quot;@RequestBody参数解析&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22],&quot;f&quot;:true},&quot;v&quot;:&quot;@ResponseBody返回值处理&quot;}]}]}"/>
+</div>
+
+
+<h2 id="背景">1. 背景</h2><p>得益于Spring框架的封装，我们只需要简单的几行代码便可创建一个<code>HTTP</code>服务，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@SpringBootApplication
+@RestController
+public class DemoApplication &#123;
+    public static void main(String[] args) &#123;
+      SpringApplication.run(DemoApplication.class, args);
+    &#125;
+	
+    @GetMapping(&quot;&#x2F;hello&quot;)
+    public String hello(@RequestParam(value &#x3D; &quot;name&quot;, defaultValue &#x3D; &quot;World&quot;) String name) &#123;
+      return String.format(&quot;Hello %s!&quot;, name);
+    &#125;
+&#125;</code></pre>
+
+<p>当我们发送相应的<code>HTTP</code>请求后，会执行<code>DemoApplication#hello</code>方法，最后会返回<code>HTTP</code>响应。下文将解读Spring MVC是如何分发<code>HTTP</code>请求的。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">$ curl http:&#x2F;&#x2F;localhost:8080&#x2F;hello?name&#x3D;foo
+$ Hello foo!</code></pre>
+
+<h2 id="Spring-MVC是如何分发HTTP请求的？">2. Spring MVC是如何分发HTTP请求的？</h2><p>当Web服务器接收到请求时，会将请求转发给<code>Servlet</code>容器进行处理，其核心方法为<code>Servlet#service</code>，该方法接收两个参数分别是<code>ServletRequest</code>和<code>ServletResponse</code>。接口定义如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public interface Servlet &#123;
+	public void service(ServletRequest req, ServletResponse res);
+&#125;</code></pre>
+
+<p>Spring MVC中提供的<code>Servlet</code>容器是<code>DispatcherServlet</code>，其核心方法为<code>DispatcherServlet#doDispatch</code>，该方法接收两个参数分别是<code>HttpServletRequest</code>和<code>HttpServletResponse</code>。继承体系如下：</p>
+<a href="/assert/puml/f10388533accea132b1b262a9aa07545cb6278d9b54a8cd3ea12693631fc2951.svg" class="gallery-item"><img src="/assert/puml/f10388533accea132b1b262a9aa07545cb6278d9b54a8cd3ea12693631fc2951.svg"></a>
+
+<p>所有的请求都会经过<code>DispatcherServlet#doDispatch</code>方法进行分发，处理流程如下图：</p>
+<a href="/assert/puml/0901fb6bf34376c72905f0cceb6419f495879ddea4b9b4979d740dbd9282d63f.svg" class="gallery-item"><img src="/assert/puml/0901fb6bf34376c72905f0cceb6419f495879ddea4b9b4979d740dbd9282d63f.svg"></a>
+
+<h3 id="获取给定请求的处理器执行链">2.1. 获取给定请求的处理器执行链</h3><p>Spring MVC抽象出了处理器映射<code>HandleMapping</code>接口，其<code>getHandler</code>方法用来获取当前请求的处理器执行链<code>HandlerExecutionChain</code>。处理器执行链维护了当前请求的处理器和处理器拦截器<code>HandlerInterceptor</code>列表。为支持多种处理器映射，<code>DispatcherServlet</code>中维护了一个处理器映射列表，会遍历该列表找到当前请求对应的处理器执行链。</p>
+<a href="/assert/puml/f1e6b211486d54845bc6a29086137ca277b1364e664c030b5979d2580bbc8a82.svg" class="gallery-item"><img src="/assert/puml/f1e6b211486d54845bc6a29086137ca277b1364e664c030b5979d2580bbc8a82.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>DispatcherServlet#getHandler</code>。</p>
+</blockquote>
+<h3 id="获取给定处理器的处理器适配器">2.2. 获取给定处理器的处理器适配器</h3><p>Spring MVC抽象出了处理器适配器<code>HandlerAdapter</code>接口，其<code>supports</code>方法用来判断该处理器适配器是否支持当前处理器。为支持多种处理器适配器，<code>DispatcherServlet</code>中维护了一个处理器适配器列表，会遍历该列表找到当前处理器对应的处理器适配器。</p>
+<a href="/assert/puml/f9e52aabc1d49d7705e7c7963aa66d0ff0c8ebfe5642978c0381a526d7743fc9.svg" class="gallery-item"><img src="/assert/puml/f9e52aabc1d49d7705e7c7963aa66d0ff0c8ebfe5642978c0381a526d7743fc9.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>DispatcherServlet#getHandlerAdapter</code>。</p>
+</blockquote>
+<h3 id="拦截器前置处理">2.3. 拦截器前置处理</h3><p>执行处理器执行链<code>HandlerExecutionChain</code>的前置处理方法<code>applyPreHandle</code>，本质上是依次调用其内部维护的<code>HandlerInterceptor</code>列表中元素的<code>preHandle</code>方法。</p>
+<a href="/assert/puml/72ab49ed71d7c6a972f8d6e28f0a43b6e34eebc0d390e6392a40f5ddd96033d1.svg" class="gallery-item"><img src="/assert/puml/72ab49ed71d7c6a972f8d6e28f0a43b6e34eebc0d390e6392a40f5ddd96033d1.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>HandlerExecutionChain#applyPreHandle</code>。</p>
+</blockquote>
+<h3 id="处理器适配器处理给定的请求和处理器">2.4. 处理器适配器处理给定的请求和处理器</h3><p>执行处理器适配器<code>HandlerAdapter</code>的<code>handle</code>方法，使用给定的处理器来处理给定的请求，并返回<code>ModelAndView</code>。</p>
+<blockquote>
+<p>对应源码所在位置：<code>HandlerAdapter#handle</code>。</p>
+</blockquote>
+<h3 id="应用默认视图名称">2.5. 应用默认视图名称</h3><p>如果上一步返回了<code>ModelAndView</code>，但没有视图，则根据HTTP请求设置默认的视图名称。</p>
+<blockquote>
+<p>对应源码所在位置：<code>DispatcherServlet#applyDefaultViewName</code>。</p>
+</blockquote>
+<h3 id="拦截器后置处理">2.6. 拦截器后置处理</h3><p>执行处理器执行链<code>HandlerExecutionChain</code>的后置处理方法<code>applyPostHandle</code>，本质上是依次调用其内部维护的<code>HandlerInterceptor</code>列表中元素的<code>postHandle</code>方法。</p>
+<a href="/assert/puml/2b928d7a28e21d3fd3940357645d48b88b76c5d33ebe959c50736a2fb9531c85.svg" class="gallery-item"><img src="/assert/puml/2b928d7a28e21d3fd3940357645d48b88b76c5d33ebe959c50736a2fb9531c85.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>HandlerExecutionChain#applyPostHandle</code>。</p>
+</blockquote>
+<h3 id="处理分发结果">2.7. 处理分发结果</h3><p>如果存在异常，则进行异常处理；如果存在视图，则进行视图的渲染；最后，执行处理器执行链<code>HandlerExecutionChain</code>的完成处理方法<code>triggerAfterCompletion</code>，本质上是依次调用其内部维护的<code>HandlerInterceptor</code>列表中元素的<code>afterCompletion</code>方法。</p>
+<blockquote>
+<p>对应源码所在位置：<code>DispatcherServlet#processDispatchResult</code>。</p>
+</blockquote>
+<h2 id="Controller和-RequestMapping是如何工作的？">3. @Controller和@RequestMapping是如何工作的？</h2><p>上文我们从整体上讲解了Spring MVC是如何分发<code>HTTP</code>请求的，但并未讲解处理器映射<code>HandlerMapping</code>和处理器适配器<code>HandlerAdapter</code>是如何实现的。下面我们将讲解<code>HTTP</code>请求是如何映射到标注了<code>@Controller</code>注解的Bean中标注了<code>@RequestMapping</code>注解的方法上的。</p>
+<h3 id="初始化处理器方法">3.1. 初始化处理器方法</h3><p>Spring MVC注册了一个Bean为<code>RequestMappingHandlerMapping</code>，其初始化时会初始化处理器方法。具体步骤如下：</p>
+<h4 id="找到给定Bean的处理器和方法">3.1.1. 找到给定Bean的处理器和方法</h4><p>对于标注了<code>@Controller</code>注解的Bean，找到标注了<code>@RequestMapping</code>注解的方法，并构建<code>RequestMappingInfo</code>。</p>
+<blockquote>
+<p>对应源码所在位置：<code>AbstractHandlerMethodMapping#initHandlerMethods</code>。</p>
+</blockquote>
+<h4 id="创建并注册处理器方法">3.1.2. 创建并注册处理器方法</h4><ol>
+<li>创建处理器方法<code>HanlderMethod</code>；</li>
+<li>建立路径和<code>RequestMappingInfo</code>的映射；</li>
+<li>建立名称和<code>HandlerMethod</code>的映射；</li>
+<li>建立<code>HandlerMethod</code>和<code>CorsConfiguration</code>的映射；</li>
+<li>建立<code>RequestMappingInfo</code>和<code>MappingRegistration</code>的映射。</li>
+</ol>
+<a href="/assert/puml/9e3d10e359214fa1435a26205b421eb5d625b3ed57c553178479cb9fc456f0b7.svg" class="gallery-item"><img src="/assert/puml/9e3d10e359214fa1435a26205b421eb5d625b3ed57c553178479cb9fc456f0b7.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：<code>AbstractHandlerMethodMapping#registerHandlerMethod</code>。</p>
+</blockquote>
+<h3 id="获取给定请求的处理器方法">3.2. 获取给定请求的处理器方法</h3><ol>
+<li>根据给定的请求获取路径；</li>
+<li>根据路径获取<code>RequestMappingInfo</code>列表，并过滤同给定的请求所匹配的；</li>
+<li>如果上一步未匹配到，则遍历所有的<code>RequestMappingInfo</code>，并过滤同给定的请求所匹配的；</li>
+<li>如果同给定的请求所匹配的结果有多个，则进行排序以选择最佳匹配的结果；</li>
+<li>返回最佳匹配结果的处理器方法<code>HandlerMethod</code>。</li>
+</ol>
+<blockquote>
+<p>对应源码所在位置：<code>AbstractHandlerMethodMapping#lookupHandlerMethod</code>。</p>
+</blockquote>
+<h3 id="处理器适配器处理给定的请求和处理器-1">3.3. 处理器适配器处理给定的请求和处理器</h3><a href="/assert/puml/d7d5bedc9b36603483f4b47bb5748d1381536d27d0f15b523c757ae52928b2e2.svg" class="gallery-item"><img src="/assert/puml/d7d5bedc9b36603483f4b47bb5748d1381536d27d0f15b523c757ae52928b2e2.svg"></a>
+
+
+<blockquote>
+<p>对应源码所在位置：<code>RequestMappingHandlerAdapter#handleInternal</code>。</p>
+</blockquote>
+<h4 id="创建ServletInvocableHandlerMethod">3.3.1. 创建ServletInvocableHandlerMethod</h4><p>根据处理器方法<code>HandlerMethod</code>创建<code>ServletInvocableHandlerMethod</code>，并设置处理器方法参数解析器<code>HandlerMethodArgumentResolverComposite</code>和处理器方法返回值处理器<code>HandlerMethodReturnValueHandlerComposite</code>。</p>
+<blockquote>
+<p>对应源码所在位置：<code>RequestMappingHandlerAdapter#createInvocableHandlerMethod</code>。</p>
+</blockquote>
+<h4 id="处理器方法参数解析器解析参数">3.3.2. 处理器方法参数解析器解析参数</h4><p>调用处理器方法参数解析器<code>HandlerMethodArgumentResolverComposite</code>的<code>resolveArgument</code>方法来解析参数，本质上是调用了<code>HandlerMethodArgumentResolver#resolveArgument</code>方法来得到解析后的参数。</p>
+<blockquote>
+<p>对应源码所在位置：<code>HandlerMethodArgumentResolverComposite#resolveArgument</code>。</p>
+</blockquote>
+<h4 id="反射调用处理器的方法">3.3.3. 反射调用处理器的方法</h4><p>通过反射调用处理器的方法。</p>
+<blockquote>
+<p>对应源码所在位置：<code>InvocableHandlerMethod#doInvoke</code>。</p>
+</blockquote>
+<h4 id="处理器方法返回值处理器处理返回值">3.3.4. 处理器方法返回值处理器处理返回值</h4><p>调用处理器方法返回值处理器<code>HandlerMethodReturnValueHandlerComposite</code>的<code>handleReturnValue</code>方法来处理返回值，本质上是调用了<code>HandlerMethodReturnValueHandler#handleReturnValue</code>方法来得到处理后的返回值。</p>
+<blockquote>
+<p>对应源码所在位置：<code>HandlerMethodReturnValueHandlerComposite#handleReturnValue</code>。</p>
+</blockquote>
+<h2 id="RequestBody和-ResponseBody是如何工作的？">4. @RequestBody和@ResponseBody是如何工作的？</h2><p>上文我们从整体上讲解了处理器适配器是如何处理请求的，但并未讲解处理器方法参数解析器<code>HandlerMethodArgumentResolver</code>和处理器方法返回值处理器<code>HandlerMethodReturnValueHandler</code>是如何实现的。下面我们将讲解标注了<code>@RequestBody</code>注解的参数是如何解析的，以及标注了<code>@ResponseBody</code>注解的返回值是如何处理的。</p>
+<h3 id="RequestBody参数解析">4.1. @RequestBody参数解析</h3><p><code>@RequestBody</code>注解的处理器方法参数解析器是<code>RequestResponseBodyMethodProcessor</code>。本质上是从<code>HTTP</code>请求读取内容并转为对象。</p>
+<blockquote>
+<p>对应源码所在位置：<code>RequestResponseBodyMethodProcessor#resolveArgument</code>。</p>
+</blockquote>
+<h3 id="ResponseBody返回值处理">4.2. @ResponseBody返回值处理</h3><p><code>@RequestBody</code>注解的处理器方法返回值处理器是<code>RequestResponseBodyMethodProcessor</code>。本质上是将对象转为内容并写入<code>HTTP</code>响应。</p>
+<blockquote>
+<p>对应源码所在位置：<code>RequestResponseBodyMethodProcessor#handleReturnValue</code>。</p>
+</blockquote>
+<h2 id="实战">5. 实战</h2><h3 id="如何打印每个请求的执行时间？">5.1. 如何打印每个请求的执行时间？</h3><p>我们希望在每次处理请求后，都打印请求的耗时时间的。首先定义一个拦截器<code>CostTimeHandlerInterceptor</code>，在<code>preHandle</code>方法中记录起始时间，在<code>afterCompletion</code>方法中记录结束时间并打印。代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">package com.remeio.upsnippet.spring.mvc.custom;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@Slf4j
+public class CostTimeHandlerInterceptor implements HandlerInterceptor &#123;
+
+    ThreadLocal&lt;Long&gt; requestTimeMillis &#x3D; new ThreadLocal&lt;&gt;();
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;
+        requestTimeMillis.set(System.currentTimeMillis());
+        return true;
+    &#125;
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception &#123;
+        final Long lastTimeMillis &#x3D; requestTimeMillis.get();
+        requestTimeMillis.remove();
+        if (lastTimeMillis &#x3D;&#x3D; null) &#123;
+            return;
+        &#125;
+        long costTimeMillis &#x3D; System.currentTimeMillis() - lastTimeMillis;
+        log.info(&quot;Request &#39;&#123;&#125;&#39; costs &#123;&#125; millis&quot;, request.getServletPath(), costTimeMillis);
+    &#125;
+&#125;</code></pre>
+
+<p>在<code>CustomWebMvcConfigurer</code>中配置拦截器，拦截所有路径。代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">package com.remeio.upsnippet.spring.mvc.custom;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
+
+
+@Slf4j
+@Configuration
+public class CustomWebMvcConfigurer implements WebMvcConfigurer &#123;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) &#123;
+        registry.addInterceptor(new CostTimeHandlerInterceptor())
+                .addPathPatterns(&quot;&#x2F;**&quot;);
+    &#125;
+&#125;</code></pre>
+
+<p>执行请求后，打印信息如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">Request &#39;&#x2F;custom&#x2F;getUserInfo&#39; costs 4 millis</code></pre>
+
+
+<h3 id="如何实现根据token获取用户信息？">5.2. 如何实现根据token获取用户信息？</h3><p>我们希望在标注了<code>@RequestUser</code>注解的参数上设置用户信息。首先定义一个处理器方法参数解析器<code>RequestUserMethodArgumentResolver</code>，代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">package com.remeio.upsnippet.spring.mvc.custom;
+
+import com.google.common.collect.ImmutableMap;
+import com.remeio.upsnippet.spring.mvc.domain.User;
+import org.springframework.core.MethodParameter;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import java.util.Map;
+
+public class RequestUserMethodArgumentResolver implements HandlerMethodArgumentResolver &#123;
+
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) &#123;
+        RequestUser ann &#x3D; parameter.getParameterAnnotation(RequestUser.class);
+        return (ann !&#x3D; null &amp;&amp; User.class.isAssignableFrom(parameter.getParameterType()));
+    &#125;
+
+    @Override
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) &#123;
+        final String token &#x3D; webRequest.getParameter(&quot;token&quot;);
+        return getUserByToken(token);
+    &#125;
+
+    private User getUserByToken(final String token) &#123;
+        &#x2F;&#x2F; get user by token from database or cache
+        return userDao.get(token);
+    &#125;
+
+    private final Map&lt;String, User&gt; userDao &#x3D; ImmutableMap.of(
+            &quot;t1&quot;, User.builder().username(&quot;foo&quot;).address(&quot;hangzhou&quot;).build(),
+            &quot;t2&quot;, User.builder().username(&quot;bar&quot;).address(&quot;shanghai&quot;).build());
+&#125;
+</code></pre>
+
+<p>在<code>CustomWebMvcConfigurer</code>中该处理器方法参数解析器。代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">package com.remeio.upsnippet.spring.mvc.custom;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
+
+
+@Slf4j
+@Configuration
+public class CustomWebMvcConfigurer implements WebMvcConfigurer &#123;
+
+    @Override
+    public void addArgumentResolvers(List&lt;HandlerMethodArgumentResolver&gt; resolvers) &#123;
+        resolvers.add(new RequestUserMethodArgumentResolver());
+    &#125;
+
+&#125;
+</code></pre>
+
+<p>业务代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import com.remeio.upsnippet.spring.mvc.custom.RequestUser;
+import com.remeio.upsnippet.spring.mvc.custom.ResponseVisualization;
+import com.remeio.upsnippet.spring.mvc.domain.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Slf4j
+@Controller
+@RequestMapping(&quot;&#x2F;custom&quot;)
+public class CustomController &#123;
+
+    @ResponseVisualization
+    @GetMapping(&quot;&#x2F;getUserInfo&quot;)
+    public User getUserInfo(@RequestUser User user) &#123;
+        log.info(&quot;Current user: &#123;&#125;&quot;, user);
+        return user;
+    &#125;
+
+&#125;</code></pre>
+
+<h3 id="如何实现响应信息的可视化？">5.3. 如何实现响应信息的可视化？</h3><p>我们希望在标注了<code>@ResponseVisualization</code>注解的方法上返回可视化的信息。首先定义一个处理器方法返回值处理器<code>ResponseVisualizationReturnValueHandler</code>，代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.util.Assert;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public class ResponseVisualizationReturnValueHandler implements HandlerMethodReturnValueHandler &#123;
+
+    @Override
+    public boolean supportsReturnType(MethodParameter returnType) &#123;
+        return (AnnotatedElementUtils.hasAnnotation(returnType.getContainingClass(), ResponseVisualization.class) ||
+                returnType.hasMethodAnnotation(ResponseVisualization.class));
+    &#125;
+
+    @Override
+    public void handleReturnValue(Object returnValue, MethodParameter returnType, ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception &#123;
+        ServletServerHttpResponse response &#x3D; createOutputMessage(webRequest);
+
+        final String content &#x3D; buildHtml(returnValue !&#x3D; null ? toMap(returnValue) : new HashMap&lt;&gt;(0));
+        StreamUtils.copy(content, StandardCharsets.UTF_8, response.getBody());
+    &#125;
+
+    protected ServletServerHttpResponse createOutputMessage(NativeWebRequest webRequest) &#123;
+        HttpServletResponse response &#x3D; webRequest.getNativeResponse(HttpServletResponse.class);
+        Assert.state(response !&#x3D; null, &quot;No HttpServletResponse&quot;);
+        return new ServletServerHttpResponse(response);
+    &#125;
+
+    private static Map&lt;String, String&gt; toMap(Object obj) throws IllegalAccessException &#123;
+        final Map&lt;String, String&gt; fieldValues &#x3D; new HashMap&lt;&gt;(obj.getClass().getDeclaredFields().length);
+        for (Field field : obj.getClass().getDeclaredFields()) &#123;
+            field.setAccessible(true);
+            fieldValues.put(field.getName(), Objects.toString(field.get(obj)));
+        &#125;
+        return fieldValues;
+    &#125;
+
+    private static String buildHtml(Map&lt;String, String&gt; map) &#123;
+        final String title &#x3D; &quot;&lt;tr&gt;&lt;th&gt;Key&lt;&#x2F;th&gt;&lt;th&gt;Value&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&quot;;
+        StringBuilder content &#x3D; new StringBuilder();
+        for (Map.Entry&lt;String, String&gt; entry : map.entrySet()) &#123;
+            content.append(&quot;&lt;tr&gt;&lt;td&gt;&quot;)
+                    .append(entry.getKey())
+                    .append(&quot;&lt;&#x2F;td&gt;&lt;td&gt;&quot;)
+                    .append(entry.getValue())
+                    .append(&quot;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&quot;);
+        &#125;
+        return &quot;&lt;html&gt;&quot; +
+                &quot;&lt;style&gt;table,th,td &#123; border:1px solid black; border-collapse:collapse; padding: 4px; text-align: left;&#125; &lt;&#x2F;style&gt;&quot; +
+                &quot;&lt;body&gt;&quot; +
+                &quot;&lt;table&gt;&quot; + title + content + &quot;&lt;&#x2F;table&gt;&quot; +
+                &quot;&lt;&#x2F;body&gt;&quot; +
+                &quot;&lt;&#x2F;html&gt;&quot;;
+    &#125;
+&#125;
+</code></pre>
+
+<p>在<code>CustomWebMvcConfigurer</code>中该处理器方法返回值处理器。代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
+
+
+@Slf4j
+@Configuration
+public class CustomWebMvcConfigurer implements WebMvcConfigurer &#123;
+
+    @Override
+    public void addReturnValueHandlers(List&lt;HandlerMethodReturnValueHandler&gt; handlers) &#123;
+        handlers.add(new ResponseVisualizationReturnValueHandler());
+    &#125;
+&#125;</code></pre>
+
+<p>业务代码如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import com.remeio.upsnippet.spring.mvc.custom.RequestUser;
+import com.remeio.upsnippet.spring.mvc.custom.ResponseVisualization;
+import com.remeio.upsnippet.spring.mvc.domain.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Slf4j
+@Controller
+@RequestMapping(&quot;&#x2F;custom&quot;)
+public class CustomController &#123;
+
+    @ResponseVisualization
+    @GetMapping(&quot;&#x2F;getUserInfo&quot;)
+    public User getUserInfo(@RequestUser User user) &#123;
+        log.info(&quot;Current user: &#123;&#125;&quot;, user);
+        return user;
+    &#125;
+
+&#125;</code></pre>
+
+
+<p>运行结果如下：</p>
+<a href="ResponseVisualizationReturnValueHandler-run-result.png" class="gallery-item"><img src="ResponseVisualizationReturnValueHandler-run-result.png"></a></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/2304171767/">上一篇：Java集合框架中Queue接口有哪些实现？</a>
+    <a href="/post/2269236659/">下一篇：在典型业务场景下如何运用设计模式提高代码可读性和扩展性？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%86%E5%8F%91HTTP%E8%AF%B7%E6%B1%82%E7%9A%84%EF%BC%9F"><span class="toc-text">2. Spring MVC是如何分发HTTP请求的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%89%A7%E8%A1%8C%E9%93%BE"><span class="toc-text">2.1. 获取给定请求的处理器执行链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8"><span class="toc-text">2.2. 获取给定处理器的处理器适配器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%89%8D%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.3. 拦截器前置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">2.4. 处理器适配器处理给定的请求和处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E9%BB%98%E8%AE%A4%E8%A7%86%E5%9B%BE%E5%90%8D%E7%A7%B0"><span class="toc-text">2.5. 应用默认视图名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86"><span class="toc-text">2.6. 拦截器后置处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%88%86%E5%8F%91%E7%BB%93%E6%9E%9C"><span class="toc-text">2.7. 处理分发结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Controller%E5%92%8C-RequestMapping%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. @Controller和@RequestMapping是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1. 初始化处理器方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%BE%E5%88%B0%E7%BB%99%E5%AE%9ABean%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.1. 找到给定Bean的处理器和方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E6%B3%A8%E5%86%8C%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.1.2. 创建并注册处理器方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%BB%99%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95"><span class="toc-text">3.2. 获取给定请求的处理器方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%80%82%E9%85%8D%E5%99%A8%E5%A4%84%E7%90%86%E7%BB%99%E5%AE%9A%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%A4%84%E7%90%86%E5%99%A8-1"><span class="toc-text">3.3. 处理器适配器处理给定的请求和处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAServletInvocableHandlerMethod"><span class="toc-text">3.3.1. 创建ServletInvocableHandlerMethod</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8%E8%A7%A3%E6%9E%90%E5%8F%82%E6%95%B0"><span class="toc-text">3.3.2. 处理器方法参数解析器解析参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">3.3.3. 反射调用处理器的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86%E5%99%A8%E5%A4%84%E7%90%86%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">3.3.4. 处理器方法返回值处理器处理返回值</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RequestBody%E5%92%8C-ResponseBody%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">4. @RequestBody和@ResponseBody是如何工作的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RequestBody%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90"><span class="toc-text">4.1. @RequestBody参数解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ResponseBody%E8%BF%94%E5%9B%9E%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-text">4.2. @ResponseBody返回值处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">5. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E6%AF%8F%E4%B8%AA%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%EF%BC%9F"><span class="toc-text">5.1. 如何打印每个请求的执行时间？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%A0%B9%E6%8D%AEtoken%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">5.2. 如何实现根据token获取用户信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%93%8D%E5%BA%94%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%AF%E8%A7%86%E5%8C%96%EF%BC%9F"><span class="toc-text">5.3. 如何实现响应信息的可视化？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

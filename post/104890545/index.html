@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    MySQL数据库中有哪些锁？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%81"><span class="toc-text">1. 锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">1.1. 数据库中的锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E9%94%81%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">1.2. 数据库中的锁有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%EF%BC%9F"><span class="toc-text">1.3. 什么是锁的兼容性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E9%94%81%EF%BC%9F"><span class="toc-text">1.4. 什么是两阶段锁？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="toc-text">2. 全局锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">2.1. 全局锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E5%85%A8%E5%BA%93%E5%A4%87%E4%BB%BD%EF%BC%9F"><span class="toc-text">2.2. 如何进行全库备份？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="toc-text">3. 表级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E7%BA%A7%E8%AF%BB%E5%86%99%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.1. 表级读写锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%84%8F%E5%90%91%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.2. 意向锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.3. 元数据锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%A2%9E%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.4. 自增锁有什么作用？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="toc-text">4. 行级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81%E7%9B%B8%E6%AF%94%E4%BA%8E%E8%A1%A8%E7%BA%A7%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%82%B9%EF%BC%9F"><span class="toc-text">4.1. 行级锁相比于表级锁有什么优点？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">4.2. 记录锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">4.3. 间隙锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B4%E9%94%AE%E9%94%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">4.4. 临键锁是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E6%84%8F%E5%90%91%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">4.5. 插入意向锁有什么作用？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%8A%A0%E9%94%81%E5%88%86%E6%9E%90"><span class="toc-text">5. 语句加锁分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E9%94%81%E5%88%86%E6%9E%90%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-text">5.1. 加锁分析整体思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E6%9F%A5%E8%AF%A2"><span class="toc-text">5.2. 通过主键索引查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E6%9F%A5%E8%AF%A2%E6%88%96%E6%9B%B4%E6%96%B0"><span class="toc-text">5.3. 通过二级索引查询或更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="toc-text">5.4. 通过主键索引更新</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%BB%E9%94%81"><span class="toc-text">6. 死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="toc-text">6.1. 什么是死锁？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%AD%BB%E9%94%81%E7%9A%84%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">6.2. 如何进行死锁的排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="toc-text">6.3. 如何避免死锁？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">7. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/MySQL">> MySQL</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+      <a href="/tags/图解">图解</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>MySQL数据库中有哪些锁？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2024-01-22 20:00，字数：6.8k，预计阅读：34分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:400px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;MySQL数据库中的锁&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;锁&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;数据库中的锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;数据库中的锁有哪些分类？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是锁的兼容性？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是两阶段锁？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[6,7]},&quot;v&quot;:&quot;全局锁&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;全局锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;如何进行全库备份？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[9,10]},&quot;v&quot;:&quot;表级锁&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;表级读写锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;意向锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;元数据锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;自增锁有什么作用？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[14,15]},&quot;v&quot;:&quot;行级锁&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16],&quot;f&quot;:true},&quot;v&quot;:&quot;行级锁相比于表级锁有什么优点？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[16,17],&quot;f&quot;:true},&quot;v&quot;:&quot;记录锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[17,18],&quot;f&quot;:true},&quot;v&quot;:&quot;间隙锁有什么作用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19],&quot;f&quot;:true},&quot;v&quot;:&quot;临键锁是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[19,20],&quot;f&quot;:true},&quot;v&quot;:&quot;插入意向锁有什么作用？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[20,21]},&quot;v&quot;:&quot;语句加锁分析&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22],&quot;f&quot;:true},&quot;v&quot;:&quot;加锁分析整体思路&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[22,23],&quot;f&quot;:true},&quot;v&quot;:&quot;通过主键索引查询&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[23,24],&quot;f&quot;:true},&quot;v&quot;:&quot;通过二级索引查询或更新&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[24,25],&quot;f&quot;:true},&quot;v&quot;:&quot;通过主键索引更新&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[25,26]},&quot;v&quot;:&quot;死锁&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[26,27],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是死锁？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[27,28],&quot;f&quot;:true},&quot;v&quot;:&quot;如何进行死锁的排查？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[28,29],&quot;f&quot;:true},&quot;v&quot;:&quot;如何避免死锁？&quot;}]}]}"/>
+</div>
+
+
+<blockquote>
+<p>本文的测试环境为MySQL8.0.34。</p>
+</blockquote>
+<h2 id="锁">1. 锁</h2><h3 id="数据库中的锁有什么作用？">1.1. 数据库中的锁有什么作用？</h3><p>锁是一种并发控制手段，避免多个事务同时对同一条记录进行修改，用来解决线程安全问题。</p>
+<h3 id="数据库中的锁有哪些分类？">1.2. 数据库中的锁有哪些分类？</h3><p>按照锁的功能来划分：</p>
+<ul>
+<li>读锁（Read Locks），也叫共享锁<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Shared & Exclusive Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks)
+">[1]</span></a></sup>（Shared Locks，S锁）。</li>
+<li>写锁（Write Locks），也叫排他锁<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Shared & Exclusive Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks)
+">[1]</span></a></sup>（Exclusive Locks，X锁）。</li>
+</ul>
+<p>按照锁的粒度来划分：</p>
+<ul>
+<li>全局锁（Global Read Locks）。</li>
+<li>表级锁（Table Level Locks）。</li>
+<li>行级锁（Row Level Locks）。</li>
+</ul>
+<h3 id="什么是锁的兼容性？">1.3. 什么是锁的兼容性？</h3><p>锁的兼容性（Compatibility）是指当一个事务添加了某种锁之后，另一个事务能否添加锁；如果能加代表这两种锁是兼容的，如果不能加代表这两种锁是不兼容的。读锁（S锁）和写锁（X锁）的兼容性如下表：</p>
+<div class="article-table"><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center"><strong>S锁</strong></th>
+<th align="center"><strong>X锁</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>S锁</strong></td>
+<td align="center">兼容</td>
+<td align="center">不兼容</td>
+</tr>
+<tr>
+<td align="center"><strong>X锁</strong></td>
+<td align="center">不兼容</td>
+<td align="center">不兼容</td>
+</tr>
+</tbody></table></div>
+<h3 id="什么是两阶段锁？">1.4. 什么是两阶段锁？</h3><p>在事务执行的过程中添加的锁会在事务提交或回滚时统一释放，即加锁和释放锁分为两个阶段，也就是两阶段锁（Two-Phase Locking，2PL）。</p>
+<h2 id="全局锁">2. 全局锁</h2><h3 id="全局锁有什么作用？">2.1. 全局锁有什么作用？</h3><p>全局读锁是由MySQL服务层实现的锁，添加全局读锁会让整库只读，可以用来备份数据库。</p>
+<ul>
+<li><p>可以通过<code>flush tables with read lock</code>命令为数据库添加全局读锁。</p>
+</li>
+<li><p>可以通过<code>unlock tables</code>命令或关闭会话来释放全局读锁。</p>
+</li>
+</ul>
+<p>如下示例，当会话<code>s1</code>对数据库添加全局读锁后，会话<code>s1</code>能对表<code>t</code>进行读操作，不能对表<code>t</code>进行写操作；会话<code>s2</code>能对表<code>t</code>进行读操作，对表<code>t</code>的写操作会被阻塞。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**s1**&#x2F;flush tables with read lock;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql&gt; &#x2F;**s1**&#x2F;select count(*) from t\G
+*************************** 1. row ***************************
+count(*): 8
+1 row in set (0.01 sec)
+
+mysql&gt; &#x2F;**s1**&#x2F;update t set value &#x3D; 1 where id &#x3D; 1;
+ERROR 1223 (HY000): Cant execute the query because you have a conflicting read lock
+
+mysql&gt; &#x2F;**s2**&#x2F;select count(*) from t\G
+*************************** 1. row ***************************
+count(*): 8
+1 row in set (0.01 sec)
+
+mysql&gt; &#x2F;**s2**&#x2F;update t set value &#x3D; 1 where id &#x3D; 1; # BLOCKED</code></pre>
+
+<h3 id="如何进行全库备份？">2.2. 如何进行全库备份？</h3><ul>
+<li>基于<code>MVCC</code>的备份，采用不加锁的方式读取一致性视图，备份过程中业务能正常进行。</li>
+<li>基于<code>LBCC</code>的备份，采用加全局读锁的方式使全库只读，备份过程中业务不能正常进行。</li>
+</ul>
+<blockquote>
+<ul>
+<li><code>mysqldump -uroot -p --host=localhost --all-databases --lock-all-tables &gt; /root/db.sql</code>。</li>
+<li><code>mysqldump -uroot -p --host=localhost --all-databases --single-transcation &gt; /root/db.sql</code>。</li>
+</ul>
+</blockquote>
+<h2 id="表级锁">3. 表级锁</h2><h3 id="表级读写锁有什么作用？">3.1. 表级读写锁有什么作用？</h3><p>表级读写锁是由MySQL服务层实现的锁，锁粒度是表级。</p>
+<ul>
+<li>可以通过<code>lock tables &lt;table_name&gt; read</code>命令为指定的表添加表级读锁。</li>
+<li>可以通过<code>lock tables &lt;table_name&gt; write</code>命令为指定的表添加表级写锁。</li>
+<li>可以通过<code>unlock tables</code>命令或关闭会话来释放表级锁。</li>
+<li>可以通过<code>show open tables</code>命令查看表级锁的状态。</li>
+</ul>
+<p>如下示例，当会话<code>s1</code>对表<code>t</code>添加表级读锁后，另一个会话<code>s2</code>对表<code>t</code>添加表级读锁成功，这说明表级读锁和表级读锁是兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**s1**&#x2F;lock table t read;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**s2**&#x2F;lock table t read;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**s1**&#x2F;show open tables like &#39;t&#39;\G
+*************************** 1. row ***************************
+   Database: test
+      Table: t
+     In_use: 1
+Name_locked: 0
+1 row in set (0.00 sec)</code></pre>
+
+<p>如下示例，当会话<code>s1</code>对表<code>t</code>添加表级读锁后，另一个会话<code>s2</code>对表<code>t</code>添加表级写锁会被阻塞，这说明表级读锁和表级写锁是不兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**s1**&#x2F;lock table t read;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**s2**&#x2F;lock table t write; # BLOCKED</code></pre>
+
+<p>如下示例，当会话<code>s1</code>对表<code>t</code>添加表级写锁后，另一个会话<code>s2</code>对表<code>t</code>添加表级写锁会被阻塞，这说明表级写锁和表级写锁是不兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**s1**&#x2F;lock table t write;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**s2**&#x2F;lock table t write; # BLOCKED</code></pre>
+
+<h3 id="意向锁有什么作用？">3.2. 意向锁有什么作用？</h3><p>意向锁<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Intention Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-intention-locks)
+">[2]</span></a></sup>（Intention Locks）是由InnoDB存储引擎层实现的锁，用来提高表级读写锁和行级锁互斥判断的速度。</p>
+<ul>
+<li>当对记录添加行级读锁（S锁）时，会自动为该表添加意向读锁（Intention Share Lock，IS锁）。</li>
+<li>当对记录添加行级写锁（X锁）时，会自动为该表添加意向写锁（Intention Exclusive Lock，IX锁）。</li>
+<li>当事务提交或回滚时，会自动释放当前事务持有的意向锁。</li>
+</ul>
+<p>如下示例，当事务<code>t1</code>对表<code>t</code>中<code>id</code>为<code>1</code>的记录添加行级读锁时（会自动为表<code>t</code>添加意向读锁），另一个事务<code>t2</code>对表<code>t</code>添加表级读锁成功，这说明意向读锁和表级读锁是兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**t1**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select * from t where id &#x3D; 1 lock in share mode;
++------+-------+
+| id   | value |
++------+-------+
+|    1 |     1 |
++------+-------+
+1 row in set (0.01 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;t&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|       422088515302184 | t           | NULL       | TABLE     | IS            | GRANTED     | NULL      |
+|       422088515302184 | t           | PRIMARY    | RECORD    | S,REC_NOT_GAP | GRANTED     | 1         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql&gt; &#x2F;**t2**&#x2F;lock table t read;
+Query OK, 0 rows affected (0.00 sec)</code></pre>
+
+<p>如下示例，当事务<code>t1</code>对表<code>t</code>中<code>id</code>为<code>1</code>的记录添加行级读锁时（会自动为表<code>t</code>添加意向读锁），另一个事务<code>t2</code>对表<code>t</code>添加表级写锁会被阻塞，这说明意向读锁和表级写锁是不兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**t1**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select * from t where id &#x3D; 1 lock in share mode;
++------+-------+
+| id   | value |
++------+-------+
+|    1 |     1 |
++------+-------+
+1 row in set (0.01 sec)
+
+mysql&gt; &#x2F;**t2**&#x2F;lock table t write; # BLOCKED</code></pre>
+
+<p>如下示例，当事务<code>t1</code>对表<code>t</code>中<code>id</code>为<code>1</code>的记录添加行级写锁时（会自动为表<code>t</code>添加意向写锁），另一个事务<code>t2</code>对表<code>t</code>添加表级读锁会被阻塞，这说明意向写锁和表级读锁是不兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**t1**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select * from t where id &#x3D; 1 for update;
++------+-------+
+| id   | value |
++------+-------+
+|    1 |     1 |
++------+-------+
+1 row in set (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;t&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141707 | t           | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141707 | t           | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 1         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql&gt; &#x2F;**t2**&#x2F;lock table t read; # BLOCKED</code></pre>
+
+<p>如下示例，当事务<code>t1</code>对表<code>t</code>中<code>id</code>为<code>1</code>的记录添加行级写锁时（会自动为表<code>t</code>添加意向写锁），另一个事务<code>t2</code>对表<code>t</code>添加表级写锁会被阻塞，这说明意向写锁和表级写锁是不兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**t1**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select * from t where id &#x3D; 1 for update;
++------+-------+
+| id   | value |
++------+-------+
+|    1 |     1 |
++------+-------+
+1 row in set (0.00 sec)
+
+mysql&gt; &#x2F;**t2**&#x2F;lock table t write; # BLOCKED</code></pre>
+
+<p>表级读写锁和意向锁的兼容性如下表：</p>
+<div class="article-table"><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">表级S锁</th>
+<th align="center">表级X锁</th>
+<th align="center">IS锁</th>
+<th align="center">IX锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>表级S锁</strong></td>
+<td align="center">兼容</td>
+<td align="center">不兼容</td>
+<td align="center">兼容</td>
+<td align="center">不兼容</td>
+</tr>
+<tr>
+<td align="center"><strong>表级X锁</strong></td>
+<td align="center">不兼容</td>
+<td align="center">不兼容</td>
+<td align="center">不兼容</td>
+<td align="center">不兼容</td>
+</tr>
+<tr>
+<td align="center"><strong>IS锁</strong></td>
+<td align="center">兼容</td>
+<td align="center">不兼容</td>
+<td align="center">兼容</td>
+<td align="center">兼容</td>
+</tr>
+<tr>
+<td align="center"><strong>IX锁</strong></td>
+<td align="center">不兼容</td>
+<td align="center">不兼容</td>
+<td align="center">兼容</td>
+<td align="center">兼容</td>
+</tr>
+</tbody></table></div>
+<h3 id="元数据锁有什么作用？">3.3. 元数据锁有什么作用？</h3><p>元数据锁<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 8.11.4 Metadata Locking](https://dev.mysql.com/doc/refman/8.0/en/metadata-locking.html)
+">[3]</span></a></sup>（Metadata Locking，MDL）是由MySQL服务层实现的锁，用来保证元数据的线程安全。</p>
+<ul>
+<li>当对表中的数据进行增删改查时（也就是执行<code>DML</code>时），会自动为表添加元数据读锁。</li>
+<li>当对表结构进行修改时（也就是执行<code>DDL</code>时），会自动为表添加元数据写锁。</li>
+<li>当<code>DDL</code>执行完毕时，会自动释放元数据写锁。</li>
+<li>当事务提交或回滚时，会自动释放当前事务持有的元数据锁。</li>
+</ul>
+<p>如下示例，当事务<code>t1</code>查询表<code>t</code>中数据时（会自动为表<code>t</code>添加元数据读锁），另一个事务<code>t2</code>修改表<code>t</code>的结构会被阻塞，这说明元数据读锁和元数据写锁是不兼容的。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**t1**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select count(*) from t\G
+*************************** 1. row ***************************
+count(*): 8
+1 row in set (0.01 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;select * from performance_schema.metadata_locks\G
+*************************** 1. row ***************************
+          OBJECT_TYPE: TABLE
+        OBJECT_SCHEMA: performance_schema
+          OBJECT_NAME: metadata_locks
+          COLUMN_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 140611663024208
+            LOCK_TYPE: SHARED_READ
+        LOCK_DURATION: TRANSACTION
+          LOCK_STATUS: GRANTED
+               SOURCE: sql_parse.cc:6139
+      OWNER_THREAD_ID: 3158975
+       OWNER_EVENT_ID: 107
+*************************** 2. row ***************************
+          OBJECT_TYPE: TABLE
+        OBJECT_SCHEMA: test
+          OBJECT_NAME: t
+          COLUMN_NAME: NULL
+OBJECT_INSTANCE_BEGIN: 140611663272320
+            LOCK_TYPE: SHARED_READ
+        LOCK_DURATION: TRANSACTION
+          LOCK_STATUS: GRANTED
+               SOURCE: sql_parse.cc:6139
+      OWNER_THREAD_ID: 3158975
+       OWNER_EVENT_ID: 106
+2 rows in set (0.00 sec)
+
+mysql&gt; &#x2F;**t2**&#x2F;alter table t add column n char(1); #BLOCKED</code></pre>
+
+<p>元数据锁的兼容性如下表：</p>
+<div class="article-table"><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">元数据S锁</th>
+<th align="center">元数据X锁</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>元数据S锁</strong></td>
+<td align="center">兼容</td>
+<td align="center">不兼容</td>
+</tr>
+<tr>
+<td align="center"><strong>元数据X锁</strong></td>
+<td align="center">不兼容</td>
+<td align="center">不兼容</td>
+</tr>
+</tbody></table></div>
+<h3 id="自增锁有什么作用？">3.4. 自增锁有什么作用？</h3><p>自增锁<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - AUTO-INC Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-auto-inc-locks)
+">[4]</span></a></sup>（AUTO-INC Locks）是由InnoDB存储引擎层实现的锁，用来保证自增列的连续性。</p>
+<ul>
+<li>当插入含有自增列的记录时，会自动为表添加自增锁。</li>
+<li>当插入语句执行完毕时，会自动释放自增锁。</li>
+</ul>
+<h2 id="行级锁">4. 行级锁</h2><h3 id="行级锁相比于表级锁有什么优点？">4.1. 行级锁相比于表级锁有什么优点？</h3><p>与表级锁相比，行级锁的锁粒度更小，锁竞争的概率更低，性能更好。与MyISAM等存储引擎相比，InnoDB存储引擎支持多粒度的锁，不仅支持表级锁，还支持行级锁。</p>
+<h3 id="记录锁有什么作用？">4.2. 记录锁有什么作用？</h3><p>记录锁<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Record Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-record-locks)
+">[5]</span></a></sup>（Record Locks）是添加在索引记录上的锁，用来锁住当前记录。</p>
+<ul>
+<li>当更新、删除记录时，会自动为记录添加写锁（X锁）。</li>
+<li>可以通过<code>&lt;sql&gt; for update</code>命令，手动为记录添加写锁（X锁）。</li>
+<li>可以通过<code>&lt;sql&gt; lock in share mode</code>命令，手动为记录添加读锁（S锁）。</li>
+<li>当事务提交或回滚时，会自动释放当前事务持有的记录锁。</li>
+</ul>
+<h3 id="间隙锁有什么作用？">4.3. 间隙锁有什么作用？</h3><p>间隙锁<sup id="fnref:6"><a href="#fn:6" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Gap Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-gap-locks)
+">[6]</span></a></sup>（Gap Locks）是添加在索引记录之间的间隙上的锁，用来避免幻读。当事务的隔离级别是不可重复读（RR）才会使用间隙锁。</p>
+<h3 id="临键锁是什么？">4.4. 临键锁是什么？</h3><p>临键锁<sup id="fnref:7"><a href="#fn:7" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Next-Key Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-next-key-locks)
+">[7]</span></a></sup>（Next-Key Locks）由间隙锁和临键锁组成，锁定区间左开右闭。当事务的隔离级别是不可重复读（RR）才会使用临键锁。为了进一步提高性能，减小锁的粒度，临键锁在以下几种情况会进行降级：</p>
+<ul>
+<li>当使用唯一索引进行等值查询并且记录存在时，临键锁会降级为记录锁。</li>
+<li>当使用唯一索引进行等值查询并且记录不存在时，临键锁会降级为间隙锁。</li>
+</ul>
+<h3 id="插入意向锁有什么作用？">4.5. 插入意向锁有什么作用？</h3><p>插入意向锁<sup id="fnref:8"><a href="#fn:8" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Insert Intention Locks](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-insert-intention-locks)
+">[8]</span></a></sup>（Insert Intention Locks）用来提高插入的性能。插入意向锁和间隙锁不兼容，插入意向锁和插入意向锁兼容。</p>
+<h2 id="语句加锁分析">5. 语句加锁分析</h2><h3 id="加锁分析整体思路">5.1. 加锁分析整体思路</h3><p>语句加锁的情况与多种因素有关，如MySQL的版本、事务的隔离级别、索引的创建和选择、表中存在的数据、以及查询条件等。对语句加锁分析的过程中，我们重点关注一下几个问题：</p>
+<ul>
+<li>对哪些记录加锁？</li>
+<li>对记录加什么类型的锁？</li>
+<li>什么时候释放记录上的锁？</li>
+</ul>
+<p>下面会以表<code>cus</code>为例，对具体语句示例的加锁过程进行分析。表<code>cus</code>有三个索引：</p>
+<ul>
+<li><code>id</code>：为<code>id</code>列添加主键索引。</li>
+<li><code>idx_name</code>：为<code>name</code>列添加普通二级索引。</li>
+<li><code>uk_id_no</code>：为<code>id_no</code>列添加唯一二级索引。</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">DROP TABLE IF EXISTS &#96;cus&#96;;
+CREATE TABLE &#96;cus&#96;  (
+  &#96;id&#96; int NOT NULL AUTO_INCREMENT,
+  &#96;name&#96; varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  &#96;id_no&#96; varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  &#96;gender&#96; int NULL DEFAULT NULL,
+  PRIMARY KEY (&#96;id&#96;) USING BTREE,
+  UNIQUE INDEX &#96;uk_id_no&#96;(&#96;id_no&#96; ASC) USING BTREE,
+  INDEX &#96;idx_name&#96;(&#96;name&#96; ASC) USING BTREE
+) ENGINE &#x3D; InnoDB CHARACTER SET &#x3D; utf8mb4 COLLATE &#x3D; utf8mb4_general_ci ROW_FORMAT &#x3D; Dynamic;
+
+INSERT INTO &#96;cus&#96; VALUES (1, &#39;tom&#39;, &#39;#001&#39;, 1);
+INSERT INTO &#96;cus&#96; VALUES (3, &#39;jerry&#39;, &#39;#009&#39;, 1);
+INSERT INTO &#96;cus&#96; VALUES (7, &#39;foo&#39;, &#39;#006&#39;, 0);
+INSERT INTO &#96;cus&#96; VALUES (8, &#39;bar&#39;, &#39;#015&#39;, 0);
+INSERT INTO &#96;cus&#96; VALUES (15, &#39;john&#39;, &#39;#010&#39;, 1);
+INSERT INTO &#96;cus&#96; VALUES (19, &#39;tom&#39;, &#39;#007&#39;, 1);</code></pre>
+
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; select * from cus;
++----+-------+-------+--------+
+| id | name  | id_no | gender |
++----+-------+-------+--------+
+|  1 | tom   | #001  |      1 |
+|  3 | jerry | #009  |      1 |
+|  7 | foo   | #006  |      0 |
+|  8 | bar   | #015  |      0 |
+| 15 | john  | #010  |      1 |
+| 19 | tom   | #007  |      1 |
++----+-------+-------+--------+
+6 rows in set (0.01 sec)</code></pre>
+
+<h3 id="通过主键索引查询">5.2. 通过主键索引查询</h3><ul>
+<li>RR级别：<ol>
+<li>首先在主键索引树上找到第一条满足搜索条件的记录，并为其添加临键锁（一般情况下）；</li>
+<li>重复上述步骤直到找到第一条不满足搜索条件的记录。</li>
+</ol>
+</li>
+<li>RU&#x2F;RC级别：<ol>
+<li>首先在主键索引树上找到第一条满足搜索条件的记录，并为其添加记录锁；</li>
+<li>然后判断查询条件是否满足，如果不满足则释放锁；</li>
+<li>重复上述步骤直到找到第一条不满足搜索条件的记录。</li>
+</ol>
+</li>
+</ul>
+<p><strong>通过主键索引等值查询存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql&gt; select * from cus where id &#x3D; 3 for update;
++----+-------+-------+--------+
+| id | name  | id_no | gender |
++----+-------+-------+--------+
+|  3 | jerry | #009  |      1 |
++----+-------+-------+--------+
+1 row in set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141562 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141562 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 3         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &#x3D; 3 for update;
++----+-------+-------+--------+
+| id | name  | id_no | gender |
++----+-------+-------+--------+
+|  3 | jerry | #009  |      1 |
++----+-------+-------+--------+
+1 row in set (0.01 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141564 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141564 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 3         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.00 sec)</code></pre>
+
+<p><strong>通过主键索引等值查询不存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &#x3D; 4 lock in share mode;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|       422088515302992 | cus         | NULL       | TABLE     | IS        | GRANTED     | NULL      |
+|       422088515302992 | cus         | PRIMARY    | RECORD    | S,GAP     | GRANTED     | 7         |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+2 rows in set (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &#x3D; 4 lock in share mode;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|       422088515303800 | cus         | NULL       | TABLE     | IS        | GRANTED     | NULL      |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+1 row in set (0.00 sec)
+
+mysql&gt; commit;
+Query OK, 0 rows affected (0.00 sec)</code></pre>
+
+<p><strong>通过主键索引范围查询存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &gt;&#x3D; 7 and id &lt; 15 for update;
++----+------+-------+--------+
+| id | name | id_no | gender |
++----+------+-------+--------+
+|  7 | foo  | #006  |      0 |
+|  8 | bar  | #015  |      0 |
++----+------+-------+--------+
+2 rows in set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141565 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141565 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7         |
+|                141565 | cus         | PRIMARY    | RECORD    | X             | GRANTED     | 8         |
+|                141565 | cus         | PRIMARY    | RECORD    | X,GAP         | GRANTED     | 15        |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+4 rows in set (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &gt;&#x3D; 7 and id &lt; 15 for update;
++----+------+-------+--------+
+| id | name | id_no | gender |
++----+------+-------+--------+
+|  7 | foo  | #006  |      0 |
+|  8 | bar  | #015  |      0 |
++----+------+-------+--------+
+2 rows in set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141566 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141566 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 8         |
+|                141566 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+3 rows in set (0.00 sec)</code></pre>
+
+<p><strong>通过主键索引范围查询不存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &gt; 3 and id &lt;&#x3D; 4 for update;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|                141568 | cus         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
+|                141568 | cus         | PRIMARY    | RECORD    | X,GAP     | GRANTED     | 7         |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+2 rows in set (0.00 sec)
+
+mysql&gt; commit;
+Query OK, 0 rows affected (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where id &gt; 3 and id &lt;&#x3D; 4 for update;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|                141567 | cus         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+1 row in set (0.00 sec)
+
+mysql&gt; commit;
+Query OK, 0 rows affected (0.00 sec)</code></pre>
+
+<h3 id="通过二级索引查询或更新">5.3. 通过二级索引查询或更新</h3><ul>
+<li><p>RR级别：</p>
+<ol>
+<li><p>首先在二级索引树上找到第一条满足搜索条件的记录，并为其添加临键锁（一般情况下）</p>
+</li>
+<li><p>然后回表找到主键索引树上的记录并为其添加记录锁；</p>
+</li>
+<li><p>重复上述步骤直到找到第一条不满足搜索条件的记录。如果适用索引条件下推且并不满足查询条件，则无需回表。</p>
+</li>
+</ol>
+</li>
+<li><p>RU&#x2F;RC级别：</p>
+<ol>
+<li>首先在二级索引树上找到第一条满足搜索条件的记录，并为其添加记录锁；</li>
+<li>然后回表在主键索引树上找到记录，并为其添加记录锁；判断查询条件是否满足，如果不满足则释放二级索引树上和主键索引树上的锁；</li>
+<li>重复上述步骤直到找到第一条不满足搜索条件的记录。如果适用索引条件下推且并不满足查询条件，则无需回表。</li>
+</ol>
+</li>
+</ul>
+<p><strong>通过普通二级索引等值查询存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql&gt; select * from cus where name &#x3D; &#39;tom&#39; for update;
++----+------+-------+--------+
+| id | name | id_no | gender |
++----+------+-------+--------+
+|  1 | tom  | #001  |      1 |
+| 19 | tom  | #007  |      1 |
++----+------+-------+--------+
+2 rows in set (0.01 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+------------------------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA              |
++-----------------------+-------------+------------+-----------+---------------+-------------+------------------------+
+|                141686 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL                   |
+|                141686 | cus         | idx_name   | RECORD    | X             | GRANTED     | supremum pseudo-record |
+|                141686 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;tom&#39;, 1               |
+|                141686 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;tom&#39;, 19              |
+|                141686 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 1                      |
+|                141686 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 19                     |
++-----------------------+-------------+------------+-----------+---------------+-------------+------------------------+
+6 rows in set (0.01 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &#x3D; &#39;tom&#39; for update;
++----+------+-------+--------+
+| id | name | id_no | gender |
++----+------+-------+--------+
+|  1 | tom  | #001  |      1 |
+| 19 | tom  | #007  |      1 |
++----+------+-------+--------+
+2 rows in set (7.24 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141687 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141687 | cus         | idx_name   | RECORD    | X,REC_NOT_GAP | GRANTED     | &#39;tom&#39;, 1  |
+|                141687 | cus         | idx_name   | RECORD    | X,REC_NOT_GAP | GRANTED     | &#39;tom&#39;, 19 |
+|                141687 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 1         |
+|                141687 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 19        |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+5 rows in set (0.01 sec)</code></pre>
+
+<p><strong>通过普通二级索引等值查询不存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &#x3D; &#39;mic&#39; for update;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|                141689 | cus         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
+|                141689 | cus         | idx_name   | RECORD    | X,GAP     | GRANTED     | &#39;tom&#39;, 1  |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+2 rows in set (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &#x3D; &#39;mic&#39; for update;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|                141692 | cus         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+1 row in set (0.00 sec)</code></pre>
+
+<p><strong>通过普通二级索引范围查询存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &gt;&#x3D; &#39;bar&#39; and name &lt; &#39;mic&#39; and gender &#x3D; 0 for update;
++----+------+-------+--------+
+| id | name | id_no | gender |
++----+------+-------+--------+
+|  8 | bar  | #015  |      0 |
+|  7 | foo  | #006  |      0 |
++----+------+-------+--------+
+2 rows in set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+------------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA  |
++-----------------------+-------------+------------+-----------+---------------+-------------+------------+
+|                141698 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL       |
+|                141698 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;tom&#39;, 1   |
+|                141698 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;bar&#39;, 8   |
+|                141698 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;foo&#39;, 7   |
+|                141698 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;john&#39;, 15 |
+|                141698 | cus         | idx_name   | RECORD    | X             | GRANTED     | &#39;jerry&#39;, 3 |
+|                141698 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 8          |
+|                141698 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7          |
+|                141698 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 15         |
+|                141698 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 3          |
++-----------------------+-------------+------------+-----------+---------------+-------------+------------+
+10 rows in set (0.01 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &gt;&#x3D; &#39;bar&#39; and name &lt; &#39;mic&#39; and gender &#x3D; 0 for update;
++----+------+-------+--------+
+| id | name | id_no | gender |
++----+------+-------+--------+
+|  8 | bar  | #015  |      0 |
+|  7 | foo  | #006  |      0 |
++----+------+-------+--------+
+2 rows in set (4.86 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141699 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141699 | cus         | idx_name   | RECORD    | X,REC_NOT_GAP | GRANTED     | &#39;bar&#39;, 8  |
+|                141699 | cus         | idx_name   | RECORD    | X,REC_NOT_GAP | GRANTED     | &#39;foo&#39;, 7  |
+|                141699 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 8         |
+|                141699 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+5 rows in set (0.00 sec)</code></pre>
+
+<p><strong>通过普通二级索引范围查询不存在的记录</strong></p>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &gt; &#39;zoo&#39; for update;
+Empty set (0.00 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+------------------------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA              |
++-----------------------+-------------+------------+-----------+-----------+-------------+------------------------+
+|                141695 | cus         | NULL       | TABLE     | IX        | GRANTED     | NULL                   |
+|                141695 | cus         | idx_name   | RECORD    | X         | GRANTED     | supremum pseudo-record |
++-----------------------+-------------+------------+-----------+-----------+-------------+------------------------+
+2 rows in set (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; select * from cus where name &gt; &#39;zoo&#39; for update;
+Empty set (0.01 sec)
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+|                141697 | cus         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
++-----------------------+-------------+------------+-----------+-----------+-------------+-----------+
+1 row in set (0.00 sec)</code></pre>
+
+<h3 id="通过主键索引更新">5.4. 通过主键索引更新</h3><ul>
+<li>RR级别：和通过主键索引查询类似，不过在为主键索引树上的记录加锁时，会同步为二级索引树上的记录添加记录锁。</li>
+<li>RU&#x2F;RC级别：和通过主键索引查询类似，不过在为主键索引树上的记录加锁时，会同步为二级索引树上的记录添加记录锁，释放主键索引树上的锁时，会同步释放二级索引树上的锁。</li>
+</ul>
+<p>RR级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; update cus set name &#x3D; &#39;foo1&#39; where id &#x3D; 7;
+Query OK, 1 row affected (5.48 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141700 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141700 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.00 sec)</code></pre>
+
+<p>RC级别：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; update cus set name &#x3D; &#39;foo1&#39; where id &#x3D; 7;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+mysql&gt; select ENGINE_TRANSACTION_ID, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, LOCK_MODE, LOCK_STATUS, LOCK_DATA from performance_schema.data_locks where OBJECT_NAME &#x3D; &#39;cus&#39;;
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+| ENGINE_TRANSACTION_ID | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+|                141706 | cus         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|                141706 | cus         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 7         |
++-----------------------+-------------+------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.01 sec)</code></pre>
+
+<h2 id="死锁">6. 死锁</h2><h3 id="什么是死锁？">6.1. 什么是死锁？</h3><p>死锁<sup id="fnref:9"><a href="#fn:9" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 15.7.5 Deadlocks in InnoDB](https://dev.mysql.com/doc/refman/8.0/en/innodb-deadlocks.html)
+">[9]</span></a></sup>（Deadlock）是指两个或多个事务互相持有对方等待的锁，导致所有事务都处于被阻塞的状态。如下示例</p>
+<ol>
+<li>事务<code>t1</code>获取到<code>id</code>为<code>1</code>的记录的写锁；</li>
+<li>事务<code>t2</code>获取到<code>id</code>为<code>2</code>的记录的写锁；</li>
+<li>事务<code>t1</code>获取<code>id</code>为<code>2</code>的记录的写锁被阻塞；</li>
+<li>事务<code>t2</code>获取<code>id</code>为<code>1</code>的记录的写锁被阻塞，事务<code>t2</code>被回滚。</li>
+</ol>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysql&gt; &#x2F;**t1**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t1**&#x2F;update user set balance &#x3D; balance - 10 where id &#x3D; 1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; &#x2F;**t2**&#x2F;begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; &#x2F;**t2**&#x2F;update user set balance &#x3D; balance - 20 where id &#x3D; 2;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; &#x2F;**t1**&#x2F;update user set balance &#x3D; balance + 10 where id &#x3D; 2; # BLOCKED
+
+mysql&gt; &#x2F;**t2**&#x2F;update user set balance &#x3D; balance + 20 where id &#x3D; 1;
+ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting transaction</code></pre>
+
+<h3 id="如何进行死锁的排查？">6.2. 如何进行死锁的排查？</h3><p>通过<code>show engine innodb status</code>命令可以查看死锁信息。如下示例：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">
+mysql&gt; show engine innodb status\G
+...
+------------------------
+LATEST DETECTED DEADLOCK
+------------------------
+2024-02-16 15:39:04 140612928214784
+*** (1) TRANSACTION:
+TRANSACTION 141716, ACTIVE 23 sec starting index read
+mysql tables in use 1, locked 1
+LOCK WAIT 3 lock struct(s), heap size 1128, 2 row lock(s), undo log entries 1
+MySQL thread id 5095085, OS thread handle 140612341798656, query id 3899944 localhost root updating
+update user set balance &#x3D; balance + 10 where id &#x3D; 2
+
+*** (1) HOLDS THE LOCK(S):
+RECORD LOCKS space id 26 page no 8 n bits 152 index PRIMARY of table &#96;test&#96;.&#96;user&#96; trx id 141716 lock_mode X locks rec but not gap
+Record lock, heap no 2 PHYSICAL RECORD: n_fields 13; compact format; info bits 0
+ 0: len 8; hex 8000000000000001; asc         ;;
+ 1: len 6; hex 000000022994; asc     ) ;;
+ 2: len 7; hex 020000018e04f1; asc        ;;
+ 3: len 6; hex e590b4e998b3; asc       ;;
+ 4: len 18; hex 353432343239313939373035313335353331; asc 542429199705135531;;
+ 5: len 11; hex 3135393333363234383534; asc 15933624854;;
+ 6: len 9; hex e58c85e8a385e5b7a5; asc          ;;
+ 7: len 12; hex e5ad9fe58aa0e68b89e59bbd; asc             ;;
+ 8: len 9; hex e99995e8a5bfe79c81; asc          ;;
+ 9: len 30; hex e8b4b5e5b79ee79c81e5ae9ce983bde5b882e8939fe5b79ee69da8e8a197; asc                               ; (total 41 bytes);
+ 10: len 22; hex 7869756c616e6368656e406578616d706c652e6e6574; asc xiulanchen@example.net;;
+ 11: len 8; hex 80000000000017b3; asc         ;;
+ 12: len 5; hex 9959aa275f; asc  Y &#39;_;;
+
+
+*** (1) WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 26 page no 8 n bits 152 index PRIMARY of table &#96;test&#96;.&#96;user&#96; trx id 141716 lock_mode X locks rec but not gap waiting
+Record lock, heap no 3 PHYSICAL RECORD: n_fields 13; compact format; info bits 0
+ 0: len 8; hex 8000000000000002; asc         ;;
+ 1: len 6; hex 000000022996; asc     ) ;;
+ 2: len 7; hex 01000002020614; asc        ;;
+ 3: len 6; hex e69d8ee790b3; asc       ;;
+ 4: len 18; hex 343331323032313933373035323832353239; asc 431202193705282529;;
+ 5: len 11; hex 3135363736333432363332; asc 15676342632;;
+ 6: len 21; hex e5bbbae7ad91e69cbae794b5e5b7a5e7a88be5b888; asc                      ;;
+ 7: len 18; hex e4b98ce585b9e588abe5858be696afe59da6; asc                   ;;
+ 8: len 9; hex e99995e8a5bfe79c81; asc          ;;
+ 9: len 30; hex e58fb0e6b9bee79c81e6b481e5b882e585b4e5b1b1e6ada6e6b189e8b7af; asc                               ; (total 41 bytes);
+ 10: len 17; hex 706d656e67406578616d706c652e6f7267; asc pmeng@example.org;;
+ 11: len 8; hex 8000000000000bdb; asc         ;;
+ 12: len 5; hex 9934ef4a33; asc  4 J3;;
+
+
+*** (2) TRANSACTION:
+TRANSACTION 141718, ACTIVE 14 sec starting index read
+mysql tables in use 1, locked 1
+LOCK WAIT 3 lock struct(s), heap size 1128, 2 row lock(s), undo log entries 1
+MySQL thread id 5095092, OS thread handle 140612339685120, query id 3899959 localhost root updating
+update user set balance &#x3D; balance + 20 where id &#x3D; 1
+
+*** (2) HOLDS THE LOCK(S):
+RECORD LOCKS space id 26 page no 8 n bits 152 index PRIMARY of table &#96;test&#96;.&#96;user&#96; trx id 141718 lock_mode X locks rec but not gap
+Record lock, heap no 3 PHYSICAL RECORD: n_fields 13; compact format; info bits 0
+ 0: len 8; hex 8000000000000002; asc         ;;
+ 1: len 6; hex 000000022996; asc     ) ;;
+ 2: len 7; hex 01000002020614; asc        ;;
+ 3: len 6; hex e69d8ee790b3; asc       ;;
+ 4: len 18; hex 343331323032313933373035323832353239; asc 431202193705282529;;
+ 5: len 11; hex 3135363736333432363332; asc 15676342632;;
+ 6: len 21; hex e5bbbae7ad91e69cbae794b5e5b7a5e7a88be5b888; asc                      ;;
+ 7: len 18; hex e4b98ce585b9e588abe5858be696afe59da6; asc                   ;;
+ 8: len 9; hex e99995e8a5bfe79c81; asc          ;;
+ 9: len 30; hex e58fb0e6b9bee79c81e6b481e5b882e585b4e5b1b1e6ada6e6b189e8b7af; asc                               ; (total 41 bytes);
+ 10: len 17; hex 706d656e67406578616d706c652e6f7267; asc pmeng@example.org;;
+ 11: len 8; hex 8000000000000bdb; asc         ;;
+ 12: len 5; hex 9934ef4a33; asc  4 J3;;
+
+
+*** (2) WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 26 page no 8 n bits 152 index PRIMARY of table &#96;test&#96;.&#96;user&#96; trx id 141718 lock_mode X locks rec but not gap waiting
+Record lock, heap no 2 PHYSICAL RECORD: n_fields 13; compact format; info bits 0
+ 0: len 8; hex 8000000000000001; asc         ;;
+ 1: len 6; hex 000000022994; asc     ) ;;
+ 2: len 7; hex 020000018e04f1; asc        ;;
+ 3: len 6; hex e590b4e998b3; asc       ;;
+ 4: len 18; hex 353432343239313939373035313335353331; asc 542429199705135531;;
+ 5: len 11; hex 3135393333363234383534; asc 15933624854;;
+ 6: len 9; hex e58c85e8a385e5b7a5; asc          ;;
+ 7: len 12; hex e5ad9fe58aa0e68b89e59bbd; asc             ;;
+ 8: len 9; hex e99995e8a5bfe79c81; asc          ;;
+ 9: len 30; hex e8b4b5e5b79ee79c81e5ae9ce983bde5b882e8939fe5b79ee69da8e8a197; asc                               ; (total 41 bytes);
+ 10: len 22; hex 7869756c616e6368656e406578616d706c652e6e6574; asc xiulanchen@example.net;;
+ 11: len 8; hex 80000000000017b3; asc         ;;
+ 12: len 5; hex 9959aa275f; asc  Y &#39;_;;
+
+*** WE ROLL BACK TRANSACTION (2)
+...</code></pre>
+
+<h3 id="如何避免死锁？">6.3. 如何避免死锁？</h3><ul>
+<li>从SQL语句层面，通过调整事务中SQL语句的顺序来确保不会发生死锁。</li>
+<li>从MySQL数据库层面，开启死锁检测，发现死锁时自动回滚事务。</li>
+</ul>
+<h2 id="参考文档">7. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-shared-exclusive-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Shared &amp; Exclusive Locks</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-intention-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Intention Locks</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/metadata-locking.html">MySQL :: MySQL 8.0 Reference Manual :: 8.11.4 Metadata Locking</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-auto-inc-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - AUTO-INC Locks</a><a href="#fnref:4" rev="footnote"> ↩</a></span></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">5.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-record-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Record Locks</a><a href="#fnref:5" rev="footnote"> ↩</a></span></li><li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">6.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-gap-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Gap Locks</a><a href="#fnref:6" rev="footnote"> ↩</a></span></li><li id="fn:7"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">7.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-next-key-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Next-Key Locks</a><a href="#fnref:7" rev="footnote"> ↩</a></span></li><li id="fn:8"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">8.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html#innodb-insert-intention-locks">MySQL :: MySQL 8.0 Reference Manual :: 17.7.1 InnoDB Locking - Insert Intention Locks</a><a href="#fnref:8" rev="footnote"> ↩</a></span></li><li id="fn:9"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">9.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-deadlocks.html">MySQL :: MySQL 8.0 Reference Manual :: 15.7.5 Deadlocks in InnoDB</a><a href="#fnref:9" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/3230764913/">上一篇：InnoDB存储引擎的索引是如何实现的？</a>
+    <a href="/post/4092758909/">下一篇：MySQL数据库如何调优？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%81"><span class="toc-text">1. 锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">1.1. 数据库中的锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E9%94%81%E6%9C%89%E5%93%AA%E4%BA%9B%E5%88%86%E7%B1%BB%EF%BC%9F"><span class="toc-text">1.2. 数据库中的锁有哪些分类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%EF%BC%9F"><span class="toc-text">1.3. 什么是锁的兼容性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%A4%E9%98%B6%E6%AE%B5%E9%94%81%EF%BC%9F"><span class="toc-text">1.4. 什么是两阶段锁？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="toc-text">2. 全局锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">2.1. 全局锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E5%85%A8%E5%BA%93%E5%A4%87%E4%BB%BD%EF%BC%9F"><span class="toc-text">2.2. 如何进行全库备份？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="toc-text">3. 表级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E7%BA%A7%E8%AF%BB%E5%86%99%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.1. 表级读写锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%84%8F%E5%90%91%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.2. 意向锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.3. 元数据锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%A2%9E%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">3.4. 自增锁有什么作用？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="toc-text">4. 行级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81%E7%9B%B8%E6%AF%94%E4%BA%8E%E8%A1%A8%E7%BA%A7%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E7%82%B9%EF%BC%9F"><span class="toc-text">4.1. 行级锁相比于表级锁有什么优点？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">4.2. 记录锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">4.3. 间隙锁有什么作用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B4%E9%94%AE%E9%94%81%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">4.4. 临键锁是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E6%84%8F%E5%90%91%E9%94%81%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="toc-text">4.5. 插入意向锁有什么作用？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E5%8F%A5%E5%8A%A0%E9%94%81%E5%88%86%E6%9E%90"><span class="toc-text">5. 语句加锁分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E9%94%81%E5%88%86%E6%9E%90%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-text">5.1. 加锁分析整体思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E6%9F%A5%E8%AF%A2"><span class="toc-text">5.2. 通过主键索引查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E6%9F%A5%E8%AF%A2%E6%88%96%E6%9B%B4%E6%96%B0"><span class="toc-text">5.3. 通过二级索引查询或更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="toc-text">5.4. 通过主键索引更新</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%BB%E9%94%81"><span class="toc-text">6. 死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="toc-text">6.1. 什么是死锁？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E6%AD%BB%E9%94%81%E7%9A%84%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="toc-text">6.2. 如何进行死锁的排查？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="toc-text">6.3. 如何避免死锁？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">7. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

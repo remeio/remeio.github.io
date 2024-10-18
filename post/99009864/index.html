@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    InnoDB存储引擎的磁盘结构和内存结构是怎样的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84"><span class="toc-text">1. MySQL逻辑架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL%E7%9A%84%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">1.1. MySQL的逻辑架构由哪些部分组成？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 一条查询语句的执行流程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84"><span class="toc-text">2. InnoDB存储引擎的磁盘结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">2.1. InnoDB存储引擎的磁盘结构由哪些部分组成？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E7%A9%BA%E9%97%B4%E6%9C%89%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">2.2. 表空间有哪些部分组成？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="toc-text">3. InnoDB存储引擎的内存结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">3.1. InnoDB存储引擎的内存结构由哪些部分组成？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E6%B1%A0Buffer-Pool%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.2. 缓冲池Buffer Pool的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E7%BC%93%E5%86%B2Change-Buffer%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.3. 修改缓冲Change Buffer的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95Adaptive-Hash-Index%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.4. 自适应哈希索引Adaptive Hash Index的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E7%BC%93%E5%86%B2Log-Buffer%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.5. 日志缓冲Log Buffer的作用是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%8F%E9%A1%B5"><span class="toc-text">4. 脏页</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%84%8F%E9%A1%B5%EF%BC%9F"><span class="toc-text">4.1. 什么是脏页？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E4%BF%AE%E6%94%B9%E7%9A%84%E6%95%88%E7%8E%87%E5%B9%B6%E4%BF%9D%E8%AF%81%E5%AE%89%E5%85%A8%E6%80%A7%EF%BC%9F"><span class="toc-text">4.2. 如何提高修改的效率并保证安全性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%8F%E9%A1%B5%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%88%B7%E7%9B%98%EF%BC%9F"><span class="toc-text">4.3. 脏页什么时候刷盘？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">4.4. 一条更新语句的执行流程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">5. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/MySQL">> MySQL</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+      <a href="/tags/图解">图解</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>InnoDB存储引擎的磁盘结构和内存结构是怎样的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2024-01-14 17:20，字数：2.6k，预计阅读：9分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:300px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,2]},&quot;v&quot;:&quot;InnoDB存储引擎的&lt;br&gt;\n磁盘结构和内存结构&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;MySQL逻辑架构&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;MySQL的逻辑架构由哪些部分组成？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;一条查询语句的执行流程是怎样的？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[5,6]},&quot;v&quot;:&quot;InnoDB存储引擎的磁盘结构&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;InnoDB存储引擎的磁盘结构由哪些部分组成？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;表空间有哪些部分组成？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;InnoDB存储引擎的内存结构&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;InnoDB存储引擎的内存结构由哪些部分组成？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;缓冲池Buffer Pool的作用是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;修改缓冲Change Buffer的作用是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;自适应哈希索引Adaptive Hash Index的作用是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;日志缓冲Log Buffer的作用是什么？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[14,15]},&quot;v&quot;:&quot;脏页&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是脏页？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[16,17],&quot;f&quot;:true},&quot;v&quot;:&quot;如何提高修改的效率并保证安全性？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[17,18],&quot;f&quot;:true},&quot;v&quot;:&quot;脏页什么时候刷盘？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19],&quot;f&quot;:true},&quot;v&quot;:&quot;一条更新语句的执行流程是怎样的？&quot;}]}]}"/>
+</div>
+
+
+<h2 id="MySQL逻辑架构">1. MySQL逻辑架构</h2><h3 id="MySQL的逻辑架构由哪些部分组成？">1.1. MySQL的逻辑架构由哪些部分组成？</h3><p>MySQL的逻辑架构由服务层和存储引擎层组成。其中服务层有以下几部分：</p>
+<ul>
+<li>连接器：管理权限，验证连接。</li>
+<li>查询缓存：命中缓存直接返回结果（在MySQL8.0版本移除）。</li>
+<li>分析器：词法分析，语法分析。</li>
+<li>优化器：生成执行计划，选择合适的索引。</li>
+<li>执行器：调用存储引擎接口，返回结果。</li>
+</ul>
+<p>其中存储引擎层有<code>InnoDB</code>，<code>MyISAM</code>和<code>MEMORY</code>等存储引擎。</p>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-MySQL%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84.drawio.svg" title="图解MySQL-MySQL逻辑架构.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-MySQL%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84.drawio.svg" alt="图解MySQL-MySQL逻辑架构.drawio.svg"></a></p>
+<blockquote>
+<p>可以通过<code>show engines</code>命令查看MySQL支持的存储引擎。</p>
+</blockquote>
+<h3 id="一条查询语句的执行流程是怎样的？">1.2. 一条查询语句的执行流程是怎样的？</h3><p>客户端将一条查询语句发送给MySQL服务端时，会经过以下几个步骤：</p>
+<ol>
+<li>客户端通过连接器与MySQL服务端建立连接；</li>
+<li>判断查询缓存是否命中，如果命中则直接返回结果（在MySQL8.0版本移除），否则进入下一步；</li>
+<li>由分析器对查询语句进行词法分析和语法分析；</li>
+<li>由优化器生成查询语句的执行计划，并选择合适的索引；</li>
+<li>由执行器调用存储引擎提供的接口，查询数据并返回结果给客户端。</li>
+</ol>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E4%B8%80%E6%9D%A1%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84.drawio.svg" title="图解MySQL-一条查询语句的执行流程是怎样的.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E4%B8%80%E6%9D%A1%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84.drawio.svg" alt="图解MySQL-一条查询语句的执行流程是怎样的.drawio.svg"></a></p>
+<blockquote>
+<p>可以通过<code>show processlist</code>命令查看当前建立的连接。</p>
+</blockquote>
+<h2 id="InnoDB存储引擎的磁盘结构">2. InnoDB存储引擎的磁盘结构</h2><h3 id="InnoDB存储引擎的磁盘结构由哪些部分组成？">2.1. InnoDB存储引擎的磁盘结构由哪些部分组成？</h3><p>InnoDB存储引擎的磁盘结构由表空间<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.6.3 Tablespaces](https://dev.mysql.com/doc/refman/8.0/en/innodb-tablespace.html)
+">[1]</span></a></sup>（Tablespace）和日志文件（Log）组成。其中表空间有以下几种：</p>
+<ul>
+<li>系统表空间（System Tablespace）：用来存储数据字典，修改缓冲，回滚日志以及双写缓冲等。</li>
+<li>独立表空间（File-Pre-Table Tablespace）：用来存储单个表的数据和索引。</li>
+<li>通用表空间（General Tablespace）：用来平衡系统表空间和独立表空间。</li>
+<li>回滚表空间（Undo Tablespace）：用来记录回滚日志。</li>
+<li>临时表空间（Temporary Tablespace）：用来存储临时表。</li>
+</ul>
+<p>其中日志文件有以下几种：</p>
+<ul>
+<li>通用日志<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 7.4.3 The General Query Log](https://dev.mysql.com/doc/refman/8.0/en/query-log.html)
+">[2]</span></a></sup>（General Log）：用来记录用户执行的所有SQL语句。</li>
+<li>错误日志<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 7.4.2 The Error Log](https://dev.mysql.com/doc/refman/8.0/en/error-log.html)
+">[3]</span></a></sup>（Error Log）：用来记录数据库运行过程中的错误日志，方便排查数据库问题。</li>
+<li>慢查询日志<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 7.4.5 The Slow Query Log](https://dev.mysql.com/doc/refman/8.0/en/slow-query-log.html)
+">[4]</span></a></sup>（Slow Query Log）：用来记录执行慢的SQL语句，方便排查SQL性能问题。</li>
+<li>二进制日志<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 7.4.4 The Binary Log](https://dev.mysql.com/doc/refman/8.0/en/binary-log.html)
+">[5]</span></a></sup>（Binary Log）：用来记录<code>DDL</code>和<code>DML</code>对数据库做的变更，用于主从复制和备份。</li>
+<li>重做日志<sup id="fnref:6"><a href="#fn:6" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.6.5 Redo Log](https://dev.mysql.com/doc/refman/8.0/en/innodb-redo-log.html)
+">[6]</span></a></sup>（Redo Log）：用来记录对数据页的修改，提高修改的速度并保证安全性，采用循环写机制。</li>
+</ul>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84.drawio.svg" title="图解MySQL-InnoDB存储引擎的磁盘结构.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84.drawio.svg" alt="图解MySQL-InnoDB存储引擎的磁盘结构.drawio.svg"></a></p>
+<blockquote>
+<p>表空间相关参数：</p>
+<ul>
+<li>可以通过<code>datadir</code>参数指定数据目录。</li>
+<li>可以通过<code>innodb_file_per_table</code>参数开启独立表空间。</li>
+<li>可以通过<code>innodb_data_file_path</code>参数指定系统表空间的路径。</li>
+<li>可以通过<code>innodb_temp_data_file_path</code>参数指定临时表空间的路径。</li>
+</ul>
+<p>日志文件相关参数：</p>
+<ul>
+<li>可以通过<code>general_log</code>参数开启并指定通用日志的路径。</li>
+<li>可以通过<code>log_error</code>参数开启并指定错误日志的路径。</li>
+<li>可以通过<code>slow_query_log</code>参数开启慢查询日志。</li>
+<li>可以通过<code>long_query_time</code>参数指定慢查询的耗时阈值。</li>
+<li>可以通过<code>log_queries_not_using_indexes</code>参数开启慢查询日志记录不使用索引的查询。</li>
+<li>可以通过<code>log_bin</code>参数开启并指定二进制日志的路径。</li>
+<li>可以通过<code>sync_binlog</code>参数指定二进制日志的刷盘策略。</li>
+<li>可以通过<code>binlog_format</code>参数指定二进制日志的格式。</li>
+<li>可以通过<code>innodb_redo_log_capacity</code>参数指定重做日志的大小。</li>
+<li>可以通过<code>log_output</code>参数指定日志格式。</li>
+</ul>
+</blockquote>
+<h3 id="表空间有哪些部分组成？">2.2. 表空间有哪些部分组成？</h3><ul>
+<li>表空间（Tablespace）：表空间由若干段组成，如数据段，索引段和回滚段等。</li>
+<li>段（Segment）：段是逻辑上的概念，一个段包含多个区。</li>
+<li>区（Extend）：区是数据库向操作系统申请资源的基本单位，大小为1MB，一个区包含64个页。</li>
+<li>页（Page）：页是InnoDB存储引擎操作的基本单位，默认大小为16KB，一个页包含多个行。</li>
+<li>行（Row） ：行是数据存储的基本单位。</li>
+</ul>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E8%A1%A8%E7%A9%BA%E9%97%B4%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86.drawio.svg" title="图解MySQL-表空间的组成部分.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E8%A1%A8%E7%A9%BA%E9%97%B4%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86.drawio.svg" alt="图解MySQL-表空间的组成部分.drawio.svg"></a></p>
+<blockquote>
+<ul>
+<li>可以通过<code>innodb_page_size</code>参数指定页的大小。</li>
+</ul>
+</blockquote>
+<h2 id="InnoDB存储引擎的内存结构">3. InnoDB存储引擎的内存结构</h2><h3 id="InnoDB存储引擎的内存结构由哪些部分组成？">3.1. InnoDB存储引擎的内存结构由哪些部分组成？</h3><p>InnoDB存储引擎的内存结构由缓冲池（Buffer Pool）和日志缓冲（Log Buffer）组成。其中缓冲池有以下几个部分：</p>
+<ul>
+<li>LRU列表。</li>
+<li>修改缓冲（Change Buffer）。</li>
+<li>自适应哈希索引（Adaptive Hash Index）等。</li>
+</ul>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84.drawio.svg" title="图解MySQL-InnoDB存储引擎的内存结构.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84.drawio.svg" alt="图解MySQL-InnoDB存储引擎的内存结构.drawio.svg"></a></p>
+<h3 id="缓冲池Buffer-Pool的作用是什么？">3.2. 缓冲池Buffer Pool的作用是什么？</h3><p>缓冲池<sup id="fnref:7"><a href="#fn:7" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.5.1 Buffer Pool](https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool.html)
+">[7]</span></a></sup>（Buffer Pool）用来加速对热点数据页的访问和修改，可以减少磁盘I&#x2F;O，提高数据库的性能和响应速度。</p>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E7%BC%93%E5%86%B2%E6%B1%A0%E5%8A%A0%E5%BF%AB%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%9A%84%E8%AE%BF%E9%97%AE%E5%92%8C%E4%BF%AE%E6%94%B9%E9%80%9F%E5%BA%A6.drawio.svg" title="图解MySQL-缓冲池加快数据页的访问和修改速度.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E7%BC%93%E5%86%B2%E6%B1%A0%E5%8A%A0%E5%BF%AB%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%9A%84%E8%AE%BF%E9%97%AE%E5%92%8C%E4%BF%AE%E6%94%B9%E9%80%9F%E5%BA%A6.drawio.svg" alt="图解MySQL-缓冲池加快数据页的访问和修改速度.drawio.svg"></a></p>
+<p>从图中我们可以看到，当访问的数据页也不在缓冲池中时，会先通过磁盘I&#x2F;O将表空间中的数据页加载到缓冲池中，再进行访问和修改；当访问的数据页在缓冲池中时，无需通过磁盘I&#x2F;O访问表空间，直接操作内存来完成数据的访问和修改。</p>
+<blockquote>
+<p>可以通过<code>innodb_buffer_pool_size</code>参数指定缓冲池的大小。</p>
+</blockquote>
+<h3 id="修改缓冲Change-Buffer的作用是什么？">3.3. 修改缓冲Change Buffer的作用是什么？</h3><p>修改缓冲<sup id="fnref:8"><a href="#fn:8" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.5.2 Change Buffer](https://dev.mysql.com/doc/refman/8.0/en/innodb-change-buffer.html)
+">[8]</span></a></sup>（Change Buffer）用来加速对非唯一二级索引的修改，通过离散写改为顺序写的方式提高写入效率；在一定的条件下，对非唯一二级索引的修改会被<code>merge</code>到磁盘中：</p>
+<ul>
+<li>当原始数据页被加载到缓冲池中时。</li>
+<li>后台线程会定时触发<code>merge</code>操作。</li>
+<li>当数据库实例正常关闭时。</li>
+</ul>
+<p>修改缓冲适用于读少写多的场景，在读多写少的场景下对非唯一二级索引修改后再对原始数据页进行访问会触发修改缓冲的<code>merge</code>操作，使得离散写改为顺序写的收益并不明显。另外修改缓冲不适用于唯一二级索引的修改，因为修改唯一二级索引时需要将数据页加载到缓冲池中进行唯一约束校验。</p>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E4%BF%AE%E6%94%B9%E7%BC%93%E5%86%B2%E5%8A%A0%E5%BF%AB%E9%9D%9E%E5%94%AF%E4%B8%80%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BF%AE%E6%94%B9%E9%80%9F%E5%BA%A6.drawio.svg" title="图解MySQL-修改缓冲加快非唯一二级索引的修改速度.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E4%BF%AE%E6%94%B9%E7%BC%93%E5%86%B2%E5%8A%A0%E5%BF%AB%E9%9D%9E%E5%94%AF%E4%B8%80%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BF%AE%E6%94%B9%E9%80%9F%E5%BA%A6.drawio.svg" alt="图解MySQL-修改缓冲加快非唯一二级索引的修改速度.drawio.svg"></a></p>
+<blockquote>
+<ul>
+<li>可以通过<code>innodb_change_buffering</code>参数开启修改缓冲。</li>
+<li>可以通过<code>innodb_change_buffer_max_size</code>参数指定修改缓冲大小占缓冲池大小的比例。</li>
+</ul>
+</blockquote>
+<h3 id="自适应哈希索引Adaptive-Hash-Index的作用是什么？">3.4. 自适应哈希索引Adaptive Hash Index的作用是什么？</h3><p>自适应哈希索引<sup id="fnref:9"><a href="#fn:9" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.5.3 Adaptive Hash Index](https://dev.mysql.com/doc/refman/8.0/en/innodb-adaptive-hash.html)
+">[9]</span></a></sup>（Adaptive Hash Index，AHI）会为频繁访问的索引创建哈希表，使得其可以快速定位到数据行，以提高查询效率。</p>
+<blockquote>
+<ul>
+<li>可以通过<code>innodb_adaptive_hash_index</code>参数开启自适应哈希索引。</li>
+<li>可以通过<code>innodb_adaptive_hash_index_parts</code>参数指定自适应哈希索引的分区个数。</li>
+</ul>
+</blockquote>
+<h3 id="日志缓冲Log-Buffer的作用是什么？">3.5. 日志缓冲Log Buffer的作用是什么？</h3><p>日志缓冲<sup id="fnref:10"><a href="#fn:10" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.5.4 Log Buffer](https://dev.mysql.com/doc/refman/8.0/en/innodb-redo-log-buffer.html)
+">[10]</span></a></sup>（Log Buffer）用来加速日志文件的写入，通过离散写改为顺序写的方式提高写入效率，并通过日志刷盘策略保证持久性。</p>
+<blockquote>
+<ul>
+<li>可以通过<code>innodb_log_buffer_size</code>参数指定日志缓冲的大小。</li>
+<li>可以通过<code>innodb_flush_log_at_trx_commit</code>参数指定日志刷盘策略。</li>
+</ul>
+</blockquote>
+<h2 id="脏页">4. 脏页</h2><h3 id="什么是脏页？">4.1. 什么是脏页？</h3><p>缓冲池中的数据页被修改后和磁盘中的数据页不一致，称缓冲池中的数据页被称为脏页。</p>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E4%BB%80%E4%B9%88%E6%98%AF%E8%84%8F%E9%A1%B5.drawio.svg" title="图解MySQL-什么是脏页.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E4%BB%80%E4%B9%88%E6%98%AF%E8%84%8F%E9%A1%B5.drawio.svg" alt="图解MySQL-什么是脏页.drawio.svg"></a></p>
+<h3 id="如何提高修改的效率并保证安全性？">4.2. 如何提高修改的效率并保证安全性？</h3><p>InnoDB存储引擎采用日志先行（Write Ahead Log，WAL）的机制，在进行修改时，会先在日志缓冲中记录日志，再对缓冲池中的数据页进行修改，并且为保证持久性，在事务提交前会进行日志刷盘。可以通过<code>innodb_flush_log_at_trx_commit</code>参数可以指定日志刷盘策略：</p>
+<ul>
+<li>为0时，每秒会将日志<code>flush</code>到磁盘上，其性能最好，当数据库崩溃时会丢失1秒种的事务。</li>
+<li>为1时，每次事务提交前会将日志<code>flush</code>刷新到磁盘上，其安全性最高，但性能较差。</li>
+<li>为2时，每次事务提交前会将日志<code>write</code>到操作系统缓冲（OS Buffer）中，由操作系统决定<code>flush</code>的时机，当操作系统崩溃时会丢失1秒种的事务，是一种折中的策略。</li>
+</ul>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E6%97%A5%E5%BF%97%E5%88%B7%E7%9B%98%E6%97%B6%E6%9C%BA.drawio.svg" title="图解MySQL-日志刷盘时机.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E6%97%A5%E5%BF%97%E5%88%B7%E7%9B%98%E6%97%B6%E6%9C%BA.drawio.svg" alt="图解MySQL-日志刷盘时机.drawio.svg"></a></p>
+<blockquote>
+<ul>
+<li>可以通过<code>innodb_flush_log_at_trx_commit</code>参数指定日志刷盘策略。</li>
+</ul>
+</blockquote>
+<h3 id="脏页什么时候刷盘？">4.3. 脏页什么时候刷盘？</h3><p>缓冲池中的脏页会通过检查点（Checkpoint）机制进行脏页刷盘<sup id="fnref:11"><a href="#fn:11" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[MySQL :: MySQL 8.0 Reference Manual :: 17.8.3.5 Configuring Buffer Pool Flushing](https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool-flushing.html)">[11]</span></a></sup>，即将脏页刷新到表空间中对应的数据页中。检查点进行脏页刷盘有以下几种情况：</p>
+<ul>
+<li>后台线程会定时触发脏页刷盘操作。</li>
+<li>当缓冲池中的脏页过多超过指定比例时。</li>
+<li>当重做日志被用完时。</li>
+<li>当数据库实例正常关闭时。</li>
+</ul>
+<p>当数据库实例故障时，内存中缓冲池数据丢失，在数据库实例重新启动时，会根据重做日志恢复数据页到缓冲池中，再经过检查点机制进行脏页刷盘。</p>
+<p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E6%A3%80%E6%9F%A5%E7%82%B9%E6%9C%BA%E5%88%B6.drawio.svg" title="图解MySQL-检查点机制.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-%E6%A3%80%E6%9F%A5%E7%82%B9%E6%9C%BA%E5%88%B6.drawio.svg" alt="图解MySQL-检查点机制.drawio.svg"></a></p>
+<blockquote>
+<ul>
+<li>可以通过<code>innodb_max_dirty_pages_pct</code>参数指定脏页占缓冲池的最大比例。</li>
+<li>可以通过<code>innodb_flush_neighbors</code>参数开启邻页刷盘。</li>
+</ul>
+</blockquote>
+<h3 id="一条更新语句的执行流程是怎样的？">4.4. 一条更新语句的执行流程是怎样的？</h3><p><a href="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E5%92%8C%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84.drawio.svg" title="图解MySQL-InnoDB存储引擎的内存和磁盘结构.drawio.svg" class="gallery-item"><img src="/post/99009864/%E5%9B%BE%E8%A7%A3MySQL-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E5%92%8C%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84.drawio.svg" alt="图解MySQL-InnoDB存储引擎的内存和磁盘结构.drawio.svg"></a></p>
+<ol>
+<li>判断要更新的数据页是否在缓冲池中，如果不在需要先从表空间中加载数据页到缓冲池中；</li>
+<li>记录回滚日志；</li>
+<li>更新缓冲池中的数据页；</li>
+<li>在日志缓冲中记录对数据页的变更；</li>
+<li>在二进制日志缓冲中记录二进制日志；</li>
+<li>提交事务前进行日志落盘；</li>
+<li>由检查点机制进行脏页刷盘。</li>
+</ol>
+<h2 id="参考文档">5. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-tablespace.html">MySQL :: MySQL 8.0 Reference Manual :: 17.6.3 Tablespaces</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/query-log.html">MySQL :: MySQL 8.0 Reference Manual :: 7.4.3 The General Query Log</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/error-log.html">MySQL :: MySQL 8.0 Reference Manual :: 7.4.2 The Error Log</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/slow-query-log.html">MySQL :: MySQL 8.0 Reference Manual :: 7.4.5 The Slow Query Log</a><a href="#fnref:4" rev="footnote"> ↩</a></span></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">5.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/binary-log.html">MySQL :: MySQL 8.0 Reference Manual :: 7.4.4 The Binary Log</a><a href="#fnref:5" rev="footnote"> ↩</a></span></li><li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">6.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-redo-log.html">MySQL :: MySQL 8.0 Reference Manual :: 17.6.5 Redo Log</a><a href="#fnref:6" rev="footnote"> ↩</a></span></li><li id="fn:7"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">7.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool.html">MySQL :: MySQL 8.0 Reference Manual :: 17.5.1 Buffer Pool</a><a href="#fnref:7" rev="footnote"> ↩</a></span></li><li id="fn:8"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">8.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-change-buffer.html">MySQL :: MySQL 8.0 Reference Manual :: 17.5.2 Change Buffer</a><a href="#fnref:8" rev="footnote"> ↩</a></span></li><li id="fn:9"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">9.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-adaptive-hash.html">MySQL :: MySQL 8.0 Reference Manual :: 17.5.3 Adaptive Hash Index</a><a href="#fnref:9" rev="footnote"> ↩</a></span></li><li id="fn:10"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">10.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-redo-log-buffer.html">MySQL :: MySQL 8.0 Reference Manual :: 17.5.4 Log Buffer</a><a href="#fnref:10" rev="footnote"> ↩</a></span></li><li id="fn:11"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">11.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool-flushing.html">MySQL :: MySQL 8.0 Reference Manual :: 17.8.3.5 Configuring Buffer Pool Flushing</a><a href="#fnref:11" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/993662572/">上一篇：Spring Boot是如何实现自动配置的？</a>
+    <a href="/post/3016273142/">下一篇：InnoDB存储引擎的事务是如何实现的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84"><span class="toc-text">1. MySQL逻辑架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL%E7%9A%84%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">1.1. MySQL的逻辑架构由哪些部分组成？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 一条查询语句的执行流程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84"><span class="toc-text">2. InnoDB存储引擎的磁盘结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">2.1. InnoDB存储引擎的磁盘结构由哪些部分组成？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E7%A9%BA%E9%97%B4%E6%9C%89%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">2.2. 表空间有哪些部分组成？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="toc-text">3. InnoDB存储引擎的内存结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%E7%94%B1%E5%93%AA%E4%BA%9B%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9F"><span class="toc-text">3.1. InnoDB存储引擎的内存结构由哪些部分组成？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E6%B1%A0Buffer-Pool%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.2. 缓冲池Buffer Pool的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E7%BC%93%E5%86%B2Change-Buffer%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.3. 修改缓冲Change Buffer的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E5%93%88%E5%B8%8C%E7%B4%A2%E5%BC%95Adaptive-Hash-Index%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.4. 自适应哈希索引Adaptive Hash Index的作用是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E7%BC%93%E5%86%B2Log-Buffer%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.5. 日志缓冲Log Buffer的作用是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%8F%E9%A1%B5"><span class="toc-text">4. 脏页</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%84%8F%E9%A1%B5%EF%BC%9F"><span class="toc-text">4.1. 什么是脏页？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E4%BF%AE%E6%94%B9%E7%9A%84%E6%95%88%E7%8E%87%E5%B9%B6%E4%BF%9D%E8%AF%81%E5%AE%89%E5%85%A8%E6%80%A7%EF%BC%9F"><span class="toc-text">4.2. 如何提高修改的效率并保证安全性？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%84%8F%E9%A1%B5%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%88%B7%E7%9B%98%EF%BC%9F"><span class="toc-text">4.3. 脏页什么时候刷盘？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">4.4. 一条更新语句的执行流程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">5. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

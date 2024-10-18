@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    ThreadPoolExecutor线程池是如何实现的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadPoolExecutor%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2. ThreadPoolExecutor是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0%EF%BC%9F"><span class="toc-text">2.1. 线程池有哪些核心参数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E4%BB%BB%E5%8A%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. 线程池是如何处理任务的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%89%E5%93%AA%E4%BA%9B%E6%8B%92%E7%BB%9D%E7%AD%96%E7%95%A5%EF%BC%9F"><span class="toc-text">2.3. 线程池有哪些拒绝策略？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%EF%BC%9F"><span class="toc-text">2.4. JDK中有哪些阻塞队列？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="toc-text">3. 如何使用线程池？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">3.1. 常用的线程池有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="toc-text">3.2. 如何自定义线程池？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E5%90%88%E9%80%82%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%95%B0%EF%BC%9F"><span class="toc-text">3.3. 如何设置合适的线程数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E4%BA%A4%E5%92%8C%E7%BB%88%E6%AD%A2%E4%BB%BB%E5%8A%A1%EF%BC%9F"><span class="toc-text">3.4. 如何提交和终止任务？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadPoolExecutor%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90"><span class="toc-text">4. ThreadPoolExecutor源码浅析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%99%A8"><span class="toc-text">4.1. 构造器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1"><span class="toc-text">4.2. 提交任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAworker"><span class="toc-text">4.3. 创建worker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Worker%E8%BF%90%E8%A1%8C%E9%80%BB%E8%BE%91"><span class="toc-text">4.4. Worker运行逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-text">4.5. 任务的获取</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">5. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/并发编程">> 并发编程</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+      <a href="/tags/多线程">多线程</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>ThreadPoolExecutor线程池是如何实现的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2024-05-27 20:00，字数：2.6k，预计阅读：11分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery"><blockquote>
+<p>本文基于 JDK1.8 编写。</p>
+</blockquote>
+<h2 id="背景">1. 背景</h2><p>当只有一个任务时，使用单个线程执行可以很好地满足需求；但由于单个线程是串行执行任务的，随着任务的增多，处理速度会很慢，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">List&lt;Task&gt; tasks &#x3D; IntStream.range(1, 100)
+                .mapToObj(Task::new)
+                .collect(Collectors.toList());
+tasks.forEach(Task::run);</code></pre>
+
+<p>为了提高多个任务的处理速度，可以使用多个线程执行任务，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">tasks.stream().map(Thread::new).forEach(Thread::start);</code></pre>
+
+<p>上面的代码为每个要执行的任务都创建了一个线程，但实际却不能这样做，有以下几个方面的原因：</p>
+<ul>
+<li>线程的创建和销毁需要消耗资源，并不是零成本的。</li>
+<li>CPU的处理速度是有限的，创建过多的线程并不能提高速度。</li>
+<li>受限于操作系统和JVM栈的限制，并不能创建无限多的线程。</li>
+</ul>
+<p>可以使用线程池解决以上问题，线程池采用池化的思想，将线程视为可以共享的资源以实现线程的复用，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">ExecutorService executorService &#x3D; Executors.newFixedThreadPool(10);
+tasks.forEach(executorService::execute);</code></pre>
+
+<p>在JDK中线程池的实现是<code>ThreadPoolExecutor</code>，下面让我们看下<code>ThreadPoolExecutor</code>是如何设计的？</p>
+<h2 id="ThreadPoolExecutor是如何设计的？">2. ThreadPoolExecutor是如何设计的？</h2><h3 id="线程池有哪些核心参数？">2.1. 线程池有哪些核心参数？</h3><p><code>ThreadPoolExecutor</code>线程池有以下几个核心参数：</p>
+<ul>
+<li><code>corePoolSize</code>：核心线程数。</li>
+<li><code>maximumPoolSize</code>：最大线程数。</li>
+<li><code>keepAliveTime</code>和<code>unit</code>：非核心线程的空闲存活时间及单位。</li>
+<li><code>workQueue</code>：阻塞队列。</li>
+<li><code>threadFactory</code>：线程工厂。</li>
+<li><code>handler</code>：拒绝策略。</li>
+</ul>
+<p>以上参数决定了线程池的行为，在线程池处理任务时会使用到。</p>
+<h3 id="线程池是如何处理任务的？">2.2. 线程池是如何处理任务的？</h3><p><a href="/post/800792967/%E5%9B%BE%E8%A7%A3%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B.drawio.svg" title="图解并发编程-线程池的处理过程.drawio" class="gallery-item"><img src="/post/800792967/%E5%9B%BE%E8%A7%A3%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B.drawio.svg" alt="图解并发编程-线程池的处理过程.drawio"></a></p>
+<p>当一个任务被提交到<code>ThreadPoolExecutor</code>线程池时，会首先判断线程池中的线程数是否达到核心线程数<code>corePoolSize</code>：</p>
+<ul>
+<li><p>如果没有达到，则使用线程工厂<code>threadFactory</code>创建新的线程执行该任务并返回。</p>
+</li>
+<li><p>如果达到，则将该任务加入到阻塞队列<code>workQueue</code>中，等待执行。</p>
+</li>
+</ul>
+<p>如果阻塞队列已经满了，则判断线程池中的线程数是否达到最大线程数<code>maximumPoolSize</code>：</p>
+<ul>
+<li>如果没有达到，则使用线程工厂<code>threadFactory</code>创建新的线程执行该任务并返回。</li>
+<li>如果达到，则执行拒绝策略<code>handler</code>。</li>
+</ul>
+<p>另外，当线程的空闲时间超过<code>keepAliveTime</code>且线程池中的线程数大于核心线程数时，会销毁线程。</p>
+<a href="/assert/puml/bfe3b04d48b4829aa18d48ab8e359a66ab78bdf2013f9423fc947aab22b0c15f.svg" class="gallery-item"><img src="/assert/puml/bfe3b04d48b4829aa18d48ab8e359a66ab78bdf2013f9423fc947aab22b0c15f.svg"></a>
+
+
+<blockquote>
+<p>类比发廊中的理发师和顾客：</p>
+<p>起初每来一个顾客时，都会分配一个理发师；当没有多余的理发师时，顾客只能在排队等待理发师空闲；当排队等待的顾客太多时，会招来了几个理发师，来缓解发廊的压力。</p>
+<p>当所有的理发师都在忙碌且排队等待的顾客还是太多时，只能拒绝新的顾客。当顾客没有这么多且某个理发师很久都没有工作时，理发师就可以被解雇了（理论上）。现实中为什么没有这样的发廊？原因是招聘解雇理发师的成本要大于顾客带来的消费。</p>
+</blockquote>
+<h3 id="线程池有哪些拒绝策略？">2.3. 线程池有哪些拒绝策略？</h3><p><code>ThreadPoolExecutor</code>线程池提供了四种拒绝策略<code>RejectedExecutionHandler</code>：</p>
+<ul>
+<li><code>CallerRunsPolicy</code>：调用运行策略，会在调用<code>execute</code>方法的线程中执行被拒绝的任务。</li>
+<li><code>AbortPolicy</code>：终止策略，会抛出拒绝执行异常<code>RejectedExecutionException</code>，也是默认的拒绝策略。</li>
+<li><code>DiscardPolicy</code>：放弃策略，空操作。</li>
+<li><code>DiscardOldestPolicy</code>：放弃最旧策略，会使阻塞队列中最旧的任务出队，并重新提交当前任务。</li>
+</ul>
+<p>除了上面的拒绝策略，还可以自定义拒绝策略，如下代码是日志拒绝策略装饰器：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class LoggerDecoratorPolicy implements RejectedExecutionHandler &#123;
+    private final RejectedExecutionHandler rejectionHandler;
+    
+    private LoggerDecoratorPolicy(RejectedExecutionHandler rejectionHandler) &#123;
+        this.rejectionHandler &#x3D; rejectionHandler;
+    &#125;
+    
+    public static RejectedExecutionHandler decorate(RejectedExecutionHandler rejectionHandler) &#123;
+        return new LoggerDecoratorPolicy(rejectionHandler);
+    &#125;
+    
+    @Override
+    public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) &#123;
+        System.out.println(&quot;[&quot; + executor + &quot;] Rejected task &quot; + r);
+        rejectionHandler.rejectedExecution(r, executor);
+    &#125;
+&#125;</code></pre>
+
+<h3 id="JDK中有哪些阻塞队列？">2.4. JDK中有哪些阻塞队列？</h3><p>JDK的并发包中提供了以下几种阻塞队列：</p>
+<ul>
+<li><code>ArrayBlockingQueue</code>：基于数组的有界阻塞队列。</li>
+<li><code>SynchronousQueue</code>：可以看作大小为0的阻塞队列。</li>
+<li><code>LinkedBlockingQueue</code>：基于链表的有界阻塞队列。</li>
+<li><code>PriorityBlockingQueue</code>：基于优先级的无界阻塞队列。</li>
+</ul>
+<h2 id="如何使用线程池？">3. 如何使用线程池？</h2><h3 id="常用的线程池有哪些？">3.1. 常用的线程池有哪些？</h3><p>在JDK的线程池工厂<code>Executors</code>中提供了以下四种常用的线程池：</p>
+<ul>
+<li><code>newSingleThreadExecutor</code>：单线程的线程池。</li>
+<li><code>newCachedThreadPool</code>：缓存的线程池。</li>
+<li><code>newFixedThreadPool</code>：固定大小的线程池。</li>
+<li><code>newScheduledThreadPool</code>：定时和周期性执行的线程池。</li>
+</ul>
+<p>在线程池的核心参数设置上，这些线程池有以下不同：</p>
+<div class="article-table"><table>
+<thead>
+<tr>
+<th></th>
+<th>newSingleThreadExecutor</th>
+<th>newCachedThreadPool</th>
+<th>newFixedThreadPool</th>
+<th>newScheduledThreadPool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>corePoolSize</strong></td>
+<td>1</td>
+<td>0</td>
+<td>nThreads</td>
+<td>corePoolSize</td>
+</tr>
+<tr>
+<td><strong>maximumPoolSize</strong></td>
+<td>1</td>
+<td>Integer.MAX_VALUE</td>
+<td>nThreads</td>
+<td>Integer.MAX_VALUE</td>
+</tr>
+<tr>
+<td><strong>keepAliveTime</strong></td>
+<td>0毫秒</td>
+<td>60秒</td>
+<td>0毫秒</td>
+<td>0纳秒</td>
+</tr>
+<tr>
+<td><strong>workQueue</strong></td>
+<td>LinkedBlockingQueue</td>
+<td>SynchronousQueue</td>
+<td>LinkedBlockingQueue</td>
+<td>DelayedWorkQueue</td>
+</tr>
+</tbody></table></div>
+<h3 id="如何自定义线程池？">3.2. 如何自定义线程池？</h3><p>如果线程池工厂<code>Executors</code>提供的线程池不能满足需求，可以考虑通过自定义线程池的方式，即根据需求设置线程池的核心参数。如下示例：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">ThreadPoolExecutor threadPoolExecutor &#x3D; new ThreadPoolExecutor(
+                8,
+                8,
+                0L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue&lt;&gt;(1000),
+                Executors.defaultThreadFactory(),
+                LoggerDecoratorPolicy.decorate(new ThreadPoolExecutor.AbortPolicy()));</code></pre>
+
+<h3 id="如何设置合适的线程数？">3.3. 如何设置合适的线程数？</h3><ul>
+<li>对于CPU密集型任务，线程数建议设置为<code>CPU核心数 + 1</code><sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Java线程池如何合理配置核心线程数-腾讯云开发者社区](https://cloud.tencent.com/developer/article/1929907)
+">[1]</span></a></sup>。</li>
+<li>对于IO密集型任务，线程数建议设置为<code>CPU核心数 * (1 + IO耗时 / CPU耗时)</code>。</li>
+</ul>
+<h3 id="如何提交和终止任务？">3.4. 如何提交和终止任务？</h3><p>先线程池中提交任务有以下两种方式：</p>
+<ul>
+<li><code>Executor#execute</code>：提交<code>Runnable</code>类型的任务，并且没有返回值。</li>
+<li><code>AbstractExecutorService#submit(Callable&lt;T&gt;)</code>：提交<code>Callable</code>类型的任务，并且返回<code>Future</code>。</li>
+</ul>
+<p>终止线程池中的任务有以下两种方式：</p>
+<ul>
+<li><code>ThreadPoolExecutor#shutdown</code>：关闭线程池，不接收新的任务但会将已提交的任务处理完。</li>
+<li><code>ThreadPoolExecutor#shutdownNow</code>：立即关闭线程池，中断执行中的任务，返回等待的任务列表。</li>
+</ul>
+<h2 id="ThreadPoolExecutor源码浅析">4. ThreadPoolExecutor源码浅析</h2><blockquote>
+<p>介于笔者水平有限，这里仅展示关键节点，不逐行解析。</p>
+</blockquote>
+<h3 id="构造器">4.1. 构造器</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java">public ThreadPoolExecutor(int corePoolSize, &#x2F;&#x2F; 核心线程数
+                          int maximumPoolSize, &#x2F;&#x2F; 最大线程数
+                          long keepAliveTime, &#x2F;&#x2F; 空闲存活时间
+                          TimeUnit unit, &#x2F;&#x2F; 空闲存活时间的单位
+                          BlockingQueue&lt;Runnable&gt; workQueue, &#x2F;&#x2F; 阻塞队列
+                          ThreadFactory threadFactory, &#x2F;&#x2F; 线程工厂
+                          RejectedExecutionHandler handler) &#x2F;&#x2F; 拒绝策略</code></pre>
+
+<h3 id="提交任务">4.2. 提交任务</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java">public void execute(Runnable command) &#123;
+    if (command &#x3D;&#x3D; null)
+        throw new NullPointerException();
+    &#x2F;*
+     * Proceed in 3 steps:
+     *
+     * 1. If fewer than corePoolSize threads are running, try to
+     * start a new thread with the given command as its first
+     * task.  The call to addWorker atomically checks runState and
+     * workerCount, and so prevents false alarms that would add
+     * threads when it shouldn&#39;t, by returning false.
+     *
+     * 2. If a task can be successfully queued, then we still need
+     * to double-check whether we should have added a thread
+     * (because existing ones died since last checking) or that
+     * the pool shut down since entry into this method. So we
+     * recheck state and if necessary roll back the enqueuing if
+     * stopped, or start a new thread if there are none.
+     *
+     * 3. If we cannot queue task, then we try to add a new
+     * thread.  If it fails, we know we are shut down or saturated
+     * and so reject the task.
+     *&#x2F;
+    int c &#x3D; ctl.get();
+    &#x2F;&#x2F; 判断线程数是否小于核心线程数
+    if (workerCountOf(c) &lt; corePoolSize) &#123;
+        &#x2F;&#x2F; 如果小于则创建新的线程
+        if (addWorker(command, true))
+            return;
+        c &#x3D; ctl.get();
+    &#125;
+    &#x2F;&#x2F; 如果线程数大于等于核心线程数，则将任务加入阻塞队列
+    if (isRunning(c) &amp;&amp; workQueue.offer(command)) &#123;
+        int recheck &#x3D; ctl.get();
+        if (! isRunning(recheck) &amp;&amp; remove(command))
+            reject(command);
+        else if (workerCountOf(recheck) &#x3D;&#x3D; 0)
+            addWorker(null, false);
+    &#125;
+    &#x2F;&#x2F; 加入阻塞队列失败，则尝试创建新的线程
+    else if (!addWorker(command, false))
+        &#x2F;&#x2F; 创建新的线程失败，则执行拒绝策略
+        reject(command);
+&#125;</code></pre>
+
+<h3 id="创建worker">4.3. 创建worker</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java">private boolean addWorker(Runnable firstTask, boolean core) &#123;
+    retry:
+    for (;;) &#123;
+        int c &#x3D; ctl.get();
+        int rs &#x3D; runStateOf(c);
+
+        &#x2F;&#x2F; Check if queue empty only if necessary.
+        if (rs &gt;&#x3D; SHUTDOWN &amp;&amp;
+            ! (rs &#x3D;&#x3D; SHUTDOWN &amp;&amp;
+               firstTask &#x3D;&#x3D; null &amp;&amp;
+               ! workQueue.isEmpty()))
+            return false;
+
+        for (;;) &#123;
+            int wc &#x3D; workerCountOf(c);
+            if (wc &gt;&#x3D; CAPACITY ||
+                wc &gt;&#x3D; (core ? corePoolSize : maximumPoolSize))
+                return false;
+            if (compareAndIncrementWorkerCount(c))
+                break retry;
+            c &#x3D; ctl.get();  &#x2F;&#x2F; Re-read ctl
+            if (runStateOf(c) !&#x3D; rs)
+                continue retry;
+            &#x2F;&#x2F; else CAS failed due to workerCount change; retry inner loop
+        &#125;
+    &#125;
+
+    boolean workerStarted &#x3D; false;
+    boolean workerAdded &#x3D; false;
+    Worker w &#x3D; null;
+    try &#123;
+        &#x2F;&#x2F; 创建新的 Worker
+        w &#x3D; new Worker(firstTask);
+        final Thread t &#x3D; w.thread;
+        if (t !&#x3D; null) &#123;
+            final ReentrantLock mainLock &#x3D; this.mainLock;
+            mainLock.lock();
+            try &#123;
+                &#x2F;&#x2F; Recheck while holding lock.
+                &#x2F;&#x2F; Back out on ThreadFactory failure or if
+                &#x2F;&#x2F; shut down before lock acquired.
+                int rs &#x3D; runStateOf(ctl.get());
+
+                if (rs &lt; SHUTDOWN ||
+                    (rs &#x3D;&#x3D; SHUTDOWN &amp;&amp; firstTask &#x3D;&#x3D; null)) &#123;
+                    if (t.isAlive()) &#x2F;&#x2F; precheck that t is startable
+                        throw new IllegalThreadStateException();
+                    workers.add(w);
+                    int s &#x3D; workers.size();
+                    if (s &gt; largestPoolSize)
+                        largestPoolSize &#x3D; s;
+                    workerAdded &#x3D; true;
+                &#125;
+            &#125; finally &#123;
+                mainLock.unlock();
+            &#125;
+            if (workerAdded) &#123;
+                t.start();
+                workerStarted &#x3D; true;
+            &#125;
+        &#125;
+    &#125; finally &#123;
+        if (! workerStarted)
+            addWorkerFailed(w);
+    &#125;
+    return workerStarted;
+&#125;</code></pre>
+
+<h3 id="Worker运行逻辑">4.4. Worker运行逻辑</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java">final void runWorker(Worker w) &#123;
+    Thread wt &#x3D; Thread.currentThread();
+    &#x2F;&#x2F; 找到 Worker 关联的任务
+    Runnable task &#x3D; w.firstTask;
+    w.firstTask &#x3D; null;
+    w.unlock(); &#x2F;&#x2F; allow interrupts
+    boolean completedAbruptly &#x3D; true;
+    try &#123;
+        &#x2F;&#x2F; 如果有任务则执行，没有任务则等待从阻塞队列中获取
+        while (task !&#x3D; null || (task &#x3D; getTask()) !&#x3D; null) &#123;
+            w.lock();
+            &#x2F;&#x2F; If pool is stopping, ensure thread is interrupted;
+            &#x2F;&#x2F; if not, ensure thread is not interrupted.  This
+            &#x2F;&#x2F; requires a recheck in second case to deal with
+            &#x2F;&#x2F; shutdownNow race while clearing interrupt
+            if ((runStateAtLeast(ctl.get(), STOP) ||
+                 (Thread.interrupted() &amp;&amp;
+                  runStateAtLeast(ctl.get(), STOP))) &amp;&amp;
+                !wt.isInterrupted())
+                wt.interrupt();
+            try &#123;
+                &#x2F;&#x2F; 执行前置操作
+                beforeExecute(wt, task);
+                Throwable thrown &#x3D; null;
+                try &#123;
+                    &#x2F;&#x2F; 运行任务
+                    task.run();
+                &#125; catch (RuntimeException x) &#123;
+                    thrown &#x3D; x; throw x;
+                &#125; catch (Error x) &#123;
+                    thrown &#x3D; x; throw x;
+                &#125; catch (Throwable x) &#123;
+                    thrown &#x3D; x; throw new Error(x);
+                &#125; finally &#123;
+                    &#x2F;&#x2F; 执行后置操作
+                    afterExecute(task, thrown);
+                &#125;
+            &#125; finally &#123;
+                task &#x3D; null;
+                w.completedTasks++;
+                w.unlock();
+            &#125;
+        &#125;
+        completedAbruptly &#x3D; false;
+    &#125; finally &#123;
+        processWorkerExit(w, completedAbruptly);
+    &#125;
+&#125;</code></pre>
+
+<h3 id="任务的获取">4.5. 任务的获取</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java">private Runnable getTask() &#123;
+    boolean timedOut &#x3D; false; &#x2F;&#x2F; Did the last poll() time out?
+
+    for (;;) &#123;
+        int c &#x3D; ctl.get();
+        int rs &#x3D; runStateOf(c);
+
+        &#x2F;&#x2F; Check if queue empty only if necessary.
+        if (rs &gt;&#x3D; SHUTDOWN &amp;&amp; (rs &gt;&#x3D; STOP || workQueue.isEmpty())) &#123;
+            decrementWorkerCount();
+            return null;
+        &#125;
+
+        int wc &#x3D; workerCountOf(c);
+
+        &#x2F;&#x2F; Are workers subject to culling?
+        boolean timed &#x3D; allowCoreThreadTimeOut || wc &gt; corePoolSize;
+
+        if ((wc &gt; maximumPoolSize || (timed &amp;&amp; timedOut))
+            &amp;&amp; (wc &gt; 1 || workQueue.isEmpty())) &#123;
+            if (compareAndDecrementWorkerCount(c))
+                return null;
+            continue;
+        &#125;
+
+        try &#123;
+            Runnable r &#x3D; timed ?
+                workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
+                workQueue.take();
+            if (r !&#x3D; null)
+                return r;
+            timedOut &#x3D; true;
+        &#125; catch (InterruptedException retry) &#123;
+            timedOut &#x3D; false;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<h2 id="参考文档">5. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1929907">Java线程池如何合理配置核心线程数-腾讯云开发者社区</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/281905677/">上一篇：AbstractQueuedSynchronizer和ReentrantLock是如何实现的？</a>
+    <a href="/"></a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadPoolExecutor%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2. ThreadPoolExecutor是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0%EF%BC%9F"><span class="toc-text">2.1. 线程池有哪些核心参数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E4%BB%BB%E5%8A%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. 线程池是如何处理任务的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%89%E5%93%AA%E4%BA%9B%E6%8B%92%E7%BB%9D%E7%AD%96%E7%95%A5%EF%BC%9F"><span class="toc-text">2.3. 线程池有哪些拒绝策略？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JDK%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%EF%BC%9F"><span class="toc-text">2.4. JDK中有哪些阻塞队列？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="toc-text">3. 如何使用线程池？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">3.1. 常用的线程池有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%9F"><span class="toc-text">3.2. 如何自定义线程池？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E5%90%88%E9%80%82%E7%9A%84%E7%BA%BF%E7%A8%8B%E6%95%B0%EF%BC%9F"><span class="toc-text">3.3. 如何设置合适的线程数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E4%BA%A4%E5%92%8C%E7%BB%88%E6%AD%A2%E4%BB%BB%E5%8A%A1%EF%BC%9F"><span class="toc-text">3.4. 如何提交和终止任务？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadPoolExecutor%E6%BA%90%E7%A0%81%E6%B5%85%E6%9E%90"><span class="toc-text">4. ThreadPoolExecutor源码浅析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%99%A8"><span class="toc-text">4.1. 构造器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1"><span class="toc-text">4.2. 提交任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAworker"><span class="toc-text">4.3. 创建worker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Worker%E8%BF%90%E8%A1%8C%E9%80%BB%E8%BE%91"><span class="toc-text">4.4. Worker运行逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E8%8E%B7%E5%8F%96"><span class="toc-text">4.5. 任务的获取</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">5. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+</body>
+</html>

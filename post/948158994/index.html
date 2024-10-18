@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    运行时数据区有哪些部分组成？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86"><span class="toc-text">1. 堆</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E4%B8%AD%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">1.1. 堆中存放的是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%86%85%E5%AD%98%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 堆内存是如何划分的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%92%8C%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%EF%BC%9F"><span class="toc-text">1.3. 什么是内存泄漏和内存溢出？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%91%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="toc-text">1.4. 堆可能会发生的异常？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">2. 方法区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA%E4%B8%AD%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.1. 方法区中存放的是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E4%BB%A3%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.2. 永久代和元空间有什么区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%91%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="toc-text">2.3. 方法区可能会发生的异常？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.4. 运行时常量池和字符串常量池有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="toc-text">3. Java虚拟机栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E4%B8%AD%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.1. Java虚拟机栈中存放的是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%91%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="toc-text">3.2. Java虚拟机栈可能会发生的异常？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="toc-text">4. 本地方法栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">5. 程序计数器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98"><span class="toc-text">6. 直接内存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%EF%BC%9F"><span class="toc-text">6.1. 什么是直接内存？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%E5%92%8C%E5%A0%86%E5%86%85%E5%AD%98%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">6.2. 直接内存和堆内存有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK%E5%B7%A5%E5%85%B7"><span class="toc-text">7. JDK工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84Java%E8%BF%9B%E7%A8%8B%EF%BC%9F"><span class="toc-text">7.1. 如何查看当前系统中有哪些正在运行的Java进程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%82%E6%95%B0%EF%BC%9F"><span class="toc-text">7.2. 如何查看Java进程的虚拟机参数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%A0%86%E5%92%8C%E6%96%B9%E6%B3%95%E5%8C%BA%E7%9A%84%E5%86%85%E5%AD%98%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">7.3. 如何查看Java进程的堆和方法区的内存信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E5%A0%86%E5%88%9B%E5%BB%BA%E5%BF%AB%E7%85%A7%EF%BC%9F"><span class="toc-text">7.4. 如何为堆创建快照？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%A0%86%E6%A0%88%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">7.5. 如何查看Java进程的堆栈信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84gc%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">7.6. 如何查看Java进程的gc信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">7.7. 可视化工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">8. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/JVM">> JVM</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>运行时数据区有哪些部分组成？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-09-01 19:00，字数：2.9k，预计阅读：13分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:400px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;运行时数据区&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;堆&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;堆中存放的是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;堆内存是如何划分的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是内存泄漏和内存溢出？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;堆可能会发生的异常？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[7,8]},&quot;v&quot;:&quot;方法区&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;方法区中存放的是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;永久代和元空间有什么区别？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;方法区可能会发生的异常？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;运行时常量池和字符串常量池有什么区别？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[12,13]},&quot;v&quot;:&quot;Java虚拟机栈&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;Java虚拟机栈中存放的是什么？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15],&quot;f&quot;:true},&quot;v&quot;:&quot;Java虚拟机栈可能会发生的异常？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[15,16]},&quot;v&quot;:&quot;本地方法栈&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[16,17]},&quot;v&quot;:&quot;程序计数器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[17,18]},&quot;v&quot;:&quot;直接内存&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是直接内存？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[19,20],&quot;f&quot;:true},&quot;v&quot;:&quot;直接内存和堆内存有什么区别？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[20,21]},&quot;v&quot;:&quot;JDK工具&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22],&quot;f&quot;:true},&quot;v&quot;:&quot;如何查看当前系统中有哪些正在运行的Java进程？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[22,23],&quot;f&quot;:true},&quot;v&quot;:&quot;如何查看Java进程的虚拟机参数？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[23,24],&quot;f&quot;:true},&quot;v&quot;:&quot;如何查看Java进程的堆和方法区的内存信息？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[24,25],&quot;f&quot;:true},&quot;v&quot;:&quot;如何为堆创建快照？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[25,26],&quot;f&quot;:true},&quot;v&quot;:&quot;如何查看Java进程的堆栈信息？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[26,27],&quot;f&quot;:true},&quot;v&quot;:&quot;如何查看Java进程的gc信息？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[27,28],&quot;f&quot;:true},&quot;v&quot;:&quot;可视化工具有哪些？&quot;}]}]}"/>
+</div>
+
+
+<h2 id="堆">1. 堆</h2><h3 id="堆中存放的是什么？">1.1. 堆中存放的是什么？</h3><p>对象实例存放在Java堆<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 2. The Structure of the Java Virtual Machine - Heap](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.3)
+">[1]</span></a></sup>（Java Heap）中。堆是线程共享的。</p>
+<h3 id="堆内存是如何划分的？">1.2. 堆内存是如何划分的？</h3><p>堆内存被划分为新生代和老年代两部分，新生代又被划分为一个<code>Eden</code>区和两个大小相同的<code>Survior</code>区。将堆内存划分为新生代和老年代主要是为了提高垃圾收集的效率，基于以下两个假说：</p>
+<ul>
+<li>弱分代假说：大部分对象都是朝生夕灭的。</li>
+<li>强分代假说：熬过越多次垃圾收集的对象越难消亡。</li>
+</ul>
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-Xms</code>：指定虚拟机堆内存的初始大小。</li>
+<li><code>-Xmx</code>：指定虚拟机堆内存的最大大小。</li>
+</ul>
+</blockquote>
+<h3 id="什么是内存泄漏和内存溢出？">1.3. 什么是内存泄漏和内存溢出？</h3><ul>
+<li>内存泄漏（Memory Leak）是指应该被回收的对象没有被回收，内存泄漏会导致内存溢出。</li>
+<li>内存溢出（Memory Overflow）是指堆内存空间不足，无法创建新的对象实例。</li>
+</ul>
+<p>可以通过转储并分析堆的内存快照文件来排查内存泄漏和内存溢出产生的原因。</p>
+<h3 id="堆可能会发生的异常？">1.4. 堆可能会发生的异常？</h3><p>当创建的对象实例占用的内存大小大于堆的内存大小时，会抛出<code>OutOfMemoryError: Java heap space</code>。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class OOMJavaHeapSpaceTest &#123;
+
+    public static void main(String[] args) &#123;
+        &#x2F;&#x2F; -Xms10m -Xmx10m
+        log.info(&quot;Size of heap: &#123;&#125;MB&quot;, 10);
+        byte[] _5MB &#x3D; new byte[1024 * 1024 * 5];
+        log.info(&quot;Assigned: &#123;&#125;MB&quot;, _5MB.length &#x2F; (1024 * 1024));
+        byte[] _3MB &#x3D; new byte[1024 * 1024 * 3];
+        log.info(&quot;Assigned: &#123;&#125;MB&quot;, _3MB.length &#x2F; (1024 * 1024));
+        byte[] _2MB &#x3D; new byte[1024 * 1024 * 2];
+        log.info(&quot;Assigned: &#123;&#125;MB&quot;, _2MB.length &#x2F; (1024 * 1024));
+    &#125;
+&#125;</code></pre>
+
+<p>在上面的程序中，我们指定虚拟机的堆内存大小为10MB，并创建内存大小分别为5MB，3MB，2MB的数组，运行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">Size of heap: 10MB
+Assigned: 5MB
+Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space
+	at com.remeio.upsnippet.jvm.runarea.heap.OOMJavaHeapSpaceTest.main(OOMJavaHeapSpaceTest.java:13)</code></pre>
+
+<h2 id="方法区">2. 方法区</h2><h3 id="方法区中存放的是什么？">2.1. 方法区中存放的是什么？</h3><p>类的元数据信息、编译后的代码、静态变量、运行时常量池存放在方法区<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 2. The Structure of the Java Virtual Machine - Method Area](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.4)
+">[2]</span></a></sup>（Method Area）中。方法区是线程共享的。</p>
+<h3 id="永久代和元空间有什么区别？">2.2. 永久代和元空间有什么区别？</h3><p>在JDK1.7及之前的版本中，方法区的实现是永久代（PermGen）；在JDK1.8及之后的版本中，方法区的实现是元空间（Metaspace）。两者有以下区别：</p>
+<ul>
+<li>存储区域不同：永久代占用的是堆内存；元空间占用的是本地内存，不受堆内存大小的限制。元空间大小取决于本地内存大小，解决了永久代大小不易指定的问题。</li>
+<li>存储内容不同：相比于JDK1.6的永久代，JDK1.7的永久代将运行时常量池和静态变量移到了堆中；而JDK1.8则去除了永久代，使用元空间代替。</li>
+</ul>
+<h3 id="方法区可能会发生的异常？">2.3. 方法区可能会发生的异常？</h3><ul>
+<li>在JDK1.8之前的版本中，当永久代内存不足时，会抛出<code>OutOfMemoryError: PermGen space</code>。</li>
+<li>在JDK1.8及之后的版本中，当元空间内存不足时，会抛出<code>OutOfMemoryError: Metaspace</code>。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+
+public class OOMMetaspaceTest &#123;
+
+    public static void main(String[] args) &#123;
+        &#x2F;&#x2F; jdk1.8
+        &#x2F;&#x2F; -verbose:class -XX:MaxMetaspaceSize&#x3D;10m -XX:MetaspaceSize&#x3D;10M
+        while (true) &#123;
+            Enhancer enhancer &#x3D; new Enhancer();
+            enhancer.setSuperclass(OOMMetaspaceTest.class);
+            &#x2F;&#x2F; 不使用缓存
+            enhancer.setUseCache(false);
+            enhancer.setCallback((MethodInterceptor) (o, method, objects, methodProxy) -&gt; method.invoke(o, objects));
+            enhancer.create();
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<p>在上面的程序中，我们使用<code>CGlib</code>不停地创建代理类，直到发生<code>OOM</code>，运行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">...
+[Loaded com.remeio.upsnippet.jvm.runarea.methodarea.OOMMetaspaceTest$$EnhancerByCGLIB$$7cd09a91_548 from file:&#x2F;D:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.runarea.methodarea.OOMMetaspaceTest$$EnhancerByCGLIB$$7cd09a91_549 from file:&#x2F;D:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+[Loaded com.remeio.upsnippet.jvm.runarea.methodarea.OOMMetaspaceTest$$EnhancerByCGLIB$$7cd09a91_550 from file:&#x2F;D:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-jvm&#x2F;target&#x2F;classes&#x2F;]
+Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Metaspace</code></pre>
+
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:PermSize</code>：在JDK1.7及之前的版本中，指定永久代的初始大小。</li>
+<li><code>-XX:MaxPermSize</code>：在JDK1.7及之前的版本中，指定永久代的最大大小。</li>
+<li><code>-XX:MetaspaceSize</code>：在JDK1.8及之后的版本中，指定元空间的初始大小。</li>
+<li><code>-XX:MaxMetaspaceSize</code>：在JDK1.8及之后的版本中，指定元空间的最大大小。</li>
+</ul>
+</blockquote>
+<h3 id="运行时常量池和字符串常量池有什么区别？">2.4. 运行时常量池和字符串常量池有什么区别？</h3><p>在JDK1.8及之后的版本中，运行时常量池和字符串常量池存放在堆中；每个类都会有一个运行时常量池，而整个虚拟机只有一个字符串常量池。</p>
+<h2 id="Java虚拟机栈">3. Java虚拟机栈</h2><h3 id="Java虚拟机栈中存放的是什么？">3.1. Java虚拟机栈中存放的是什么？</h3><p>每个线程都有一个Java虚拟机栈<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 2. The Structure of the Java Virtual Machine - Java Virtual Machine Stacks](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.2)
+">[3]</span></a></sup>（Java Stack），调用方法时会压入栈帧<sup id="fnref:6"><a href="#fn:6" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 2. The Structure of the Java Virtual Machine - Frames](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6)
+">[6]</span></a></sup>（Frame），方法执行完毕时会弹出栈帧，Java虚拟机栈是线程私有的。每个栈帧包括以下内容：</p>
+<ul>
+<li>局部变量表。</li>
+<li>操作数栈。</li>
+<li>动态连接。</li>
+<li>方法返回地址等。</li>
+</ul>
+<h3 id="Java虚拟机栈可能会发生的异常？">3.2. Java虚拟机栈可能会发生的异常？</h3><ul>
+<li>当创建过多线程不能创建新的线程时，会抛出<code>OutOfMemoryError: unable to create native thread</code>。</li>
+<li>当Java虚拟机栈内存不足时，会抛出<code>StackOverflowError</code>。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public class StackOverflowTest &#123;
+    private static int count &#x3D; 1;
+    public static void main(String[] args) &#123;
+        try &#123;
+            &#x2F;&#x2F; -Xss108k
+            pushStackFrame();
+        &#125; catch (Error e) &#123;
+            System.err.println(e);
+            System.out.println(count);
+        &#125;
+    &#125;
+    private static void pushStackFrame() &#123;
+        int variable &#x3D; 1;
+        int variable2 &#x3D; 1;
+        int variable3 &#x3D; 1;
+        int variable4 &#x3D; 1;
+        int variable5 &#x3D; 1;
+        int variable6 &#x3D; 1;
+        count++;
+        pushStackFrame();
+    &#125;
+&#125;</code></pre>
+<p>在上面的程序中，我们不断向<code>main</code>线程的Java虚拟机栈中压入栈帧，直到抛出<code>StackOverflowError</code>，运行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">java.lang.StackOverflowError
+683</code></pre>
+
+<p>栈帧越小，每个线程拥有的Java虚拟机栈所能容纳的栈帧越多。若上面的程序的<code>pushStackFrame</code>方法中只声明一个变量，运行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">java.lang.StackOverflowError
+985</code></pre>
+
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-Xss</code>：指定每个线程的Java虚拟机栈的大小。</li>
+</ul>
+</blockquote>
+<h2 id="本地方法栈">4. 本地方法栈</h2><p>本地方法栈<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 2. The Structure of the Java Virtual Machine - Native Method Stacks](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.6)
+">[4]</span></a></sup>和Java虚拟机栈类似，在调用本地方法时，会向本地方法栈中压入栈帧。本地方法栈是线程私有的。</p>
+<h2 id="程序计数器">5. 程序计数器</h2><p>程序计数器<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Chapter 2. The Structure of the Java Virtual Machine - The pc Register](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.1)
+">[5]</span></a></sup>用来记录当前线程执行方法的位置，用于线程切换回当前线程时，继续执行方法。程序计数器是线程私有的。</p>
+<h2 id="直接内存">6. 直接内存</h2><h3 id="什么是直接内存？">6.1. 什么是直接内存？</h3><p>直接内存不属于堆内内存，是直接向操作系统申请的内存，用于NIO。</p>
+<h3 id="直接内存和堆内存有什么区别？">6.2. 直接内存和堆内存有什么区别？</h3><ul>
+<li>在内存分配方面，由于堆内存是提前分配，所以比操作直接内存快。</li>
+<li>在内存读写方面，操作堆内存，需要将本地内存转为堆内存，再将堆内存转为本地内存；而直接内存是直接操作本地内存，比堆内存高效。</li>
+</ul>
+<h2 id="JDK工具">7. JDK工具</h2><h3 id="如何查看当前系统中有哪些正在运行的Java进程？">7.1. 如何查看当前系统中有哪些正在运行的Java进程？</h3><p>通过<code>jps -mlvV</code>命令可以打印当前系统中正在运行的Java进程。</p>
+<pre class="line-numbers language-none"><code class="language-none">$ jps -lvVm
+2195793 sun.tools.jps.Jps -lvVm -Dapplication.home&#x3D;&#x2F;usr&#x2F;lib&#x2F;jvm&#x2F;java-8-openjdk-amd64 -Xms8m
+710359 application-0.0.1-SNAPSHOT.jar</code></pre>
+
+<h3 id="如何查看Java进程的虚拟机参数？">7.2. 如何查看Java进程的虚拟机参数？</h3><p>通过<code>jinfo -flags &lt;pid&gt;</code>命令可以打印指定Java进程的虚拟机参数。</p>
+<pre class="line-numbers language-none"><code class="language-none">$ jinfo -flags 917356
+VM Flags:
+-XX:CICompilerCount&#x3D;4 -XX:InitialHeapSize&#x3D;534773760 -XX:MaxHeapSize&#x3D;8552185856 -XX:MaxNewSize&#x3D;2850553856 -XX:MinHeapDeltaBytes&#x3D;524288 -XX:NewSize&#x3D;1782
+57920 -XX:OldSize&#x3D;356515840 -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+</code></pre>
+
+<h3 id="如何查看Java进程的堆和方法区的内存信息？">7.3. 如何查看Java进程的堆和方法区的内存信息？</h3><p>通过<code>jmap -heap &lt;pid&gt;</code>命令可以打印指定Java进程的堆的配置和内存信息。</p>
+<pre class="line-numbers language-none"><code class="language-none">$ jmap -heap 23060
+Attaching to process ID 23060, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.361-b09
+
+using thread-local object allocation.
+Parallel GC with 8 thread(s)
+
+Heap Configuration:
+   MinHeapFreeRatio         &#x3D; 0
+   MaxHeapFreeRatio         &#x3D; 100
+   MaxHeapSize              &#x3D; 4244635648 (4048.0MB)
+   NewSize                  &#x3D; 88604672 (84.5MB)
+   MaxNewSize               &#x3D; 1414529024 (1349.0MB)
+   OldSize                  &#x3D; 177733632 (169.5MB)
+   NewRatio                 &#x3D; 2
+   SurvivorRatio            &#x3D; 8
+   MetaspaceSize            &#x3D; 21807104 (20.796875MB)
+   CompressedClassSpaceSize &#x3D; 1073741824 (1024.0MB)
+   MaxMetaspaceSize         &#x3D; 17592186044415 MB
+   G1HeapRegionSize         &#x3D; 0 (0.0MB)
+
+Heap Usage:
+PS Young Generation
+Eden Space:
+   capacity &#x3D; 66584576 (63.5MB)
+   used     &#x3D; 6658704 (6.3502349853515625MB)
+   free     &#x3D; 59925872 (57.14976501464844MB)
+   10.000370055671752% used
+From Space:
+   capacity &#x3D; 11010048 (10.5MB)
+   used     &#x3D; 0 (0.0MB)
+   free     &#x3D; 11010048 (10.5MB)
+   0.0% used
+To Space:
+   capacity &#x3D; 11010048 (10.5MB)
+   used     &#x3D; 0 (0.0MB)
+   free     &#x3D; 11010048 (10.5MB)
+   0.0% used
+PS Old Generation
+   capacity &#x3D; 177733632 (169.5MB)
+   used     &#x3D; 0 (0.0MB)
+   free     &#x3D; 177733632 (169.5MB)
+   0.0% used
+
+3189 interned Strings occupying 261688 bytes.
+</code></pre>
+<p>如上示例，从打印信息的<code>Heap Configuration</code>部分可以看到该Java进程的堆的配置：</p>
+<ul>
+<li>堆的最大内存<code>MaxHeapSize</code>为4048MB。</li>
+<li>新生代的最大内存<code>MaxNewSize</code>为1349MB。</li>
+<li>老年代与新生代内存大小的比值<code>NewRatio</code>为2。</li>
+<li><code>Eden</code>区与<code>Survivor</code>区的比值<code>SurvivorRatio</code>为8。</li>
+<li>元空间的最大内存<code>MaxMetaspaceSize</code>为16GB。</li>
+</ul>
+<p>从打印信息的<code>Heap Usage</code>部分可以看到该Java进程堆分配的内存为254MB，包括以下两个部分：</p>
+<ul>
+<li>新生代<code>PS Young Generation</code>分配的内存为84.5MB，包括以下三个部分：<ul>
+<li><code>Eden Space</code>分配的内存为63.5MB。</li>
+<li><code>From Space</code>分配的内为10.5MB。</li>
+<li><code>To Space</code>分配的内存为10.5MB。</li>
+</ul>
+</li>
+<li>老年代<code>PS Old Generation</code>分配的内存大小为169.5MB。</li>
+</ul>
+<h3 id="如何为堆创建快照？">7.4. 如何为堆创建快照？</h3><p>通过<code>jmap -dump:format=b,file=&lt;file&gt; &lt;pid&gt;</code>命令可以转储堆的内存快照文件。通过<code>jhat &lt;file&gt;</code>命令或<code>MAT</code>，<code>JProfiler</code>等工具分析堆的内存快照文件。下图是使用<code>MAT</code>分析程序是否发生了内存泄漏：</p>
+<a href="mat-memory-leak.png" class="gallery-item"><img src="mat-memory-leak.png" style="width: 50%"></a>
+
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:+HeapDumpOnOutOfMemoryError</code>：开启当程序出现<code>OOM</code>时自动转储堆的内存快照文件。</li>
+<li><code>-XX:HeapDumpPath=&lt;file&gt;</code>：指定堆的内存快照文件的输出路径。</li>
+</ul>
+</blockquote>
+<h3 id="如何查看Java进程的堆栈信息？">7.5. 如何查看Java进程的堆栈信息？</h3><p>通过<code>jstack &lt;pid&gt;</code>命令查看Java进程的堆栈信息。</p>
+<pre class="line-numbers language-none"><code class="language-none">$ jstack 917356
+2023-09-09 13:54:47
+Full thread dump OpenJDK 64-Bit Server VM (25.372-b07 mixed mode):
+
+...
+
+&quot;main&quot; #1 prio&#x3D;5 os_prio&#x3D;0 tid&#x3D;0x0000024c391bf800 nid&#x3D;0xdff20 waiting on condition [0x000000e53c9ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+        at java.lang.Thread.sleep(Native Method)
+        at com.remeio.upsnippet.jvm.runarea.heap.HeapDemo.main(HeapDemo.java:7)
+
+&quot;VM Thread&quot; os_prio&#x3D;2 tid&#x3D;0x0000024c5d736800 nid&#x3D;0xe0004 runnable
+
+&quot;GC task thread#0 (ParallelGC)&quot; os_prio&#x3D;0 tid&#x3D;0x0000024c391d6800 nid&#x3D;0xdffb0 runnable
+
+&quot;GC task thread#1 (ParallelGC)&quot; os_prio&#x3D;0 tid&#x3D;0x0000024c391d8000 nid&#x3D;0xdff18 runnable
+
+...
+
+&quot;VM Periodic Task Thread&quot; os_prio&#x3D;2 tid&#x3D;0x0000024c5fe1f800 nid&#x3D;0xe0040 waiting on condition
+
+JNI global references: 12
+</code></pre>
+
+<h3 id="如何查看Java进程的gc信息？">7.6. 如何查看Java进程的gc信息？</h3><p>通过<code>jstat -gc &lt;pid&gt; &lt;interval&gt; &lt;count&gt;</code>打印Java进程的gc信息。</p>
+<pre class="line-numbers language-none"><code class="language-none">&gt; jstat -gc 23060 1000 3        
+ S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT   
+10752.0 10752.0  0.0    0.0   65024.0   6502.6   173568.0     0.0     4480.0 775.7  384.0   76.0       0    0.000   0      0.000    0.000
+10752.0 10752.0  0.0    0.0   65024.0   6502.6   173568.0     0.0     4480.0 775.7  384.0   76.0       0    0.000   0      0.000    0.000
+10752.0 10752.0  0.0    0.0   65024.0   6502.6   173568.0     0.0     4480.0 775.7  384.0   76.0       0    0.000   0      0.000    0.000</code></pre>
+
+<h3 id="可视化工具有哪些？">7.7. 可视化工具有哪些？</h3><p>可视化工具有jconsole、visualvm、Jprofiler、Arthas等。</p>
+<h2 id="参考文档">8. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.3">Chapter 2. The Structure of the Java Virtual Machine - Heap</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.4">Chapter 2. The Structure of the Java Virtual Machine - Method Area</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.2">Chapter 2. The Structure of the Java Virtual Machine - Java Virtual Machine Stacks</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.6">Chapter 2. The Structure of the Java Virtual Machine - Native Method Stacks</a><a href="#fnref:4" rev="footnote"> ↩</a></span></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">5.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5.1">Chapter 2. The Structure of the Java Virtual Machine - The pc Register</a><a href="#fnref:5" rev="footnote"> ↩</a></span></li><li id="fn:6"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">6.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.6">Chapter 2. The Structure of the Java Virtual Machine - Frames</a><a href="#fnref:6" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/495983587/">上一篇：@Configuration及其周边注解是如何生效的？</a>
+    <a href="/post/3287649796/">下一篇：对象是如何创建的及是如何分配内存的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86"><span class="toc-text">1. 堆</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E4%B8%AD%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">1.1. 堆中存放的是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%86%85%E5%AD%98%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%92%E5%88%86%E7%9A%84%EF%BC%9F"><span class="toc-text">1.2. 堆内存是如何划分的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E5%92%8C%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%EF%BC%9F"><span class="toc-text">1.3. 什么是内存泄漏和内存溢出？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%91%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="toc-text">1.4. 堆可能会发生的异常？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="toc-text">2. 方法区</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA%E4%B8%AD%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">2.1. 方法区中存放的是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E4%BB%A3%E5%92%8C%E5%85%83%E7%A9%BA%E9%97%B4%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.2. 永久代和元空间有什么区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%91%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="toc-text">2.3. 方法区可能会发生的异常？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">2.4. 运行时常量池和字符串常量池有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="toc-text">3. Java虚拟机栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E4%B8%AD%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">3.1. Java虚拟机栈中存放的是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%8F%91%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8%EF%BC%9F"><span class="toc-text">3.2. Java虚拟机栈可能会发生的异常？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="toc-text">4. 本地方法栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">5. 程序计数器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98"><span class="toc-text">6. 直接内存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%EF%BC%9F"><span class="toc-text">6.1. 什么是直接内存？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98%E5%92%8C%E5%A0%86%E5%86%85%E5%AD%98%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-text">6.2. 直接内存和堆内存有什么区别？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK%E5%B7%A5%E5%85%B7"><span class="toc-text">7. JDK工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%9C%89%E5%93%AA%E4%BA%9B%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84Java%E8%BF%9B%E7%A8%8B%EF%BC%9F"><span class="toc-text">7.1. 如何查看当前系统中有哪些正在运行的Java进程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%8F%82%E6%95%B0%EF%BC%9F"><span class="toc-text">7.2. 如何查看Java进程的虚拟机参数？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%A0%86%E5%92%8C%E6%96%B9%E6%B3%95%E5%8C%BA%E7%9A%84%E5%86%85%E5%AD%98%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">7.3. 如何查看Java进程的堆和方法区的内存信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E5%A0%86%E5%88%9B%E5%BB%BA%E5%BF%AB%E7%85%A7%EF%BC%9F"><span class="toc-text">7.4. 如何为堆创建快照？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%A0%86%E6%A0%88%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">7.5. 如何查看Java进程的堆栈信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8BJava%E8%BF%9B%E7%A8%8B%E7%9A%84gc%E4%BF%A1%E6%81%AF%EF%BC%9F"><span class="toc-text">7.6. 如何查看Java进程的gc信息？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96%E5%B7%A5%E5%85%B7%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-text">7.7. 可视化工具有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">8. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

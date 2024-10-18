@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    @Transactional是如何生效的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2. 声明式事务是如何实现的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%88%87%E9%9D%A2"><span class="toc-text">2.1. 事务切面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%88%87%E7%82%B9"><span class="toc-text">2.2. 事务切点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%80%9A%E7%9F%A5"><span class="toc-text">2.3. 事务通知</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%8B%A6%E6%88%AA%E5%99%A8%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. 事务拦截器是如何执行的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E4%BA%8B%E5%8A%A1%E5%B1%9E%E6%80%A7"><span class="toc-text">3.1. 获取事务属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%B1%9E%E6%80%A7"><span class="toc-text">3.1.1. 事务属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%B1%9E%E6%80%A7%E6%9D%A5%E6%BA%90"><span class="toc-text">3.1.2. 事务属性来源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%B3%A8%E8%A7%A3%E8%BD%AC%E6%8D%A2%E5%99%A8"><span class="toc-text">3.1.3. 事务注解转换器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E5%BF%85%E8%A6%81%E5%88%99%E5%88%9B%E5%BB%BA%E4%BA%8B%E5%8A%A1"><span class="toc-text">3.2. 如果必要则创建事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="toc-text">3.3. 执行方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%E6%97%B6%E5%86%B3%E5%AE%9A%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81%E5%9B%9E%E6%BB%9A%E4%BA%8B%E5%8A%A1"><span class="toc-text">3.4. 抛出异常时决定是否需要回滚事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%AD%A3%E5%B8%B8%E8%BF%94%E5%9B%9E%E6%97%B6%E6%8F%90%E4%BA%A4%E4%BA%8B%E5%8A%A1"><span class="toc-text">3.5. 执行正常返回时提交事务</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/SpringFramework">> SpringFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>@Transactional是如何生效的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2024-04-10 20:00，字数：3.2k，预计阅读：15分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery"><h2 id="背景">1. 背景</h2><p>相比于<code>JDBC</code>的编程式事务，Spring提供了一种更便捷的处理事务的方式，即声明式事务。我们只需要在方法或类上标注<code>@Transactional</code>注解便可完成事务的声明，如下示例：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Transactional(rollbackFor &#x3D; Exception.class)
+public void pay() &#123;
+	jdbcTemplate.execute(&quot;update balance &#x3D; balance + 1 where id &#x3D; 1&quot;);
+	jdbcTemplate.execute(&quot;update balance &#x3D; balance - 1 where id &#x3D; 2&quot;);
+&#125;</code></pre>
+
+<p>当上面的方法抛出异常时，整个事务会进行回滚。下面我们来看<code>@Transactional</code>注解是如何生效的？</p>
+<h2 id="声明式事务是如何实现的？">2. 声明式事务是如何实现的？</h2><p>声明式事务是在事务切面中完成了事务的创建、提交和回滚。</p>
+<h3 id="事务切面">2.1. 事务切面</h3><p>事务切面在配置类<code>ProxyTransactionManagementConfiguration</code>中配置，切面相关要素如下：</p>
+<ul>
+<li>事务切点：事务属性来源切点<code>TransactionAttributeSourcePointcut</code>。</li>
+<li>事务通知：事务拦截器<code>TransactionInterceptor</code>。</li>
+<li>事务切面：Bean工厂事务属性来源切面<code>BeanFactoryTransactionAttributeSourceAdvisor</code>。</li>
+</ul>
+<h3 id="事务切点">2.2. 事务切点</h3><p>事务切点由事务属性来源切点<code>TransactionAttributeSourcePointcut</code>实现，在以下几种情况会进行方法的拦截：</p>
+<ul>
+<li>当类能够被事务属性来源<code>TransactionAttributeSource</code>认定为候选类时。</li>
+<li>当方法和类能够被事务属性来源<code>TransactionAttributeSource</code>获取到事务属性<code>TransactionAttribute</code>时。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Override
+public boolean matches(Method method, Class&lt;?&gt; targetClass) &#123;
+    &#x2F;&#x2F; 事务属性来源为空或存在事务属性时，切点匹配
+    return (this.transactionAttributeSource &#x3D;&#x3D; null ||
+            this.transactionAttributeSource.getTransactionAttribute(method, targetClass) !&#x3D; null);
+&#125;
+
+private class TransactionAttributeSourceClassFilter implements ClassFilter &#123;
+
+    @Override
+    public boolean matches(Class&lt;?&gt; clazz) &#123;
+        if (TransactionalProxy.class.isAssignableFrom(clazz) ||
+                TransactionManager.class.isAssignableFrom(clazz) ||
+                PersistenceExceptionTranslator.class.isAssignableFrom(clazz)) &#123;
+            return false;
+        &#125;
+        &#x2F;&#x2F; 是否是候选类
+        return (transactionAttributeSource &#x3D;&#x3D; null || transactionAttributeSource.isCandidateClass(clazz));
+    &#125;
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>TransactionAttributeSourcePointcut#matches</code>。</p>
+</blockquote>
+<h3 id="事务通知">2.3. 事务通知</h3><p>事务通知由事务拦截器<code>TransactionInterceptor</code>实现，其完成了事务方法的拦截处理。</p>
+<h2 id="事务拦截器是如何执行的？">3. 事务拦截器是如何执行的？</h2><p>事务拦截器的执行流程：</p>
+<ol>
+<li>获取事务属性；</li>
+<li>如果必要则创建事务；</li>
+<li>执行方法；</li>
+<li>抛出异常时决定是否需要回滚事务；</li>
+<li>执行正常返回时提交事务。</li>
+</ol>
+<a href="/assert/puml/2d319fcf511310e8d79324ca5aeaf12168bb4c94f5cd9c783aecec1e834ad5c1.svg" class="gallery-item"><img src="/assert/puml/2d319fcf511310e8d79324ca5aeaf12168bb4c94f5cd9c783aecec1e834ad5c1.svg"></a>
+
+<blockquote>
+<p> 对应源码所在位置：<code>TransactionAspectSupport#invokeWithinTransaction</code>。</p>
+</blockquote>
+<h3 id="获取事务属性">3.1. 获取事务属性</h3><h4 id="事务属性">3.1.1. 事务属性</h4><p>事务属性<code>TransactionAttribute</code>是对事务信息的抽象，其包含以下属性：</p>
+<ul>
+<li><code>propagationBehavior</code>：事务的传播行为。</li>
+<li><code>isolationLevel</code>：事务的隔离级别。</li>
+<li><code>timeout</code>：事务的超时时间。</li>
+<li><code>readOnly</code>：事务是否只读。</li>
+<li><code>rollbackOn</code>：事务需要回滚的异常。</li>
+</ul>
+<a href="/assert/puml/509889f669e02c141277db06efaf6b03aaf97bb9e6af7c9c95174cee67558009.svg" class="gallery-item"><img src="/assert/puml/509889f669e02c141277db06efaf6b03aaf97bb9e6af7c9c95174cee67558009.svg"></a>
+
+<h4 id="事务属性来源">3.1.2. 事务属性来源</h4><p>事务属性来源<code>TransactionAttributeSource</code>提供了<code>getTransactionAttribute</code>方法，其拥有从方法和类上获取事务属性<code>TransactionAttribute</code>的能力。</p>
+<a href="/assert/puml/27ee2590ea6f52b5edf88c42c9ceaf15f50f50562016b05881b4bad14c7fa5f0.svg" class="gallery-item"><img src="/assert/puml/27ee2590ea6f52b5edf88c42c9ceaf15f50f50562016b05881b4bad14c7fa5f0.svg"></a>
+
+<p>从实现上看，注解事务属性来源<code>AnnotationTransactionAttributeSource</code>将获取事务属性<code>TransactionAttribute</code>的逻辑委派给了事务注解转换器<code>TransactionAnnotationParser</code>。</p>
+<ul>
+<li>从方法<code>Method</code>上获取事务属性<code>TransactionAttribute</code>。</li>
+<li>从类<code>Class</code>上获取事务属性<code>TransactionAttribute</code>。</li>
+<li>退路到接口方法获取事务属性<code>TransactionAttribute</code>。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">protected TransactionAttribute computeTransactionAttribute(Method method, @Nullable Class&lt;?&gt; targetClass) &#123;
+	&#x2F;&#x2F; Don&#39;t allow non-public methods, as configured.
+	if (allowPublicMethodsOnly() &amp;&amp; !Modifier.isPublic(method.getModifiers())) &#123;
+		&#x2F;&#x2F; 事务仅允许公共方法，且方法的修饰符不是公共的，返回空
+		return null;
+	&#125;
+
+	&#x2F;&#x2F; The method may be on an interface, but we need attributes from the target class.
+	&#x2F;&#x2F; If the target class is null, the method will be unchanged.
+	&#x2F;&#x2F; 获取具体的方法
+	Method specificMethod &#x3D; AopUtils.getMostSpecificMethod(method, targetClass);
+
+	&#x2F;&#x2F; First try is the method in the target class.
+	&#x2F;&#x2F; 从方法上获取事务属性
+	TransactionAttribute txAttr &#x3D; findTransactionAttribute(specificMethod);
+	if (txAttr !&#x3D; null) &#123;
+		return txAttr;
+	&#125;
+
+	&#x2F;&#x2F; Second try is the transaction attribute on the target class.
+	&#x2F;&#x2F; 从类上获取事务属性
+	txAttr &#x3D; findTransactionAttribute(specificMethod.getDeclaringClass());
+	if (txAttr !&#x3D; null &amp;&amp; ClassUtils.isUserLevelMethod(method)) &#123;
+		return txAttr;
+	&#125;
+
+	if (specificMethod !&#x3D; method) &#123;
+		&#x2F;&#x2F; 退路到接口方法获取事务属性
+		&#x2F;&#x2F; Fallback is to look at the original method.
+		txAttr &#x3D; findTransactionAttribute(method);
+		if (txAttr !&#x3D; null) &#123;
+			return txAttr;
+		&#125;
+		&#x2F;&#x2F; Last fallback is the class of the original method.
+		txAttr &#x3D; findTransactionAttribute(method.getDeclaringClass());
+		if (txAttr !&#x3D; null &amp;&amp; ClassUtils.isUserLevelMethod(method)) &#123;
+			return txAttr;
+		&#125;
+	&#125;
+
+	return null;
+&#125;
+
+@Override
+@Nullable
+protected TransactionAttribute findTransactionAttribute(Class&lt;?&gt; clazz) &#123;
+	return determineTransactionAttribute(clazz);
+&#125;
+
+@Nullable
+protected TransactionAttribute determineTransactionAttribute(AnnotatedElement element) &#123;
+	for (TransactionAnnotationParser parser : this.annotationParsers) &#123;
+		TransactionAttribute attr &#x3D; parser.parseTransactionAnnotation(element);
+		if (attr !&#x3D; null) &#123;
+			return attr;
+		&#125;
+	&#125;
+	return null;
+&#125;</code></pre>
+
+<h4 id="事务注解转换器">3.1.3. 事务注解转换器</h4><p>事务注解转换器<code>TransactionAnnotationParser</code>提供了<code>parseTransactionAnnotation</code>方法，其拥有将注解转换为事务属性<code>TransactionAttribute</code>的能力。从实现上看，Spring事务注解转换器<code>SpringTransactionAnnotationParser实现了将</code>@Transactional<code>注解转为事务属性</code>TransactionAttribute&#96;的逻辑。</p>
+<a href="/assert/puml/a7577fc24d5746356d8601ce4ac35361552e354bd8f7eb6f92687581a6871ab5.svg" class="gallery-item"><img src="/assert/puml/a7577fc24d5746356d8601ce4ac35361552e354bd8f7eb6f92687581a6871ab5.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Override
+@Nullable
+public TransactionAttribute parseTransactionAnnotation(AnnotatedElement element) &#123;
+	&#x2F;&#x2F; 获取事务注解
+	AnnotationAttributes attributes &#x3D; AnnotatedElementUtils.findMergedAnnotationAttributes(
+			element, Transactional.class, false, false);
+	if (attributes !&#x3D; null) &#123;
+		return parseTransactionAnnotation(attributes);
+	&#125;
+	else &#123;
+		return null;
+	&#125;
+&#125;
+protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) &#123;
+	&#x2F;&#x2F; 创建基于规则的事务属性
+	RuleBasedTransactionAttribute rbta &#x3D; new RuleBasedTransactionAttribute();
+
+	Propagation propagation &#x3D; attributes.getEnum(&quot;propagation&quot;);
+	rbta.setPropagationBehavior(propagation.value());
+	Isolation isolation &#x3D; attributes.getEnum(&quot;isolation&quot;);
+	rbta.setIsolationLevel(isolation.value());
+
+	rbta.setTimeout(attributes.getNumber(&quot;timeout&quot;).intValue());
+	String timeoutString &#x3D; attributes.getString(&quot;timeoutString&quot;);
+	Assert.isTrue(!StringUtils.hasText(timeoutString) || rbta.getTimeout() &lt; 0,
+			&quot;Specify &#39;timeout&#39; or &#39;timeoutString&#39;, not both&quot;);
+	rbta.setTimeoutString(timeoutString);
+
+	rbta.setReadOnly(attributes.getBoolean(&quot;readOnly&quot;));
+	rbta.setQualifier(attributes.getString(&quot;value&quot;));
+	rbta.setLabels(Set.of(attributes.getStringArray(&quot;label&quot;)));
+
+	List&lt;RollbackRuleAttribute&gt; rollbackRules &#x3D; new ArrayList&lt;&gt;();
+	for (Class&lt;?&gt; rbRule : attributes.getClassArray(&quot;rollbackFor&quot;)) &#123;
+		rollbackRules.add(new RollbackRuleAttribute(rbRule));
+	&#125;
+	for (String rbRule : attributes.getStringArray(&quot;rollbackForClassName&quot;)) &#123;
+		rollbackRules.add(new RollbackRuleAttribute(rbRule));
+	&#125;
+	for (Class&lt;?&gt; rbRule : attributes.getClassArray(&quot;noRollbackFor&quot;)) &#123;
+		rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
+	&#125;
+	for (String rbRule : attributes.getStringArray(&quot;noRollbackForClassName&quot;)) &#123;
+		rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
+	&#125;
+	rbta.setRollbackRules(rollbackRules);
+
+	return rbta;
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>AbstractFallbackTransactionAttributeSource#getTransactionAttribute</code>。</p>
+</blockquote>
+<h3 id="如果必要则创建事务">3.2. 如果必要则创建事务</h3><p>事务的传播行为决定了当存在或不存在事务时执行的行为，如下表格：</p>
+<div class="article-table"><table>
+<thead>
+<tr>
+<th align="left">传播行为</th>
+<th align="left">不存在事务</th>
+<th>存在事务</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">REQUIRED</td>
+<td align="left">启动新事务</td>
+<td>加入到当前事务</td>
+</tr>
+<tr>
+<td align="left">SUPPORTS</td>
+<td align="left">以非事务的方式执行</td>
+<td>加入到当前事务</td>
+</tr>
+<tr>
+<td align="left">MANDATORY</td>
+<td align="left">抛出异常</td>
+<td>加入到当前事务</td>
+</tr>
+<tr>
+<td align="left">REQUIRES_NEW</td>
+<td align="left">启动新事务</td>
+<td>挂起当前事务，并且启动新事务</td>
+</tr>
+<tr>
+<td align="left">NOT_SUPPORTED</td>
+<td align="left">以非事务的方式执行</td>
+<td>挂起当前事务，并且以非事务的方式执行</td>
+</tr>
+<tr>
+<td align="left">NEVER</td>
+<td align="left">以非事务的方式执行</td>
+<td>抛出异常</td>
+</tr>
+<tr>
+<td align="left">NESTED</td>
+<td align="left">启动新事务</td>
+<td>启动嵌套事务</td>
+</tr>
+</tbody></table></div>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Override
+public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition)
+		throws TransactionException &#123;
+
+	&#x2F;&#x2F; Use defaults if no transaction definition given.
+	TransactionDefinition def &#x3D; (definition !&#x3D; null ? definition : TransactionDefinition.withDefaults());
+
+	&#x2F;&#x2F; 获取当前事务
+	Object transaction &#x3D; doGetTransaction();
+	boolean debugEnabled &#x3D; logger.isDebugEnabled();
+
+	&#x2F;&#x2F; 如果存在事务，进行相应处理
+	if (isExistingTransaction(transaction)) &#123;
+		&#x2F;&#x2F; Existing transaction found -&gt; check propagation behavior to find out how to behave.
+		return handleExistingTransaction(def, transaction, debugEnabled);
+	&#125;
+
+	&#x2F;&#x2F; Check definition settings for new transaction.
+	if (def.getTimeout() &lt; TransactionDefinition.TIMEOUT_DEFAULT) &#123;
+		throw new InvalidTimeoutException(&quot;Invalid transaction timeout&quot;, def.getTimeout());
+	&#125;
+
+	&#x2F;&#x2F; 如果不存在事务，进行相应处理
+	&#x2F;&#x2F; No existing transaction found -&gt; check propagation behavior to find out how to proceed.
+	&#x2F;&#x2F; 当前不存在事务，且传播行为为 MANDATORY，则抛出异常
+	if (def.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_MANDATORY) &#123;
+		throw new IllegalTransactionStateException(
+				&quot;No existing transaction found for transaction marked with propagation &#39;mandatory&#39;&quot;);
+	&#125;
+	&#x2F;&#x2F; 当前不存在事务，且传播行为为 REQUIRED 或 REQUIRES_NEW 或 NESTED，则启动新的事务
+	else if (def.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_REQUIRED ||
+			def.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
+			def.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_NESTED) &#123;
+		SuspendedResourcesHolder suspendedResources &#x3D; suspend(null);
+		if (debugEnabled) &#123;
+			logger.debug(&quot;Creating new transaction with name [&quot; + def.getName() + &quot;]: &quot; + def);
+		&#125;
+		try &#123;
+			return startTransaction(def, transaction, debugEnabled, suspendedResources);
+		&#125;
+		catch (RuntimeException | Error ex) &#123;
+			resume(null, suspendedResources);
+			throw ex;
+		&#125;
+	&#125;
+	&#x2F;&#x2F; 当前不存在事务，且传播行为为 SUPPORTS 或 NOT_SUPPORTED 或 NEVER，则以非事务的方式执行
+	else &#123;
+		&#x2F;&#x2F; Create &quot;empty&quot; transaction: no actual transaction, but potentially synchronization.
+		if (def.getIsolationLevel() !&#x3D; TransactionDefinition.ISOLATION_DEFAULT &amp;&amp; logger.isWarnEnabled()) &#123;
+			logger.warn(&quot;Custom isolation level specified but no actual transaction initiated; &quot; +
+					&quot;isolation level will effectively be ignored: &quot; + def);
+		&#125;
+		boolean newSynchronization &#x3D; (getTransactionSynchronization() &#x3D;&#x3D; SYNCHRONIZATION_ALWAYS);
+		return prepareTransactionStatus(def, null, true, newSynchronization, debugEnabled, null);
+	&#125;
+&#125;
+
+private TransactionStatus handleExistingTransaction(
+			TransactionDefinition definition, Object transaction, boolean debugEnabled)
+			throws TransactionException &#123;
+
+	&#x2F;&#x2F; 当前存在事务，且传播行为为 NEVER，则抛出异常
+	if (definition.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_NEVER) &#123;
+		throw new IllegalTransactionStateException(
+				&quot;Existing transaction found for transaction marked with propagation &#39;never&#39;&quot;);
+	&#125;
+	&#x2F;&#x2F; 当前存在事务，且传播行为为 NOT_SUPPORTED，则挂起当前事务，以非事务的方式执行
+	if (definition.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_NOT_SUPPORTED) &#123;
+		if (debugEnabled) &#123;
+			logger.debug(&quot;Suspending current transaction&quot;);
+		&#125;
+		Object suspendedResources &#x3D; suspend(transaction);
+		boolean newSynchronization &#x3D; (getTransactionSynchronization() &#x3D;&#x3D; SYNCHRONIZATION_ALWAYS);
+		return prepareTransactionStatus(
+				definition, null, false, newSynchronization, debugEnabled, suspendedResources);
+	&#125;
+
+	&#x2F;&#x2F; 当前存在事务，且传播行为为 REQUIRES_NEW，则挂起当前事务，并启动新事务
+	if (definition.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_REQUIRES_NEW) &#123;
+		if (debugEnabled) &#123;
+			logger.debug(&quot;Suspending current transaction, creating new transaction with name [&quot; +
+					definition.getName() + &quot;]&quot;);
+		&#125;
+		SuspendedResourcesHolder suspendedResources &#x3D; suspend(transaction);
+		try &#123;
+			return startTransaction(definition, transaction, debugEnabled, suspendedResources);
+		&#125;
+		catch (RuntimeException | Error beginEx) &#123;
+			resumeAfterBeginException(transaction, suspendedResources, beginEx);
+			throw beginEx;
+		&#125;
+	&#125;
+	&#x2F;&#x2F; 当前存在事务，且传播行为为 NESTED，则启用嵌套事务
+	if (definition.getPropagationBehavior() &#x3D;&#x3D; TransactionDefinition.PROPAGATION_NESTED) &#123;
+		if (!isNestedTransactionAllowed()) &#123;
+			throw new NestedTransactionNotSupportedException(
+					&quot;Transaction manager does not allow nested transactions by default - &quot; +
+					&quot;specify &#39;nestedTransactionAllowed&#39; property with value &#39;true&#39;&quot;);
+		&#125;
+		if (debugEnabled) &#123;
+			logger.debug(&quot;Creating nested transaction with name [&quot; + definition.getName() + &quot;]&quot;);
+		&#125;
+		if (useSavepointForNestedTransaction()) &#123;
+			&#x2F;&#x2F; Create savepoint within existing Spring-managed transaction,
+			&#x2F;&#x2F; through the SavepointManager API implemented by TransactionStatus.
+			&#x2F;&#x2F; Usually uses JDBC 3.0 savepoints. Never activates Spring synchronization.
+			DefaultTransactionStatus status &#x3D;
+					prepareTransactionStatus(definition, transaction, false, false, debugEnabled, null);
+			status.createAndHoldSavepoint();
+			return status;
+		&#125;
+		else &#123;
+			&#x2F;&#x2F; Nested transaction through nested begin and commit&#x2F;rollback calls.
+			&#x2F;&#x2F; Usually only for JTA: Spring synchronization might get activated here
+			&#x2F;&#x2F; in case of a pre-existing JTA transaction.
+			return startTransaction(definition, transaction, debugEnabled, null);
+		&#125;
+	&#125;
+
+	&#x2F;&#x2F; Assumably PROPAGATION_SUPPORTS or PROPAGATION_REQUIRED.
+	&#x2F;&#x2F; 当前存在事务，且传播行为为 SUPPORTS 或 REQUIRED 或 MANDATORY，则加入到当前事务中
+	if (debugEnabled) &#123;
+		logger.debug(&quot;Participating in existing transaction&quot;);
+	&#125;
+	if (isValidateExistingTransaction()) &#123;
+		if (definition.getIsolationLevel() !&#x3D; TransactionDefinition.ISOLATION_DEFAULT) &#123;
+			Integer currentIsolationLevel &#x3D; TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
+			if (currentIsolationLevel &#x3D;&#x3D; null || currentIsolationLevel !&#x3D; definition.getIsolationLevel()) &#123;
+				Constants isoConstants &#x3D; DefaultTransactionDefinition.constants;
+				throw new IllegalTransactionStateException(&quot;Participating transaction with definition [&quot; +
+						definition + &quot;] specifies isolation level which is incompatible with existing transaction: &quot; +
+						(currentIsolationLevel !&#x3D; null ?
+								isoConstants.toCode(currentIsolationLevel, DefaultTransactionDefinition.PREFIX_ISOLATION) :
+								&quot;(unknown)&quot;));
+			&#125;
+		&#125;
+		if (!definition.isReadOnly()) &#123;
+			if (TransactionSynchronizationManager.isCurrentTransactionReadOnly()) &#123;
+				throw new IllegalTransactionStateException(&quot;Participating transaction with definition [&quot; +
+						definition + &quot;] is not marked as read-only but existing transaction is&quot;);
+			&#125;
+		&#125;
+	&#125;
+	boolean newSynchronization &#x3D; (getTransactionSynchronization() !&#x3D; SYNCHRONIZATION_NEVER);
+	return prepareTransactionStatus(definition, transaction, false, newSynchronization, debugEnabled, null);
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>TransactionAspectSupport#createTransactionIfNecessary</code>。</p>
+</blockquote>
+<h3 id="执行方法">3.3. 执行方法</h3><p>执行被代理对象的方法。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">try &#123;
+	&#x2F;&#x2F; This is an around advice: Invoke the next interceptor in the chain.
+	&#x2F;&#x2F; This will normally result in a target object being invoked.
+	&#x2F;&#x2F; 执行方法
+	retVal &#x3D; invocation.proceedWithInvocation();
+&#125;
+catch (Throwable ex) &#123;
+	&#x2F;&#x2F; target invocation exception
+	&#x2F;&#x2F; 在捕获到异常后，决定是否需要回滚事务
+	completeTransactionAfterThrowing(txInfo, ex);
+	throw ex;
+&#125;
+finally &#123;
+	&#x2F;&#x2F; 清除事务信息
+	cleanupTransactionInfo(txInfo);
+&#125;
+</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>TransactionAspectSupport.InvocationCallback#proceedWithInvocation</code>。</p>
+</blockquote>
+<h3 id="抛出异常时决定是否需要回滚事务">3.4. 抛出异常时决定是否需要回滚事务</h3><p>当执行方法异常时，根据异常类型决定是否需要回滚事务。需要回滚时则回滚事务；不需要回滚时则提交事务。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">protected void completeTransactionAfterThrowing(@Nullable TransactionInfo txInfo, Throwable ex) &#123;
+	if (txInfo !&#x3D; null &amp;&amp; txInfo.getTransactionStatus() !&#x3D; null) &#123;
+		if (logger.isTraceEnabled()) &#123;
+			logger.trace(&quot;Completing transaction for [&quot; + txInfo.getJoinpointIdentification() +
+					&quot;] after exception: &quot; + ex);
+		&#125;
+		&#x2F;&#x2F; 判断是否需要回滚
+		if (txInfo.transactionAttribute !&#x3D; null &amp;&amp; txInfo.transactionAttribute.rollbackOn(ex)) &#123;
+			try &#123;
+				&#x2F;&#x2F; 需要回滚则回滚事务
+				txInfo.getTransactionManager().rollback(txInfo.getTransactionStatus());
+			&#125;
+			catch (TransactionSystemException ex2) &#123;
+				logger.error(&quot;Application exception overridden by rollback exception&quot;, ex);
+				ex2.initApplicationException(ex);
+				throw ex2;
+			&#125;
+			catch (RuntimeException | Error ex2) &#123;
+				logger.error(&quot;Application exception overridden by rollback exception&quot;, ex);
+				throw ex2;
+			&#125;
+		&#125;
+		else &#123;
+			&#x2F;&#x2F; We don&#39;t roll back on this exception.
+			&#x2F;&#x2F; Will still roll back if TransactionStatus.isRollbackOnly() is true.
+			try &#123;
+				&#x2F;&#x2F; 不需要回滚则提交事务
+				txInfo.getTransactionManager().commit(txInfo.getTransactionStatus());
+			&#125;
+			catch (TransactionSystemException ex2) &#123;
+				logger.error(&quot;Application exception overridden by commit exception&quot;, ex);
+				ex2.initApplicationException(ex);
+				throw ex2;
+			&#125;
+			catch (RuntimeException | Error ex2) &#123;
+				logger.error(&quot;Application exception overridden by commit exception&quot;, ex);
+				throw ex2;
+			&#125;
+		&#125;
+	&#125;
+&#125;</code></pre>
+
+<p>由基于规则的事务属性<code>RuleBasedTransactionAttribute</code>来决定是否需要回滚，其<code>rollbackOn</code>方法会获取最接近抛出异常的声明异常，决定是否回滚。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@Override
+public boolean rollbackOn(Throwable ex) &#123;
+    RollbackRuleAttribute winner &#x3D; null;
+    int deepest &#x3D; Integer.MAX_VALUE;
+
+    if (this.rollbackRules !&#x3D; null) &#123;
+        for (RollbackRuleAttribute rule : this.rollbackRules) &#123;
+            int depth &#x3D; rule.getDepth(ex);
+            &#x2F;&#x2F; 获取最接近的规则
+            if (depth &gt;&#x3D; 0 &amp;&amp; depth &lt; deepest) &#123;
+                deepest &#x3D; depth;
+                winner &#x3D; rule;
+            &#125;
+        &#125;
+    &#125;
+
+    &#x2F;&#x2F; User superclass behavior (rollback on unchecked) if no rule matches.
+    if (winner &#x3D;&#x3D; null) &#123;
+        return super.rollbackOn(ex);
+    &#125;
+
+    return !(winner instanceof NoRollbackRuleAttribute);
+&#125;</code></pre>
+
+<p>回滚规则属性<code>RollbackRuleAttribute</code>提供了<code>getDepth</code>方法，以获取异常的深度。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 获取指定异常进行规则匹配的深度
+public int getDepth(Throwable exception) &#123;
+    return getDepth(exception.getClass(), 0);
+&#125;
+
+
+private int getDepth(Class&lt;?&gt; exceptionType, int depth) &#123;
+    if (this.exceptionType !&#x3D; null) &#123;
+        if (this.exceptionType.equals(exceptionType)) &#123;
+            &#x2F;&#x2F; Found it!
+            return depth;
+        &#125;
+    &#125;
+    &#x2F;&#x2F; 包含规则即可
+    else if (exceptionType.getName().contains(this.exceptionPattern)) &#123;
+        &#x2F;&#x2F; Found it!
+        return depth;
+    &#125;
+    &#x2F;&#x2F; If we&#39;ve gone as far as we can go and haven&#39;t found it...
+    if (exceptionType &#x3D;&#x3D; Throwable.class) &#123;
+        return -1;
+    &#125;
+    return getDepth(exceptionType.getSuperclass(), depth + 1);
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>TransactionAspectSupport#completeTransactionAfterThrowing</code>。</p>
+</blockquote>
+<h3 id="执行正常返回时提交事务">3.5. 执行正常返回时提交事务</h3><p>执行方法正常结束时，提交事务。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">protected void commitTransactionAfterReturning(@Nullable TransactionInfo txInfo) &#123;
+	if (txInfo !&#x3D; null &amp;&amp; txInfo.getTransactionStatus() !&#x3D; null) &#123;
+		if (logger.isTraceEnabled()) &#123;
+			logger.trace(&quot;Completing transaction for [&quot; + txInfo.getJoinpointIdentification() + &quot;]&quot;);
+		&#125;
+		txInfo.getTransactionManager().commit(txInfo.getTransactionStatus());
+	&#125;
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>TransactionAspectSupport#commitTransactionAfterReturning</code>。</p>
+</blockquote>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/797218127/">上一篇：Spring应用是如何启动的？</a>
+    <a href="/post/1848011465/">下一篇：synchronized内置锁是如何实现的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%9F"><span class="toc-text">2. 声明式事务是如何实现的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%88%87%E9%9D%A2"><span class="toc-text">2.1. 事务切面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%88%87%E7%82%B9"><span class="toc-text">2.2. 事务切点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%80%9A%E7%9F%A5"><span class="toc-text">2.3. 事务通知</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%8B%A6%E6%88%AA%E5%99%A8%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. 事务拦截器是如何执行的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E4%BA%8B%E5%8A%A1%E5%B1%9E%E6%80%A7"><span class="toc-text">3.1. 获取事务属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%B1%9E%E6%80%A7"><span class="toc-text">3.1.1. 事务属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%B1%9E%E6%80%A7%E6%9D%A5%E6%BA%90"><span class="toc-text">3.1.2. 事务属性来源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%B3%A8%E8%A7%A3%E8%BD%AC%E6%8D%A2%E5%99%A8"><span class="toc-text">3.1.3. 事务注解转换器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E5%BF%85%E8%A6%81%E5%88%99%E5%88%9B%E5%BB%BA%E4%BA%8B%E5%8A%A1"><span class="toc-text">3.2. 如果必要则创建事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%96%B9%E6%B3%95"><span class="toc-text">3.3. 执行方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%E6%97%B6%E5%86%B3%E5%AE%9A%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81%E5%9B%9E%E6%BB%9A%E4%BA%8B%E5%8A%A1"><span class="toc-text">3.4. 抛出异常时决定是否需要回滚事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%AD%A3%E5%B8%B8%E8%BF%94%E5%9B%9E%E6%97%B6%E6%8F%90%E4%BA%A4%E4%BA%8B%E5%8A%A1"><span class="toc-text">3.5. 执行正常返回时提交事务</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+</body>
+</html>

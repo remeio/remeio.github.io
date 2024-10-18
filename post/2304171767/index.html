@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Java集合框架中Queue接口有哪些实现？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Queue接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Queue接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArrayDeque%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. ArrayDeque详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. ArrayDeque是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. ArrayDeque是如何添加新元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. ArrayDeque是如何删除元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. ArrayDeque是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E4%B8%BA%E4%BA%86%E6%8F%90%E5%8D%87%E6%80%A7%E8%83%BD%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2.5. ArrayDeque为了提升性能做了哪些设计？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PriorityQueue%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. PriorityQueue详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PriorityQueue%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%B4%E6%8C%81%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. PriorityQueue是如何维持优先级的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">4. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/CollectionsFramework">> CollectionsFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>Java集合框架中Queue接口有哪些实现？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-10-24 20:37，字数：1.1k，预计阅读：5分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:200px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;Queue&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;ArrayDeque&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayDeque是如何设计的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayDeque是如何添加新元素的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayDeque是如何删除元素的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayDeque是如何扩容的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;ArrayDeque为了提升性能做了哪些设计？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[7,8]},&quot;v&quot;:&quot;PriorityQueue&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;f&quot;:true},&quot;v&quot;:&quot;PriorityQueue是如何维持优先级的？&quot;}]}]}"/>
+</div>
+
+
+
+<h2 id="Queue接口详解">1. Queue接口详解</h2><h3 id="Queue接口有哪些实现？">1.1. Queue接口有哪些实现？</h3><a href="/assert/puml/3c187ac168160fac5a6874ea316bfbe673f7335211dc41a0a12077797bdcecae.svg" class="gallery-item"><img src="/assert/puml/3c187ac168160fac5a6874ea316bfbe673f7335211dc41a0a12077797bdcecae.svg"></a>
+
+<h2 id="ArrayDeque详解">2. ArrayDeque详解</h2><h3 id="ArrayDeque是如何设计的？">2.1. ArrayDeque是如何设计的？</h3><ul>
+<li>继承关系：<code>ArrayDeque</code>继承了<code>AbstractCollection</code>，实现了<code>Deque</code>接口。</li>
+<li>底层数据结构：<code>ArrayDeque</code>使用了动态数组，当容量不足时会进行扩容。</li>
+<li>存储元素：<code>ArrayDeque</code>不允许存储<code>null</code>元素。</li>
+<li>线程安全：<code>ArrayDeque</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
+</ul>
+<h3 id="ArrayDeque是如何添加新元素的？">2.2. ArrayDeque是如何添加新元素的？</h3><p><code>ArrayDeque</code>用<code>head</code>记录头节点在数组中的下标，用<code>tail</code>记录尾节点的下一个节点在数组中的下标。</p>
+<ul>
+<li>当调用<code>addFirst</code>方法时，<code>head</code>减一同数组长度减一做且位运算（数组长度被限制为2的倍数，相当于取模运算）作为新的<code>head</code>的值，并设置新的元素。</li>
+<li>当调用<code>addLast</code>方法时，在<code>tail</code>下标设置新的元素，并<code>tail</code>加一同数组长度减一做且位运算作为新的<code>tail</code>的值。</li>
+<li>当<code>head</code>和<code>tail</code>相等时，意味着数组容量已满，需要进行扩容。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public void addFirst(E e) &#123;
+    if (e &#x3D;&#x3D; null)
+        throw new NullPointerException();
+    elements[head &#x3D; (head - 1) &amp; (elements.length - 1)] &#x3D; e;
+    if (head &#x3D;&#x3D; tail)
+        doubleCapacity();
+&#125;
+
+public void addLast(E e) &#123;
+    if (e &#x3D;&#x3D; null)
+        throw new NullPointerException();
+    elements[tail] &#x3D; e;
+    if ( (tail &#x3D; (tail + 1) &amp; (elements.length - 1)) &#x3D;&#x3D; head)
+        doubleCapacity();
+&#125;</code></pre>
+
+<h3 id="ArrayDeque是如何删除元素的？">2.3. ArrayDeque是如何删除元素的？</h3><ul>
+<li>当调用<code>pollFirst</code>方法时，移除<code>head</code>下标处的元素，并拿<code>head</code>加一同数组长度减一做且位运算（数组长度被限制为2的倍数，相当于取模运算）作为新的<code>head</code>的值。</li>
+<li>当调用<code>pollLast</code>方法时，移除<code>tail</code>减一同数组长度减一做且位运算下标处的元素，并将该下标作为新的<code>tail</code>的值。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public E pollFirst() &#123;
+    int h &#x3D; head;
+    @SuppressWarnings(&quot;unchecked&quot;)
+    E result &#x3D; (E) elements[h];
+    &#x2F;&#x2F; Element is null if deque empty
+    if (result &#x3D;&#x3D; null)
+        return null;
+    elements[h] &#x3D; null;     &#x2F;&#x2F; Must null out slot
+    head &#x3D; (h + 1) &amp; (elements.length - 1);
+    return result;
+&#125;
+
+public E pollLast() &#123;
+    int t &#x3D; (tail - 1) &amp; (elements.length - 1);
+    @SuppressWarnings(&quot;unchecked&quot;)
+    E result &#x3D; (E) elements[t];
+    if (result &#x3D;&#x3D; null)
+        return null;
+    elements[t] &#x3D; null;
+    tail &#x3D; t;
+    return result;
+&#125;</code></pre>
+
+<h3 id="ArrayDeque是如何扩容的？">2.4. ArrayDeque是如何扩容的？</h3><p>当<code>head</code>和<code>tail</code>相同时，也就是原数组容量已满时，<code>ArrayDeque</code>会进行扩容。<code>ArrayDeque</code>会将数组大小扩容为原数组大小的两倍，并将<code>head</code>节点及右侧的节点复制到新数组的左侧，将剩余的节点复制到新数组的右侧，最后将<code>head</code>设置为0，<code>tail</code>设置为原数组的大小。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void doubleCapacity() &#123;
+	assert head &#x3D;&#x3D; tail;
+	int p &#x3D; head;
+	int n &#x3D; elements.length;
+	int r &#x3D; n - p; &#x2F;&#x2F; number of elements to the right of p
+	int newCapacity &#x3D; n &lt;&lt; 1;
+	if (newCapacity &lt; 0)
+		throw new IllegalStateException(&quot;Sorry, deque too big&quot;);
+	Object[] a &#x3D; new Object[newCapacity];
+	System.arraycopy(elements, p, a, 0, r);
+	System.arraycopy(elements, 0, a, r, p);
+	elements &#x3D; a;
+	head &#x3D; 0;
+	tail &#x3D; n;
+&#125;</code></pre>
+
+<h3 id="ArrayDeque为了提升性能做了哪些设计？">2.5. ArrayDeque为了提升性能做了哪些设计？</h3><ul>
+<li>使用动态数组维护队列，不存在节点的移动</li>
+<li>限制数组长度为2的倍数，以便使用位运算代替取模运算；</li>
+<li>扩容时只需要两次复制。</li>
+</ul>
+<h2 id="PriorityQueue详解">3. PriorityQueue详解</h2><ul>
+<li>继承关系：<code>PriorityQueue</code>继承了<code>AbstractQueue</code>。</li>
+<li>底层数据结构：<code>PriorityQueue</code>使用了基于数组实现的小顶堆，支持自然排序和比较器排序。</li>
+<li>存储元素：<code>PriorityQueue</code>不允许存储<code>null</code>元素。</li>
+<li>线程安全：<code>PriorityQueue</code>是线程不安全的，采用<code>fast-fail</code>机制。</li>
+</ul>
+<h3 id="PriorityQueue是如何维持优先级的？">3.1. PriorityQueue是如何维持优先级的？</h3><p>当有新的元素入队时，会判断是否存在自定义比较器，如果存在则使用比较器，如果不存在则使用自然排序。元素的优先级取决于排序结果，排序越小的优先级越高，越先出队。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void siftUp(int k, E x) &#123;
+	if (comparator !&#x3D; null)
+		&#x2F;&#x2F; 比较器排序
+		siftUpUsingComparator(k, x);
+	else
+		&#x2F;&#x2F; 自然排序
+		siftUpComparable(k, x);
+&#125;
+
+private 
+void siftUpComparable(int k, E x) &#123;
+	Comparable&lt;? super E&gt; key &#x3D; (Comparable&lt;? super E&gt;) x;
+	while (k &gt; 0) &#123;
+		int parent &#x3D; (k - 1) &gt;&gt;&gt; 1;
+		Object e &#x3D; queue[parent];
+		if (key.compareTo((E) e) &gt;&#x3D; 0)
+			break;
+		queue[k] &#x3D; e;
+		k &#x3D; parent;
+	&#125;
+	queue[k] &#x3D; key;
+&#125;
+
+private void siftUpUsingComparator(int k, E x) &#123;
+	while (k &gt; 0) &#123;
+		int parent &#x3D; (k - 1) &gt;&gt;&gt; 1;
+		Object e &#x3D; queue[parent];
+		if (comparator.compare(x, (E) e) &gt;&#x3D; 0)
+			break;
+		queue[k] &#x3D; e;
+		k &#x3D; parent;
+	&#125;
+	queue[k] &#x3D; x;
+&#125;</code></pre>
+
+<h2 id="参考文档">4. 参考文档</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/intro/index.html">The Java™ Tutorials-Lesson: Introduction to Collections</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/interfaces/queue.html">The Java™ Tutorials-The Queue Interface</a> </li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/collections/implementations/queue.html">The Java™ Tutorials-Queue Implementations</a></li>
+</ul>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/3921014442/">上一篇：Java集合框架中Set接口有哪些实现？</a>
+    <a href="/post/1808606146/">下一篇：Spring MVC是如何分发HTTP请求的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E8%AF%A6%E8%A7%A3"><span class="toc-text">1. Queue接口详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Queue%E6%8E%A5%E5%8F%A3%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AE%9E%E7%8E%B0%EF%BC%9F"><span class="toc-text">1.1. Queue接口有哪些实现？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArrayDeque%E8%AF%A6%E8%A7%A3"><span class="toc-text">2. ArrayDeque详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">2.1. ArrayDeque是如何设计的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.2. ArrayDeque是如何添加新元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0%E7%9A%84%EF%BC%9F"><span class="toc-text">2.3. ArrayDeque是如何删除元素的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A9%E5%AE%B9%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. ArrayDeque是如何扩容的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayDeque%E4%B8%BA%E4%BA%86%E6%8F%90%E5%8D%87%E6%80%A7%E8%83%BD%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2.5. ArrayDeque为了提升性能做了哪些设计？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PriorityQueue%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. PriorityQueue详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PriorityQueue%E6%98%AF%E5%A6%82%E4%BD%95%E7%BB%B4%E6%8C%81%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. PriorityQueue是如何维持优先级的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">4. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

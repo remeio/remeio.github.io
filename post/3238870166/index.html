@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Bean在Spring中是如何被加载的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2. 如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. BeanDefinition是如何存储的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%98%AF%E5%A6%82%E4%BD%95%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. BeanDefinition是如何被加载的？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E8%B7%AF%E5%BE%84%E8%8E%B7%E5%8F%96XML%E9%85%8D%E7%BD%AE%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%9F"><span class="toc-text">3.2.1. 如何通过路径获取XML配置的资源？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E9%85%8D%E7%BD%AE%E7%9A%84%E8%B5%84%E6%BA%90%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E5%8A%A0%E8%BD%BD%E4%B8%BAXML%E6%96%87%E6%A1%A3%EF%BC%9F"><span class="toc-text">3.2.2. 拿到XML配置的资源后，如何将其加载为XML文档？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E6%96%87%E6%A1%A3%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E6%A0%87%E7%AD%BE%EF%BC%9F"><span class="toc-text">3.2.3. 拿到XML文档后，如何解析文档中的各种标签？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84bean%E6%A0%87%E7%AD%BE%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E8%A7%A3%E6%9E%90%E4%B8%BABeanDefinition%EF%BC%9F"><span class="toc-text">3.2.4. 拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0BeanDefinition%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E6%B3%A8%E5%86%8C%E5%88%B0BeanDefinitionRegistry%E4%B8%AD%EF%BC%9F"><span class="toc-text">3.2.5. 拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">4. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%B7%AF%E5%BE%84%E6%9D%A5%E8%8E%B7%E5%8F%96%E8%B5%84%E6%BA%90%EF%BC%8C%E4%BC%9A%E8%BF%94%E5%9B%9E%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%9F"><span class="toc-text">4.1. 使用不同类型的路径来获取资源，会返回什么类型的资源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8debug%E7%9A%84%E6%96%B9%E5%BC%8F%E8%B7%9F%E8%B8%AAXML%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%98%AF%E5%A6%82%E4%BD%95%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. 使用debug的方式跟踪XML配置文件是如何被加载的？</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/SpringFramework">> SpringFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>Bean在Spring中是如何被加载的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-07-05 23:38，字数：2.3k，预计阅读：10分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:300px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;BeanDefinition的加载&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;BeanDefinition是如何存储的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;BeanDefinition是如何被加载的？&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;如何通过路径获取XML配置的资源？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML配置的资源后，如何将其加载为XML文档？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML文档后，如何解析文档中的各种标签？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;实战&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;使用不同类型的路径来获取资源，会返回什么类型的资源？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;使用debug的方式跟踪XML配置文件是如何被加载的？&quot;}]}]}"/>
+</div>
+
+
+<blockquote>
+<p>在阅读本文前请先确保你了解什么是<code>BeanDefinition</code>。</p>
+</blockquote>
+<h2 id="背景">1. 背景</h2><p>以XML配置文件配置的Bean为例，搞明白Bean在Spring中是如何被加载的可以使我们更了解Spring的XML配置文件中有哪些配置信息，以及各个配置信息是如何生效的。Spring的XML配置文件提供了很多标签和属性，我们不仅可以使用<code>bean</code>标签配置Bean，使用<code>alias</code>标签配置别名，还可以使用<code>import</code>标签导入资源，使用<code>component-scan</code>标签开启组件扫描等。</p>
+<blockquote>
+<p>根据二八定律，我们往往只会用到20%的配置，现在让我们去了解剩余的80%。</p>
+</blockquote>
+<h2 id="如果让你设计，你会如何设计？">2. 如果让你设计，你会如何设计？</h2><p>首先，我们需要设计一个类来存储已经被加载的<code>BeanDefinition</code>，我们起名为<code>BeanDefinitionRegistry</code>。</p>
+<ul>
+<li>其持有一个Bean名称与<code>BeanDefinition</code>的映射。</li>
+<li>并提供一个注册<code>BeanDefinition</code>的方法。</li>
+</ul>
+<p>其次，我们需要设计一个类来从XML配置文件中加载<code>BeanDefinition</code>，我们起名为<code>BeanDefinitionReader</code>。</p>
+<ul>
+<li>其持有一个<code>BeanDefinitionRegistry</code>的实例，用于注册<code>BeanDefinition</code>。</li>
+<li>并提供一个加载<code>BeanDefinition</code>的方法。</li>
+</ul>
+<a href="/assert/puml/15c81055fd2fa6531d3d731500e9974eef528d5a9ca27de62ee7500668ef176a.svg" class="gallery-item"><img src="/assert/puml/15c81055fd2fa6531d3d731500e9974eef528d5a9ca27de62ee7500668ef176a.svg"></a>
+
+<h2 id="Spring是如何设计的？">3. Spring是如何设计的？</h2><p>同我们上面的设计类似，Spring在此基础上进行接口和类的抽象以及各个功能的拆分，所以派生了大量的类，看着比我们上面的设计复杂不少，实际上殊途同归。</p>
+<blockquote>
+<p>Spring为什么设计的这么复杂，按照我们的设计两个类足矣。如果按照我们的设计会有以下几个问题：</p>
+<ul>
+<li>一方面，所有的处理逻辑全部集中在<code>BeanDefinitionReader</code>中，很难扩展和维护，违背了单一职责原则（SRP）。</li>
+<li>另一方面，我们的设计并没有进行抽象，如果后续添加支持解析<code>Properties</code>配置文件，我们无从下手，抽离接口是为了服务于依赖倒置原则（DIP）。</li>
+<li>更宽泛地说，遵循面向对象设计的原则，才能写出更方便维护与扩展的代码。</li>
+</ul>
+</blockquote>
+<h3 id="BeanDefinition是如何存储的？">3.1. BeanDefinition是如何存储的？</h3><p>首先我们来看<code>BeanDefinition</code>的存储，为此Spring抽象出了一个<code>BeanDefinitionRegistry</code>接口，并提供了注册<code>BeanDefinition</code>的方法，由<code>DefaultListableBeanFactory</code>进行实现，类图如下：</p>
+<a href="/assert/puml/0cd592aa61462a133e87d72de14308405407359c5d4c334e7e4f034014243679.svg" class="gallery-item"><img src="/assert/puml/0cd592aa61462a133e87d72de14308405407359c5d4c334e7e4f034014243679.svg"></a>
+<h3 id="BeanDefinition是如何被加载的？">3.2. BeanDefinition是如何被加载的？</h3><p>有了存储<code>BeanDefinition</code>的类，还需要能够从XML或其他类型的配置文件中加载<code>BeanDefinition</code>，为此Spring抽象出了一个<code>BeanDefinitionReader</code>接口，用于从资源里加载<code>BeanDefinition</code>，由<code>XMLBeanDefinitionReader</code>等类进行实现，类图如下：</p>
+<a href="/assert/puml/e1edfad3269255a3ac9e0690e56305330512f0ecacecaf1df2f2462fb249a8d0.svg" class="gallery-item"><img src="/assert/puml/e1edfad3269255a3ac9e0690e56305330512f0ecacecaf1df2f2462fb249a8d0.svg"></a>
+<blockquote>
+<p>Spring提供了加载<code>BeanDefinition</code>的通用抽象类实现<code>AbstractBeanDefinitionReader</code>，并提供了抽象方法<code>loadBeanDefinitions(Resource)</code>。如此以来，无论是从XML配置，Groovy配置，还是从Properties配置中加载<code>BeanDefinition</code>都只需要实现该抽象方法即可，这是一种模板方法模式。</p>
+</blockquote>
+<p>下面我们来看下<code>XMLBeanDefinitionReader</code>的<code>loadBeanDefinitions(String)</code>方法是如何工作的？</p>
+<h4 id="如何通过路径获取XML配置的资源？">3.2.1. 如何通过路径获取XML配置的资源？</h4><p>获取资源无非就是通过一个路径找到一个资源。Spring将资源声明为<code>Resource</code>类，并获取资源的工作则交给<code>ResourceLoader</code>类，其会根据传入路径的类型决定返回具体的<code>Resource</code>类的子类（详见下文实战），类图如下：</p>
+<a href="/assert/puml/e005f87720a5143180ed2be50aa0e14d94ca1daa6218a28b77fa1d3fe33d509a.svg" class="gallery-item"><img src="/assert/puml/e005f87720a5143180ed2be50aa0e14d94ca1daa6218a28b77fa1d3fe33d509a.svg"></a>
+
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>DefaultResourceLoader#getResource</code>。</li>
+<li><code>PathMatchingResourcePatternResolver#getResources</code>。</li>
+</ul>
+</blockquote>
+<h4 id="拿到XML配置的资源后，如何将其加载为XML文档？">3.2.2. 拿到XML配置的资源后，如何将其加载为XML文档？</h4><p>在Java中操作XML需要先将其转为XML文档，然后才能进行读取等操作。在Spring中，拿到<code>Resource</code>资源后，<code>DocumentLoader</code>会将<code>Resource</code>资源的输入流转为<code>Document</code>。</p>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>DefaultDocumentLoader#loadDocument</code>。</li>
+</ul>
+</blockquote>
+<h4 id="拿到XML文档后，如何解析文档中的各种标签？">3.2.3. 拿到XML文档后，如何解析文档中的各种标签？</h4><p>拿到<code>Document</code>文档后，会通过<code>BeanDefinitionDocumentReader</code>解析文档中的标签。</p>
+<ul>
+<li>如果是默认命名空间的标签：<ul>
+<li>如<code>import</code>，<code>alias</code>，<code>beans</code>标签，会通过<code>DefaultBeanDefinitionDocumentReader#parseDefaultElement</code>方法处理</li>
+<li>如<code>bean</code>标签，会委派给<code>BeanDefinitionParserDelegate</code>的<code>parseBeanDefinitionElement</code>方法处理。</li>
+</ul>
+</li>
+<li>如果是自定义命名空间的标签，如<code>component-scan</code>，<code>aspectj-autoproxy</code>等标签，会委派给<code>BeanDefinitionParserDelegate</code>的<code>parseCustomElement</code>方法处理。</li>
+</ul>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>DefaultBeanDefinitionDocumentReader#parseDefaultElement</code>。</li>
+<li><code>BeanDefinitionParserDelegate#parseBeanDefinitionElement(Element)</code>。</li>
+<li><code>BeanDefinitionParserDelegate#parseCustomElement(Element)</code>。</li>
+</ul>
+</blockquote>
+<h4 id="拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？">3.2.4. 拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？</h4><p>拿到XML文档中的bean标签后，会委派给<code>BeanDefinitionParserDelegate</code>的<code>parseBeanDefinitionElement</code>方法处理，并返回一个持有<code>BeanDefinition</code>，bean的名称和bean的别名等信息的<code>BeanDefinitionHolder</code>。</p>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>BeanDefinitionParserDelegate#parseBeanDefinitionElement(Element, BeanDefinition)</code>。</li>
+</ul>
+</blockquote>
+<h4 id="拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？">3.2.5. 拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？</h4><p>拿到<code>BeanDefinition</code>后，通过<code>BeanDefinitionReaderUtils#registerBeanDefinition</code>方法，将<code>BeanDefinition</code>注册到<code>BeanDefinitionRegistry</code>中去。</p>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>BeanDefinitionReaderUtils#registerBeanDefinition</code>。</li>
+</ul>
+</blockquote>
+<p>至此，通过XML配置的bean加载到Spring容器中的流程全部完成，<code>BeanDefinition</code>准备就绪等待容器后续处理。</p>
+<h2 id="实战">4. 实战</h2><h3 id="使用不同类型的路径来获取资源，会返回什么类型的资源？">4.1. 使用不同类型的路径来获取资源，会返回什么类型的资源？</h3><p>我们使用<code>DefaultResourceLoader</code>来获取<code>ResourceLoaderTest.class</code>这个资源，不过我们通过传入不同类型的路径去获取，并观察返回资源的类型，如下代码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+
+@Slf4j
+public class ResourceLoaderTest &#123;
+    public static void main(String[] args) &#123;
+        testResourceLoader();
+    &#125;
+
+    public static void testResourceLoader() &#123;
+        getResource(getPathOfClass(ResourceLoaderTest.class));
+        getResource(&quot;classpath:&quot; + getPathOfClass(ResourceLoaderTest.class));
+        getResource(ResourceLoaderTest.class.getResource(&quot;&#x2F;&quot; + getPathOfClass(ResourceLoaderTest.class)).getPath());
+    &#125;
+
+    public static void getResource(String location) &#123;
+        final ResourceLoader resourceLoader &#x3D; new DefaultResourceLoader();
+        final Resource resource &#x3D; resourceLoader.getResource(location);
+        printResourceInfo(location, resource);
+    &#125;
+
+    private static void printResourceInfo(String location, Resource resource) &#123;
+        log.info(&quot;location: &#123;&#125;, resource type: &#123;&#125;, resource: &#123;&#125;&quot;, location, resource.getClass(), resource);
+    &#125;
+
+    private static String getPathOfClass(Class&lt;?&gt; clazz) &#123;
+        return clazz.getPackage().getName().replace(&quot;.&quot;, &quot;&#x2F;&quot;) + &quot;&#x2F;&quot; + clazz.getSimpleName() + &quot;.class&quot;;
+    &#125;
+&#125;
+</code></pre>
+<p>运行结果如下图，我们可以看出即便是同一个资源文件，通过传入不同类型的路径，也会返回不同类型的资源。不同类型的资源有不同的适用场景。</p>
+<pre class="line-numbers language-none"><code class="language-none">location: com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;ResourceLoaderTest.class, resource type: class org.springframework.core.io.DefaultResourceLoader$ClassPathContextResource, resource: class path resource [com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;ResourceLoaderTest.class]
+location: classpath:com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;ResourceLoaderTest.class, resource type: class org.springframework.core.io.ClassPathResource, resource: class path resource [com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;ResourceLoaderTest.class]
+location: &#x2F;E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-spring&#x2F;target&#x2F;classes&#x2F;com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;ResourceLoaderTest.class, resource type: class org.springframework.core.io.DefaultResourceLoader$ClassPathContextResource, resource: class path resource [E:&#x2F;project&#x2F;remeio&#x2F;upsnippet&#x2F;upsnippet-spring&#x2F;target&#x2F;classes&#x2F;com&#x2F;remeio&#x2F;upsnippet&#x2F;spring&#x2F;beandefinition&#x2F;ResourceLoaderTest.class]</code></pre>
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>DefaultResourceLoader#getResource</code>。</li>
+</ul>
+</blockquote>
+<h3 id="使用debug的方式跟踪XML配置文件是如何被加载的？">4.2. 使用debug的方式跟踪XML配置文件是如何被加载的？</h3><p>以下面的XML配置文件为示例，通过debug的方式剖析Spring根据这个XML配置文件做了哪些处理，以便深入了解Spring中XML配置文件中标签和属性的内部处理流程，也可以通过源码来反推Spring的XML配置文件中有哪些标签和属性。</p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&quot;
+       xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;
+       xmlns:context&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;context&quot;
+       xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&#x2F;spring-beans.xsd http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;context https:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;context&#x2F;spring-context.xsd&quot;&gt;
+    &lt;!-- 配置一个Bean --&gt;
+    &lt;bean id&#x3D;&quot;testBean&quot; class&#x3D;&quot;com.remeio.upsnippet.spring.beandefinition.TestBean&quot;&gt;
+        &lt;property name&#x3D;&quot;name&quot; value&#x3D;&quot;foo&quot;&#x2F;&gt;
+        &lt;property name&#x3D;&quot;age&quot; value&#x3D;&quot;1&quot;&#x2F;&gt;
+    &lt;&#x2F;bean&gt;
+    &lt;!-- 为testBean配置一个别名 --&gt;
+    &lt;alias name&#x3D;&quot;testBean&quot; alias&#x3D;&quot;aliaOfTestBean&quot;&#x2F;&gt;
+    &lt;!-- 引入另一个XML配置文件 --&gt;
+    &lt;import resource&#x3D;&quot;BeanDefinitionLoadTest-inner.xml&quot;&#x2F;&gt;
+    &lt;!-- 启用注解配置 --&gt;
+    &lt;context:annotation-config &#x2F;&gt;
+&lt;&#x2F;beans&gt;</code></pre>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&quot;
+       xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;
+       xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&#x2F;spring-beans.xsd&quot;&gt;
+    &lt;!-- 配置一个Bean --&gt;
+    &lt;bean id&#x3D;&quot;innerTestBean&quot; class&#x3D;&quot;com.remeio.upsnippet.spring.beandefinition.TestBean&quot;&gt;
+        &lt;property name&#x3D;&quot;name&quot; value&#x3D;&quot;bar&quot;&#x2F;&gt;
+        &lt;property name&#x3D;&quot;age&quot; value&#x3D;&quot;1&quot;&#x2F;&gt;
+    &lt;&#x2F;bean&gt;
+&lt;&#x2F;beans&gt;</code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+
+@Slf4j
+public class BeanDefinitionLoadTest &#123;
+
+    public static void main(String[] args) &#123;
+        testXmlBeanDefinitionReader();
+    &#125;
+
+    public static void testXmlBeanDefinitionReader() &#123;
+        final DefaultListableBeanFactory beanFactory &#x3D; new DefaultListableBeanFactory();
+        final XmlBeanDefinitionReader xmlBeanDefinitionReader &#x3D; new XmlBeanDefinitionReader(beanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinitions(getResourcePathOfClass(BeanDefinitionLoadTest.class));
+
+        Object testBean &#x3D; beanFactory.getBean(&quot;testBean&quot;);
+        Object testBeanWithAlia &#x3D; beanFactory.getBean(&quot;aliaOfTestBean&quot;);
+        Object innerTestBean &#x3D; beanFactory.getBean(&quot;innerTestBean&quot;);
+        log.info(&quot;testBean: &#123;&#125;, testBeanWithAlia: &#123;&#125;, innerTestBean: &#123;&#125;&quot;, testBean, testBeanWithAlia, innerTestBean);
+    &#125;
+
+
+    private static String getResourcePathOfClass(Class&lt;?&gt; clazz) &#123;
+        return clazz.getPackage().getName().replace(&quot;.&quot;, &quot;&#x2F;&quot;) + &quot;&#x2F;&quot; + clazz.getSimpleName() + &quot;.xml&quot;;
+    &#125;
+&#125;</code></pre>
+
+<p>从XML配置文件的处理顺序，断点依次打到以下方法处：</p>
+<ul>
+<li>定位资源：<code>PathMatchingResourcePatternResolver#getResources</code>。</li>
+<li>处理<code>testBean</code>：<code>BeanDefinitionParserDelegate#parseBeanDefinitionElement(Element, BeanDefinition)</code>。</li>
+<li>处理<code>alias</code>标签：<code>DefaultBeanDefinitionDocumentReader#processAliasRegistration</code>。</li>
+<li>处理<code>import</code>标签：<code>DefaultBeanDefinitionDocumentReader#importBeanDefinitionResource</code>。</li>
+<li>处理<code>innerTestBean</code>：同<code>testBean</code>。</li>
+<li>处理<code>context:annotation-config</code>：<code>BeanDefinitionParserDelegate#parseCustomElement(Element)</code>。</li>
+</ul>
+<p>运行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">testBean: TestBean(name&#x3D;foo, age&#x3D;1), testBeanWithAlia: TestBean(name&#x3D;foo, age&#x3D;1), innerTestBean: TestBean(name&#x3D;bar, age&#x3D;1)</code></pre></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/3448844314/">上一篇：Bean在Spring中是如何表示的？</a>
+    <a href="/post/4227148998/">下一篇：Bean在Spring中是如何被创建的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%EF%BC%8C%E4%BD%A0%E4%BC%9A%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">2. 如果让你设计，你会如何设计？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring是如何设计的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%9F"><span class="toc-text">3.1. BeanDefinition是如何存储的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BeanDefinition%E6%98%AF%E5%A6%82%E4%BD%95%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%EF%BC%9F"><span class="toc-text">3.2. BeanDefinition是如何被加载的？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E8%B7%AF%E5%BE%84%E8%8E%B7%E5%8F%96XML%E9%85%8D%E7%BD%AE%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%9F"><span class="toc-text">3.2.1. 如何通过路径获取XML配置的资源？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E9%85%8D%E7%BD%AE%E7%9A%84%E8%B5%84%E6%BA%90%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E5%8A%A0%E8%BD%BD%E4%B8%BAXML%E6%96%87%E6%A1%A3%EF%BC%9F"><span class="toc-text">3.2.2. 拿到XML配置的资源后，如何将其加载为XML文档？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E6%96%87%E6%A1%A3%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E6%A0%87%E7%AD%BE%EF%BC%9F"><span class="toc-text">3.2.3. 拿到XML文档后，如何解析文档中的各种标签？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0XML%E6%96%87%E6%A1%A3%E4%B8%AD%E7%9A%84bean%E6%A0%87%E7%AD%BE%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E8%A7%A3%E6%9E%90%E4%B8%BABeanDefinition%EF%BC%9F"><span class="toc-text">3.2.4. 拿到XML文档中的bean标签后，如何将其解析为BeanDefinition？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%BF%E5%88%B0BeanDefinition%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E6%B3%A8%E5%86%8C%E5%88%B0BeanDefinitionRegistry%E4%B8%AD%EF%BC%9F"><span class="toc-text">3.2.5. 拿到BeanDefinition后，如何将其注册到BeanDefinitionRegistry中？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-text">4. 实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%B7%AF%E5%BE%84%E6%9D%A5%E8%8E%B7%E5%8F%96%E8%B5%84%E6%BA%90%EF%BC%8C%E4%BC%9A%E8%BF%94%E5%9B%9E%E4%BB%80%E4%B9%88%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%9F"><span class="toc-text">4.1. 使用不同类型的路径来获取资源，会返回什么类型的资源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8debug%E7%9A%84%E6%96%B9%E5%BC%8F%E8%B7%9F%E8%B8%AAXML%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%98%AF%E5%A6%82%E4%BD%95%E8%A2%AB%E5%8A%A0%E8%BD%BD%E7%9A%84%EF%BC%9F"><span class="toc-text">4.2. 使用debug的方式跟踪XML配置文件是如何被加载的？</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

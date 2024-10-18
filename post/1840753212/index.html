@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    什么是垃圾回收及有哪些垃圾收集器？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%8E%9F%E7%90%86"><span class="toc-text">1. 垃圾回收原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9E%83%E5%9C%BE%EF%BC%9F"><span class="toc-text">1.1. 什么是垃圾？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%EF%BC%9F"><span class="toc-text">1.2. 为什么需要垃圾回收？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E5%9E%83%E5%9C%BE%EF%BC%9F"><span class="toc-text">1.3. 如何找到垃圾？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%AA%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%8F%AF%E4%BB%A5%E4%BD%9C%E4%B8%BAGC-Roots%EF%BC%9F"><span class="toc-text">1.4. 哪些对象可以作为GC Roots？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8%EF%BC%9F"><span class="toc-text">1.5. 有哪些对象引用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ThreadLocal%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E5%BC%B1%E5%BC%95%E7%94%A8%EF%BC%9F"><span class="toc-text">1.6. ThreadLocal为什么使用弱引用？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-text">2. 垃圾收集器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="toc-text">2.1. 有哪些垃圾回收算法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFStop-The-World%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AFsafe-point%EF%BC%9F"><span class="toc-text">2.2. 什么是Stop The World？什么是safe point？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%9F"><span class="toc-text">2.3. 有哪些垃圾收集器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. CMS垃圾收集器垃圾回收的过程是怎样的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">2.5. G1垃圾收集器垃圾回收的过程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">3. 参考文档</span></a></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/JVM">> JVM</a>
+      
+      
+      <a href="/tags/总结">总结</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>什么是垃圾回收及有哪些垃圾收集器？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2023-09-12 19:00，字数：1.8k，预计阅读：6分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:250px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[0,1]},&quot;v&quot;:&quot;垃圾回收和垃圾收集器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;垃圾回收原理&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[2,3],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是垃圾？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;f&quot;:true},&quot;v&quot;:&quot;为什么需要垃圾回收？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;f&quot;:true},&quot;v&quot;:&quot;如何找到垃圾？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;f&quot;:true},&quot;v&quot;:&quot;哪些对象可以作为GC Roots？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些对象引用？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;f&quot;:true},&quot;v&quot;:&quot;ThreadLocal为什么使用弱引用？&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[8,9]},&quot;v&quot;:&quot;垃圾收集器&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些垃圾回收算法？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[10,11],&quot;f&quot;:true},&quot;v&quot;:&quot;什么是Stop The World？什么是safe point？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;f&quot;:true},&quot;v&quot;:&quot;有哪些垃圾收集器？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;f&quot;:true},&quot;v&quot;:&quot;CMS垃圾收集器垃圾回收的过程是怎样的？&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;f&quot;:true},&quot;v&quot;:&quot;G1垃圾收集器垃圾回收的过程是怎样的？&quot;}]}]}"/>
+</div>
+
+<h2 id="垃圾回收原理">1. 垃圾回收原理</h2><h3 id="什么是垃圾？">1.1. 什么是垃圾？</h3><p>垃圾是指不再被使用的对象，也就是死亡的对象。</p>
+<h3 id="为什么需要垃圾回收？">1.2. 为什么需要垃圾回收？</h3><p>由于内存空间是有限的，需要垃圾回收来释放内存空间，以保证程序的正常运行。</p>
+<h3 id="如何找到垃圾？">1.3. 如何找到垃圾？</h3><ul>
+<li>引用计数法：当对象被引用时，其引用计数器加一；当去除对象的引用时，引用计数器减一。当引用计数器的值为零时，代表该对象是垃圾对象。引用计数法不能解决循环依赖的问题。</li>
+<li>可达性分析：当对象不能被<code>GC Roots</code>直接或间接地引用时，代表该对象是垃圾对象。<code>GC Roots</code>搜索走过的路径被称为引用链。</li>
+</ul>
+<a href="/assert/puml/1c296a03fde6952de684562e7b40d5e1b4b1b40294496fc89f72d6872a66cd67.svg" class="gallery-item"><img src="/assert/puml/1c296a03fde6952de684562e7b40d5e1b4b1b40294496fc89f72d6872a66cd67.svg"></a>
+
+<p>如上图所示，可达性分析结果如下：</p>
+<ul>
+<li>对象<code>R1</code>，<code>R2</code>是<code>GC Roots</code>，故存活。</li>
+<li>对象<code>A</code>被<code>R1</code>直接引用，故存活。</li>
+<li>对象<code>B</code>，<code>F</code>并未被<code>R1</code>或<code>R2</code>直接或间接地引用，故死亡。</li>
+<li>对象<code>C</code>被<code>R2</code>直接引用，及被<code>R1</code>间接引用，故存活。</li>
+<li>对象<code>D</code>被<code>R1</code>间接引用，其引用链为<code>R1 → A → D</code>，故存活。</li>
+</ul>
+<h3 id="哪些对象可以作为GC-Roots？">1.4. 哪些对象可以作为GC Roots？</h3><ul>
+<li>虚拟机栈的栈帧中局部变量表所引用的对象。</li>
+<li>本地方法栈中<code>JNI</code>引用的对象。</li>
+<li>方法区中类静态属性引用的对象。</li>
+<li>方法区中常量引用的对象。</li>
+<li>虚拟机内部的引用。</li>
+</ul>
+<h3 id="有哪些对象引用？">1.5. 有哪些对象引用？</h3><ul>
+<li>强引用<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Finalization and Weak, Soft, and Phantom References](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/considerations.html#sthref63)
+">[1]</span></a></sup>（Strong Reference），不会发生垃圾回收直至发生OOM。</li>
+<li>软引用（Soft Reference），内存不足时会被垃圾回收，适合用作缓存。</li>
+<li>弱引用（Weak Reference），在下次GC时会被垃圾回收，如<code>ThreadLocal</code>的实现。</li>
+<li>虚引用（Plantom Reference），在下次GC时会被垃圾回收，用作回调机制。</li>
+</ul>
+<a href="/assert/puml/7bb31587d40fd623cee78241618f0a349063cbcd17c43bf02e7a73a5538eed73.svg" class="gallery-item"><img src="/assert/puml/7bb31587d40fd623cee78241618f0a349063cbcd17c43bf02e7a73a5538eed73.svg"></a>
+
+<h3 id="ThreadLocal为什么使用弱引用？">1.6. ThreadLocal为什么使用弱引用？</h3><p><code>ThreadLocal</code>是指线程本地变量，即为每个线程提供一份变量副本。本质上是在每个线程中都维护了一个<code>ThreadLocalMap</code>，内部<code>Entry</code>的键<code>reference</code>是<code>ThreadLocal</code>，内部<code>Entry</code>的值<code>value</code>是<code>ThreadLocal</code>对应的值。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; &#123;
+    &#x2F;** The value associated with this ThreadLocal. *&#x2F;
+    Object value;
+
+    Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;
+        super(k);
+        value &#x3D; v;
+    &#125;
+&#125;</code></pre>
+
+<ul>
+<li><code>ThreadLocal</code>使用的引用是弱引用，当客户端的强引用不再引用时，会在下次GC时会被回收，从根本上避免了内存泄漏。</li>
+<li><code>ThreadLocal</code>对应的值使用的是强引用，在使用完后需要手动调用<code>ThreadLocal#remove</code>移除引用，来避免发生内存泄漏。</li>
+</ul>
+<a href="/assert/puml/cae19762a8f49872218addbbe25ad13a2d7106c7e3ad618bc102189a662892e1.svg" class="gallery-item"><img src="/assert/puml/cae19762a8f49872218addbbe25ad13a2d7106c7e3ad618bc102189a662892e1.svg"></a>
+
+<h2 id="垃圾收集器">2. 垃圾收集器</h2><h3 id="有哪些垃圾回收算法？">2.1. 有哪些垃圾回收算法？</h3><ul>
+<li>标记-清除算法（Mark-Sweep）。<ul>
+<li>步骤：根据可达性分析算法标记垃圾对象，并清除垃圾对象。</li>
+<li>利弊：会产生内存碎片。</li>
+<li>适用场景：由于需要对垃圾对象进行标记和清除，适合垃圾对象较少的情况，即老年代。</li>
+</ul>
+</li>
+<li>标记-复制算法（Copying）。<ul>
+<li>步骤：根据可达性分析算法标记存活对象，并将其复制到另一区域，最后对原先的整个区域进行清除。</li>
+<li>利弊：不会产生内存碎片，但会浪费一部分的内存空间。</li>
+<li>适用场景：由于需要复制存活对象，适合存活对象校少的情况，即新生代。</li>
+</ul>
+</li>
+<li>标记-整理算法（Mark-Compact）。<ul>
+<li>步骤：根据可达性分析算法标记存活对象，并将存活对象移动到一端，最后清除剩余内存区域。</li>
+<li>利弊：不会产生内存碎片，但整理步骤是负重式的。</li>
+<li>适用场景：由于需要对垃圾对象进行标记和清除，适合垃圾对象较少的情况，即老年代。</li>
+</ul>
+</li>
+</ul>
+<h3 id="什么是Stop-The-World？什么是safe-point？">2.2. 什么是Stop The World？什么是safe point？</h3><p><code>STW</code>（Stop The World，STW）是指在垃圾回收的过程中，会在安全点（Safe points）处暂停用户线程，避免产生新的垃圾对象。安全点主要在以下位置设置：</p>
+<ul>
+<li>循环的末尾。</li>
+<li>方法返回前。</li>
+<li>调用方法的call之后。</li>
+<li>抛出异常的位置。</li>
+</ul>
+<h3 id="有哪些垃圾收集器？">2.3. 有哪些垃圾收集器？</h3><p>根据弱分代假说，新生代中存活对象较少，适合使用标记-复制算法。新生代的垃圾收集器有：</p>
+<ul>
+<li>Serial<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Available Collectors](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/collectors.html)
+">[2]</span></a></sup>，基于标记-复制算法的串行新生代垃圾收集器，会<code>STW</code>。</li>
+<li>Parallel Scavenge<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[The Parallel Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/parallel.html#parallel_collector)
+">[3]</span></a></sup>，基于标记-复制算法的并行新生代垃圾收集器，会STW，吞吐量优先。</li>
+<li>ParNew，基于标记-复制算法的并行新生代垃圾收集器，会<code>STW</code>，Serial的多线程版。</li>
+</ul>
+<p>根据强分代假说，老年代中垃圾对象较少，适合使用标记-清除或标记-整理算法。老年代的垃圾收集器有：</p>
+<ul>
+<li>Serial Old<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Available Collectors](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/collectors.html)
+">[2]</span></a></sup>，基于标记-整理算法的串行老年代垃圾收集器，会<code>STW</code>。</li>
+<li>Parallel Old<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[The Parallel Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/parallel.html#parallel_collector)
+">[3]</span></a></sup>，基于标记-整理算法的并行老年代垃圾收集器，会<code>STW</code>，吞吐量优先。</li>
+<li>CMS<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Concurrent Mark Sweep (CMS) Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html#concurrent_mark_sweep_cms_collector)
+">[4]</span></a></sup>，基于标记-清除算法的并发老年代垃圾收集器，减少<code>STW</code>，响应时间优先。</li>
+</ul>
+<p>相比于传统的垃圾收集器，整堆垃圾收集器取消了物理上对新生代和老年代的划分，而是逻辑上使用<code>Region</code>代替<code>Eden</code>、<code>Survivor</code>和<code>Old</code>等。整堆的垃圾收集器有：</p>
+<ul>
+<li>G1<sup id="fnref:5"><a href="#fn:5" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="[Garbage-First Garbage Collector](https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/g1_gc.html#garbage_first_garbage_collection)">[5]</span></a></sup>，全局采用标记-整理算法，局部使用标记-复制算法的整堆垃圾收集器，减少<code>STW</code>，关注吞吐量和低延迟，适用于大内存的服务端应用。</li>
+<li>ZGC，基于标记-整理算法的整堆垃圾收集器，关注低延迟。</li>
+</ul>
+<a href="/assert/puml/b270030336a016c67f4d02a818647227e5118ca162c39e6a02823d3fd06c3e4c.svg" class="gallery-item"><img src="/assert/puml/b270030336a016c67f4d02a818647227e5118ca162c39e6a02823d3fd06c3e4c.svg"></a>
+
+<blockquote>
+<p>虚拟机参数：</p>
+<ul>
+<li><code>-XX:+UseSerialGC</code>：指定垃圾收集器为Serial搭配Serial Old。</li>
+<li><code>-XX:+UseParallelGC</code>：指定垃圾收集器为Parallel Scavenge搭配Serial Old。</li>
+<li><code>-XX:+UseParallelOldGC</code>：指定垃圾收集器为Parallel Scavenge搭配Serial Old。</li>
+<li><code>-XX:+UseParNewGC</code>：指定垃圾收集器为ParNew搭配Serial Old，于JDK9移除。</li>
+<li><code>-XX:+UseConcMarkSweepGC</code>：指定垃圾收集器为ParNew搭配CMS，加Serial Old；</li>
+<li><code>-XX:+UseConcMarkSweepGC -XX:-UseParNewGC</code>：指定垃圾收集器为Serial搭配CMS，于JDK9移除。</li>
+<li><code>-XX:+UseG1GC</code>：指定垃圾收集器为G1。</li>
+<li><code>-XX:+UseZGC</code>：指定垃圾收集器为ZGC。</li>
+</ul>
+</blockquote>
+<h3 id="CMS垃圾收集器垃圾回收的过程是怎样的？">2.4. CMS垃圾收集器垃圾回收的过程是怎样的？</h3><ol>
+<li>初始标记，标记<code>GC Roots</code>对象，耗时短，会<code>STW</code>；</li>
+<li>并发标记，标记<code>GC Roots</code>引用链上的对象，耗时长，不会<code>STW</code>；</li>
+<li>重新标记，修复并发标记期间新产生的对象，会<code>STW</code>；</li>
+<li>并发清除，清除垃圾对象，不会<code>STW</code>。</li>
+</ol>
+<h3 id="G1垃圾收集器垃圾回收的过程是怎样的？">2.5. G1垃圾收集器垃圾回收的过程是怎样的？</h3><ol>
+<li>初始标记，标记<code>GC Roots</code>对象，耗时短，会<code>STW</code>；</li>
+<li>并发标记，标记<code>GC Roots</code>引用链上的对象，耗时长，不会<code>STW</code>；</li>
+<li>最终标记，修复并发标记期间新产生的对象，会<code>STW</code>；</li>
+<li>筛选回收，对各个<code>Region</code>的回收价值和成本排序，根据用户期望GC停顿时间确定回收计划，会<code>STW</code>。</li>
+</ol>
+<h2 id="参考文档">3. 参考文档</h2><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/considerations.html#sthref63">Finalization and Weak, Soft, and Phantom References</a><a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/collectors.html">Available Collectors</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/parallel.html#parallel_collector">The Parallel Collector</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html#concurrent_mark_sweep_cms_collector">Concurrent Mark Sweep (CMS) Collector</a><a href="#fnref:4" rev="footnote"> ↩</a></span></li><li id="fn:5"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">5.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;"><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/g1_gc.html#garbage_first_garbage_collection">Garbage-First Garbage Collector</a><a href="#fnref:5" rev="footnote"> ↩</a></span></li></ol></div></div></div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/3287649796/">上一篇：对象是如何创建的及是如何分配内存的？</a>
+    <a href="/post/3554163017/">下一篇：虚拟机如何调优及案例分析？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%8E%9F%E7%90%86"><span class="toc-text">1. 垃圾回收原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9E%83%E5%9C%BE%EF%BC%9F"><span class="toc-text">1.1. 什么是垃圾？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%EF%BC%9F"><span class="toc-text">1.2. 为什么需要垃圾回收？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E5%9E%83%E5%9C%BE%EF%BC%9F"><span class="toc-text">1.3. 如何找到垃圾？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%AA%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%8F%AF%E4%BB%A5%E4%BD%9C%E4%B8%BAGC-Roots%EF%BC%9F"><span class="toc-text">1.4. 哪些对象可以作为GC Roots？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8%EF%BC%9F"><span class="toc-text">1.5. 有哪些对象引用？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ThreadLocal%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E5%BC%B1%E5%BC%95%E7%94%A8%EF%BC%9F"><span class="toc-text">1.6. ThreadLocal为什么使用弱引用？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="toc-text">2. 垃圾收集器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="toc-text">2.1. 有哪些垃圾回收算法？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFStop-The-World%EF%BC%9F%E4%BB%80%E4%B9%88%E6%98%AFsafe-point%EF%BC%9F"><span class="toc-text">2.2. 什么是Stop The World？什么是safe point？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%9F"><span class="toc-text">2.3. 有哪些垃圾收集器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">2.4. CMS垃圾收集器垃圾回收的过程是怎样的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#G1%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%9A%84%E8%BF%87%E7%A8%8B%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-text">2.5. G1垃圾收集器垃圾回收的过程是怎样的？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">3. 参考文档</span></a></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

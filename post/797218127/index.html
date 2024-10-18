@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="utf-8">
+  
+  <title>
+    
+    Spring应用是如何启动的？
+    
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/logo.png" type="image/svg+xml" />
+
+  <!-- lightgallery查看图片支持 -->
+  
+<link rel="stylesheet" href="/js/lightgallery/lightgallery.css">
+
+  
+<script src="/js/lightgallery/lightgallery.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-zoom.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-fullscreen.min.js"></script>
+
+  
+<script src="/js/lightgallery/lg-thumbnail.min.js"></script>
+
+  
+  <!-- 活动图支持 -->
+  
+<script src="/js/echart/echarts-4.8.0.min.js"></script>
+
+
+  <!-- 思维导图支持 -->
+  
+<script src="/js/markmap/d3@6.js"></script>
+
+  
+<script src="/js/markmap/markmap-view@0.2.7.js"></script>
+
+  
+<link rel="stylesheet" href="/js/markmap/katex.min.css">
+
+  
+<link rel="stylesheet" href="/js/markmap/custom-markmap.css">
+
+  
+  <!-- 字体支持 -->
+  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Noto+Sans+SC:wght@300&display=swap.css">
+
+  
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+
+  
+  <!-- 代码高亮支持 -->
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/prism.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+  
+<link rel="stylesheet" href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-light.css">
+
+  
+<link rel="stylesheet" href="/css/prism/material-dark.css">
+
+
+  <!-- 自定义样式 -->
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+<body>
+  <div class="layout-container">
+    <header>
+  <a href="/"><img class="header-logo" src="/logo.png"/></a>
+  <h3>xuMengqi&#39;s Blog</h3>
+  <ul class="header-nav">
+    <li class="header-nav-child">
+      <a href="/">首页</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/categories">分类</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/tags">标签</a>
+    </li>
+    <li class="header-nav-child">
+      <a href="/about">关于我</a>
+    </li>
+    <li class="header-nav-child">
+      <img class="header-theme-switcher" onclick="switchTheme()"  src="/img/dark-mode.svg"/>
+    </li>
+  </ul>
+  <img class="header-to-top" onclick="scrollToTop()" src="/img/top.svg"/>
+<script>
+  function scrollToTop() {
+    document.body.scrollTop = 0; // 对Safari
+    document.documentElement.scrollTop = 0; // 对Chrome, Firefox, IE 和 Opera
+  }
+  
+  function setThemeMode(mode) {
+    localStorage.setItem('theme-mode', mode)
+  }
+
+  function getThemeMode() {
+    return localStorage.getItem('theme-mode')
+  }
+
+  function switchTheme() {
+    let themeMode = getThemeMode()
+    if (themeMode === 'light') {
+      document.documentElement.className = 'dark'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/light-mode.svg"
+      setThemeMode('dark')
+    } else {
+      document.documentElement.className = 'light'
+      document.getElementsByClassName('header-theme-switcher')[0].src = "/img/dark-mode.svg"
+      setThemeMode('light')
+    }
+  }
+  
+  // 开启主题
+  if (getThemeMode() === null) {
+	  switchTheme()
+  }
+  if (getThemeMode() === 'dark') {
+    setThemeMode('light')
+    switchTheme()
+  }
+  
+
+  
+  var prevScrollpos = window.pageYOffset;
+  /* Get the header element and it's position */
+  var headerDiv = document.getElementsByTagName("header")[0];
+  var headerBottom = headerDiv.offsetTop + headerDiv.offsetHeight;
+  window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    /* if scrolling down, let it scroll out of view as normal */
+    if (prevScrollpos <= currentScrollPos ){
+        headerDiv.style.top ="-6rem";
+    }
+    /* otherwise if we're scrolling up, fix the nav to the top */
+    else{  
+        headerDiv.style.top = "0";
+    }
+    prevScrollpos = currentScrollPos;
+  }
+</script>
+</header>
+    <main class="main-post">
+  <div class="toc-container">
+  <div class="toc-toggle">
+    <i id="toc-b-icon" class="iconfont icon-liebiao-01" onclick="toggleShow()"></i>
+  </div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E5%BA%94%E7%94%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%9A%84%EF%BC%9F"><span class="toc-text">2. Spring应用是如何创建的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">2.1. 设置资源加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%88%9D%E5%A7%8B%E8%B5%84%E6%BA%90%E7%B1%BB"><span class="toc-text">2.2. 设置初始资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E6%B5%8BWeb%E5%BA%94%E7%94%A8%E7%B1%BB%E5%9E%8B%EF%BC%88deduceFromClasspath%EF%BC%89"><span class="toc-text">2.3. 推测Web应用类型（deduceFromClasspath）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%BC%95%E5%AF%BC%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8"><span class="toc-text">2.4. 设置引导上下文初始化器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8%EF%BC%88setInitializers%EF%BC%89"><span class="toc-text">2.5. 设置应用上下文初始化器（setInitializers）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%BA%94%E7%94%A8%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%88setListeners%EF%BC%89"><span class="toc-text">2.6. 设置应用监听器（setListeners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E6%B5%8B%E5%90%AF%E5%8A%A8%E7%B1%BB%EF%BC%88deduceMainApplicationClass%EF%BC%89"><span class="toc-text">2.7. 推测启动类（deduceMainApplicationClass）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E5%BA%94%E7%94%A8%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring应用是如何运行的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4"><span class="toc-text">3.1. 记录启动时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BC%95%E5%AF%BC%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88createBootstrapContext%EF%BC%89"><span class="toc-text">3.2. 创建引导上下文（createBootstrapContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEheadless%E6%A8%A1%E5%BC%8F%EF%BC%88configureHeadlessProperty%EF%BC%89"><span class="toc-text">3.3. 设置headless模式（configureHeadlessProperty）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96Spring%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%88getRunListeners%EF%BC%89"><span class="toc-text">3.4. 获取Spring应用运行监听器（getRunListeners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%E7%9A%84starting%E6%96%B9%E6%B3%95"><span class="toc-text">3.5. 调用应用运行监听器的starting方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-text">3.6. 创建应用参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83%EF%BC%88prepareEnvironment%EF%BC%89"><span class="toc-text">3.7. 准备环境（prepareEnvironment）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%93%E5%8D%B0Banner%EF%BC%88printBanner%EF%BC%89"><span class="toc-text">3.8. 打印Banner（printBanner）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88createApplicationContext%EF%BC%89"><span class="toc-text">3.9. 创建应用上下文（createApplicationContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88prepareContext%EF%BC%89"><span class="toc-text">3.10. 准备应用上下文（prepareContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B7%E6%96%B0%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88refreshContext%EF%BC%89"><span class="toc-text">3.11. 刷新应用上下文（refreshContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%E7%9A%84started%E6%96%B9%E6%B3%95"><span class="toc-text">3.12. 调用应用运行监听器的started方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83Runner%EF%BC%88callRunners%EF%BC%89"><span class="toc-text">3.13. 回调Runner（callRunners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%E7%9A%84ready%E6%96%B9%E6%B3%95"><span class="toc-text">3.14. 调用应用运行监听器的ready方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E5%A4%B1%E8%B4%A5%EF%BC%88handleRunFailure%EF%BC%89"><span class="toc-text">3.15. 处理运行失败（handleRunFailure）</span></a></li></ol></li></ol>
+</div>
+
+<script>
+  var show = false
+  function toggleShow() {
+    if (show) {
+      document.getElementsByClassName('toc')[0].className = 'toc'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-liebiao-01'
+    } else {
+      document.getElementsByClassName('toc')[0].className = 'toc show'
+      document.getElementById('toc-b-icon').className = 'iconfont icon-quxiao-01'
+    }
+    show = !show
+  }
+  document.getElementsByClassName('toc')[0].onclick = toggleShow
+</script>
+
+  <div class="article-header">
+    <div class="article-tags">
+      
+        <a class="article-tags-version" href="/categories/SpringFramework">> SpringFramework</a>
+      
+      
+      <a href="/tags/源码">源码</a>
+      
+    </div>
+    <div class="article-title">
+      <h1>Spring应用是如何启动的？</h1>
+    </div>
+    <div class="article-details">
+      <div class="article-post-date">
+        <span>作者：徐梦旗，发布于：2024-03-30 15:22，字数：3k，预计阅读：14分钟</span>
+	    </div>
+    </div>
+  </div>
+  <div class="article">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.7.0/hint.min.css"><link rel="stylesheet" type="text/css" href><div class=".article-gallery">
+<div class="markmap-container" style="height:500px">
+  <svg data="{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:2,&quot;p&quot;:{&quot;lines&quot;:[1,2]},&quot;v&quot;:&quot;Spring应用的启动&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[2,3]},&quot;v&quot;:&quot;Spring应用的创建&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[3,4],&quot;index&quot;:1,&quot;f&quot;:true},&quot;v&quot;:&quot;1. 设置资源加载器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[4,5],&quot;index&quot;:2,&quot;f&quot;:true},&quot;v&quot;:&quot;2. 设置初始资源类&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[5,6],&quot;index&quot;:3,&quot;f&quot;:true},&quot;v&quot;:&quot;3. 推测Web应用类型（deduceFromClasspath）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[6,7],&quot;index&quot;:4,&quot;f&quot;:true},&quot;v&quot;:&quot;4. 设置引导上下文初始化器&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[7,8],&quot;index&quot;:5,&quot;f&quot;:true},&quot;v&quot;:&quot;5. 设置应用上下文初始化器（setInitializers）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[8,9],&quot;index&quot;:6,&quot;f&quot;:true},&quot;v&quot;:&quot;6. 设置应用监听器（setListeners）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[9,10],&quot;index&quot;:7,&quot;f&quot;:true},&quot;v&quot;:&quot;7. 推测启动类（deduceMainApplicationClass）&quot;}]},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:4,&quot;p&quot;:{&quot;lines&quot;:[10,11]},&quot;v&quot;:&quot;Spring应用的运行&quot;,&quot;c&quot;:[{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[11,12],&quot;index&quot;:1,&quot;f&quot;:true},&quot;v&quot;:&quot;1. 记录启动时间&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[12,13],&quot;index&quot;:2,&quot;f&quot;:true},&quot;v&quot;:&quot;2. 创建引导上下文（createBootstrapContext）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[13,14],&quot;index&quot;:3,&quot;f&quot;:true},&quot;v&quot;:&quot;3. 设置headless模式（configureHeadlessProperty）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[14,15],&quot;index&quot;:4,&quot;f&quot;:true},&quot;v&quot;:&quot;4. 获取Spring应用运行监听器（getRunListeners）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[15,16],&quot;index&quot;:5,&quot;f&quot;:true},&quot;v&quot;:&quot;5. 调用应用运行监听器的starting方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[16,17],&quot;index&quot;:6,&quot;f&quot;:true},&quot;v&quot;:&quot;6. 创建应用参数&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[17,18],&quot;index&quot;:7,&quot;f&quot;:true},&quot;v&quot;:&quot;7. 准备环境（prepareEnvironment）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[18,19],&quot;index&quot;:8,&quot;f&quot;:true},&quot;v&quot;:&quot;8. 打印Banner（printBanner）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[19,20],&quot;index&quot;:9,&quot;f&quot;:true},&quot;v&quot;:&quot;9. 创建应用上下文（createApplicationContext）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[20,21],&quot;index&quot;:10,&quot;f&quot;:true},&quot;v&quot;:&quot;10. 准备应用上下文（prepareContext）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[21,22],&quot;index&quot;:11,&quot;f&quot;:true},&quot;v&quot;:&quot;11. 刷新应用上下文（refreshContext）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[22,23],&quot;index&quot;:12,&quot;f&quot;:true},&quot;v&quot;:&quot;12. 调用应用运行监听器的started方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[23,24],&quot;index&quot;:13,&quot;f&quot;:true},&quot;v&quot;:&quot;13. 回调Runner（callRunners）&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[24,25],&quot;index&quot;:14,&quot;f&quot;:true},&quot;v&quot;:&quot;14. 调用应用运行监听器的ready方法&quot;},{&quot;t&quot;:&quot;list_item&quot;,&quot;d&quot;:6,&quot;p&quot;:{&quot;lines&quot;:[25,26],&quot;index&quot;:15,&quot;f&quot;:true},&quot;v&quot;:&quot;15. 处理运行失败（handleRunFailure）&quot;}]}]}"/>
+</div>
+
+
+<h2 id="背景">1. 背景</h2><p>得益于SpringBoot的封装，我们只需要简单的几行代码便可启动一个Spring应用，如下示例：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">@SpringBootApplication
+public class DemoApplication &#123;
+    public static void main(String[] args) &#123;
+      SpringApplication.run(DemoApplication.class, args);
+    &#125;
+&#125;</code></pre>
+
+<p>当调用<code>SpringApplication#run(Class&lt;?&gt;, String...)</code>方法时，会创建并运行一个Spring应用。</p>
+<h2 id="Spring应用是如何创建的？">2. Spring应用是如何创建的？</h2><p>Spring应用的创建流程如下：</p>
+<a href="/assert/puml/65005b38223404cca30cdc2c104cb8466a4a854ce4f764728f5330b7bad97dd6.svg" class="gallery-item"><img src="/assert/puml/65005b38223404cca30cdc2c104cb8466a4a854ce4f764728f5330b7bad97dd6.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public SpringApplication(ResourceLoader resourceLoader, Class&lt;?&gt;... primarySources) &#123;
+    &#x2F;&#x2F; 设置资源加载器
+    this.resourceLoader &#x3D; resourceLoader;
+    &#x2F;&#x2F; 设置初始资源类
+    Assert.notNull(primarySources, &quot;PrimarySources must not be null&quot;);
+    this.primarySources &#x3D; new LinkedHashSet&lt;&gt;(Arrays.asList(primarySources));
+    &#x2F;&#x2F; 推测 Web 应用类型
+    this.webApplicationType &#x3D; WebApplicationType.deduceFromClasspath();
+    &#x2F;&#x2F; 设置引导上下文初始化器
+    this.bootstrapRegistryInitializers &#x3D; new ArrayList&lt;&gt;(
+            getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
+    &#x2F;&#x2F; 设置应用上下文初始化器
+    setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+    &#x2F;&#x2F; 设置应用监听器
+    setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+    &#x2F;&#x2F; 推测启动类
+    this.mainApplicationClass &#x3D; deduceMainApplicationClass();
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#SpringApplication(ResourceLoader, Class&lt;?&gt;...)</code>。</p>
+</blockquote>
+<h3 id="设置资源加载器">2.1. 设置资源加载器</h3><p>根据传入的构造器参数设置资源加载器<code>ResouceLoader</code>。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 设置资源加载器
+this.resourceLoader &#x3D; resourceLoader;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#SpringApplication(ResourceLoader, Class&lt;?&gt;...)</code>。</p>
+</blockquote>
+<h3 id="设置初始资源类">2.2. 设置初始资源类</h3><p>根据传入的构造器参数设置初始资源类，供后续准备应用上下文过程中的加载Bean定义使用。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 设置初始资源类
+Assert.notNull(primarySources, &quot;PrimarySources must not be null&quot;);
+this.primarySources &#x3D; new LinkedHashSet&lt;&gt;(Arrays.asList(primarySources));</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#SpringApplication(ResourceLoader, Class&lt;?&gt;...)</code>。</p>
+</blockquote>
+<h3 id="推测Web应用类型（deduceFromClasspath）">2.3. 推测Web应用类型（deduceFromClasspath）</h3><p>根据<code>classpath</code>下存在的类，来推测Web应用类型。<code>WebApplicationType</code>有以下几种：</p>
+<ul>
+<li><code>SERVLET</code>：基于servlet的Web应用，需要启动内嵌servlet类型的Web服务。</li>
+<li><code>REACTIVE</code>：基于reactive的Web应用，需要启动内嵌reactive类型的Web服务。</li>
+<li><code>NONE</code>：非Web应用，不需要启动内嵌Web服务。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">static WebApplicationType deduceFromClasspath() &#123;
+    &#x2F;&#x2F; 有 webflux 所需类且没有 webmvc 和 jersey 所需类，对应 reactive
+    if (ClassUtils.isPresent(WEBFLUX_INDICATOR_CLASS, null) &amp;&amp; !ClassUtils.isPresent(WEBMVC_INDICATOR_CLASS, null)
+            &amp;&amp; !ClassUtils.isPresent(JERSEY_INDICATOR_CLASS, null)) &#123;
+        return WebApplicationType.REACTIVE;
+    &#125;
+    &#x2F;&#x2F; servlet 所需类非全都有，对应 none
+    for (String className : SERVLET_INDICATOR_CLASSES) &#123;
+        if (!ClassUtils.isPresent(className, null)) &#123;
+            return WebApplicationType.NONE;
+        &#125;
+    &#125;
+    &#x2F;&#x2F; servlet 所需类全都有，对应 servlet
+    return WebApplicationType.SERVLET;
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>WebApplicationType#deduceFromClasspath</code>。</p>
+</blockquote>
+<h3 id="设置引导上下文初始化器">2.4. 设置引导上下文初始化器</h3><p>从<code>META-INFO/spring.factories</code>中获取引导上下文初始化器<code>BootstrapRegistryInitializer</code>列表，并设置到Spring应用中，供后续引导上下文初始化时使用。</p>
+<a href="/assert/puml/bee1a9b7426e207d09db96120655fd2133f3b80f3c53cf33ab7489c2b3124800.svg" class="gallery-item"><img src="/assert/puml/bee1a9b7426e207d09db96120655fd2133f3b80f3c53cf33ab7489c2b3124800.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 设置引导上下文初始化器
+this.bootstrapRegistryInitializers &#x3D; new ArrayList&lt;&gt;(
+        getSpringFactoriesInstances(BootstrapRegistryInitializer.class));</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#SpringApplication(ResourceLoader, Class&lt;?&gt;...)</code>。</p>
+</blockquote>
+<h3 id="设置应用上下文初始化器（setInitializers）">2.5. 设置应用上下文初始化器（setInitializers）</h3><p>从<code>META-INFO/spring.factories</code>中获取应用上下文初始化器<code>ApplicationContextInitializer</code>列表，并设置到Spring应用中，供后续应用上下文初始化时使用。</p>
+<a href="/assert/puml/3294e2a2afd633f897e5f39eb10a813224231c3e1064975f31d660f9c3bb2e4e.svg" class="gallery-item"><img src="/assert/puml/3294e2a2afd633f897e5f39eb10a813224231c3e1064975f31d660f9c3bb2e4e.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 设置应用上下文初始化器
+setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#setInitializers</code>。</p>
+</blockquote>
+<h3 id="设置应用监听器（setListeners）">2.6. 设置应用监听器（setListeners）</h3><p>从<code>META-INFO/spring.factories</code>中获取应用监听器<code>ApplicationListener</code>列表，并设置到Spring应用中，供后续接收发布的事件使用。</p>
+<a href="/assert/puml/8d4464822d06ed5e2a3d8011a8fc736167eb36afd2afbafc675fd8b75ac1e610.svg" class="gallery-item"><img src="/assert/puml/8d4464822d06ed5e2a3d8011a8fc736167eb36afd2afbafc675fd8b75ac1e610.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 设置应用监听器
+setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#setListeners</code>。</p>
+</blockquote>
+<h3 id="推测启动类（deduceMainApplicationClass）">2.7. 推测启动类（deduceMainApplicationClass）</h3><p>获取堆栈信息，遍历栈帧<code>StackFrame</code>，获取<code>main</code>方法所在的类。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private Class&lt;?&gt; deduceMainApplicationClass() &#123;
+    return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+        .walk(this::findMainClass)
+        .orElse(null);
+&#125;
+
+private Optional&lt;Class&lt;?&gt;&gt; findMainClass(Stream&lt;StackFrame&gt; stack) &#123;
+    return stack.filter((frame) -&gt; Objects.equals(frame.getMethodName(), &quot;main&quot;))
+        .findFirst()
+        &#x2F;&#x2F; 找到 main 方法所在的类
+        .map(StackWalker.StackFrame::getDeclaringClass);
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#deduceMainApplicationClass</code>。</p>
+</blockquote>
+<h2 id="Spring应用是如何运行的？">3. Spring应用是如何运行的？</h2><p>Spring应用的运行流程如下：</p>
+<a href="/assert/puml/9781171e762f73ec5d96c167110e69592b4b28d854a1ed8baa65528e0798ae65.svg" class="gallery-item"><img src="/assert/puml/9781171e762f73ec5d96c167110e69592b4b28d854a1ed8baa65528e0798ae65.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">public ConfigurableApplicationContext run(String... args) &#123;
+		&#x2F;&#x2F; 记录启动时间
+		Startup startup &#x3D; Startup.create();
+		if (this.registerShutdownHook) &#123;
+			SpringApplication.shutdownHook.enableShutdownHookAddition();
+		&#125;
+		&#x2F;&#x2F; 创建引导上下文
+		DefaultBootstrapContext bootstrapContext &#x3D; createBootstrapContext();
+		ConfigurableApplicationContext context &#x3D; null;
+		&#x2F;&#x2F; 设置 headless 模式
+		configureHeadlessProperty();
+		&#x2F;&#x2F; 获取 Spring 应用运行监听器
+		SpringApplicationRunListeners listeners &#x3D; getRunListeners(args);
+		&#x2F;&#x2F; 调用应用运行监听器的 start 方法
+		listeners.starting(bootstrapContext, this.mainApplicationClass);
+		try &#123;
+			&#x2F;&#x2F; 设置应用参数
+			ApplicationArguments applicationArguments &#x3D; new DefaultApplicationArguments(args);
+			&#x2F;&#x2F; 准备环境
+			ConfigurableEnvironment environment &#x3D; prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+			&#x2F;&#x2F; 打印 Banner
+			Banner printedBanner &#x3D; printBanner(environment);
+			&#x2F;&#x2F; 创建应用上下文
+			context &#x3D; createApplicationContext();
+			context.setApplicationStartup(this.applicationStartup);
+			&#x2F;&#x2F; 准备应用上下文
+			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+			&#x2F;&#x2F; 刷新应用上下文
+			refreshContext(context);
+			afterRefresh(context, applicationArguments);
+			startup.started();
+			if (this.logStartupInfo) &#123;
+				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), startup);
+			&#125;
+			&#x2F;&#x2F; 调用应用运行监听器的 started 方法
+			listeners.started(context, startup.timeTakenToStarted());
+			&#x2F;&#x2F; 回调 Runner
+			callRunners(context, applicationArguments);
+		&#125;
+		catch (Throwable ex) &#123;
+			if (ex instanceof AbandonedRunException) &#123;
+				throw ex;
+			&#125;
+			&#x2F;&#x2F; 处理运行失败
+			handleRunFailure(context, ex, listeners);
+			throw new IllegalStateException(ex);
+		&#125;
+		try &#123;
+			if (context.isRunning()) &#123;
+				&#x2F;&#x2F; 调用应用运行监听器的 ready 方法
+				listeners.ready(context, startup.ready());
+			&#125;
+		&#125;
+		catch (Throwable ex) &#123;
+			if (ex instanceof AbandonedRunException) &#123;
+				throw ex;
+			&#125;
+			handleRunFailure(context, ex, null);
+			throw new IllegalStateException(ex);
+		&#125;
+		return context;
+	&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#run(String...)</code>。</p>
+</blockquote>
+<h3 id="记录启动时间">3.1. 记录启动时间</h3><p>记录Spring应用的启动时间。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">Startup startup &#x3D; Startup.create();</code></pre>
+
+<h3 id="创建引导上下文（createBootstrapContext）">3.2. 创建引导上下文（createBootstrapContext）</h3><ol>
+<li>实例化引导上下文<code>DefaultBootstrapContext</code>；</li>
+<li>使用引导上下文初始化器<code>BootstrapRegistryInitializer</code>初始化引导上下文。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private DefaultBootstrapContext createBootstrapContext() &#123;
+    &#x2F;&#x2F; 实例化默认引导上下文
+    DefaultBootstrapContext bootstrapContext &#x3D; new DefaultBootstrapContext();
+    &#x2F;&#x2F; 初始化引导上下文
+    this.bootstrapRegistryInitializers.forEach((initializer) -&gt; initializer.initialize(bootstrapContext));
+    return bootstrapContext;
+&#125;</code></pre>
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#createBootstrapContext</code>。</p>
+</blockquote>
+<h3 id="设置headless模式（configureHeadlessProperty）">3.3. 设置headless模式（configureHeadlessProperty）</h3><p>Spring应用运行在服务端，<code>java.awt.headless</code>指在没有显示设备的情况下能否正常运行，默认设置为<code>true</code>。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void configureHeadlessProperty() &#123;
+    System.setProperty(SYSTEM_PROPERTY_JAVA_AWT_HEADLESS,
+            System.getProperty(SYSTEM_PROPERTY_JAVA_AWT_HEADLESS, Boolean.toString(this.headless)));
+&#125;</code></pre>
+
+<blockquote>
+<p> 对应源码所在位置：<code>SpringApplication#configureHeadlessProperty</code>。</p>
+</blockquote>
+<h3 id="获取Spring应用运行监听器（getRunListeners）">3.4. 获取Spring应用运行监听器（getRunListeners）</h3><ol>
+<li>从<code>META-INFO/spring.factories</code>中获取Spring应用运行监听器<code>SpringApplicationRunListener</code>列表；</li>
+<li>使用组合模式将<code>SpringApplicationRunListener</code>列表封装为<code>SpringApplicationRunListeners</code>。</li>
+</ol>
+<a href="/assert/puml/3ddbd82c5d5a5139f5e2b7f7a640c2156bb395a67a6fcd64105dde3158e83a07.svg" class="gallery-item"><img src="/assert/puml/3ddbd82c5d5a5139f5e2b7f7a640c2156bb395a67a6fcd64105dde3158e83a07.svg"></a>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private SpringApplicationRunListeners getRunListeners(String[] args) &#123;
+		ArgumentResolver argumentResolver &#x3D; ArgumentResolver.of(SpringApplication.class, this);
+		argumentResolver &#x3D; argumentResolver.and(String[].class, args);
+    &#x2F;&#x2F; 从 spring.factories 中获取 Spring 应用运行监听器列表
+    List&lt;SpringApplicationRunListener&gt; listeners &#x3D; getSpringFactoriesInstances(SpringApplicationRunListener.class,
+            argumentResolver);
+    SpringApplicationHook hook &#x3D; applicationHook.get();
+    SpringApplicationRunListener hookListener &#x3D; (hook !&#x3D; null) ? hook.getRunListener(this) : null;
+    if (hookListener !&#x3D; null) &#123;
+        listeners &#x3D; new ArrayList&lt;&gt;(listeners);
+        listeners.add(hookListener);
+    &#125;
+    &#x2F;&#x2F; 使用 SpringApplicationRunListeners 提供统一的调用入口（组合模式）
+    return new SpringApplicationRunListeners(logger, listeners, this.applicationStartup);
+&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#getRunListeners</code>。</p>
+</blockquote>
+<h3 id="调用应用运行监听器的starting方法">3.5. 调用应用运行监听器的starting方法</h3><p>调用应用运行监听器<code>SpringApplicationRunListeners</code>的<code>starting</code>方法。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 调用应用运行监听器的 start 方法
+listeners.starting(bootstrapContext, this.mainApplicationClass);</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplicationRunListeners#starting</code>。</p>
+</blockquote>
+<h3 id="创建应用参数">3.6. 创建应用参数</h3><p>根据<code>run</code>方法的入参创建应用参数。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 创建应用参数
+ApplicationArguments applicationArguments &#x3D; new DefaultApplicationArguments(args);			</code></pre>
+
+<h3 id="准备环境（prepareEnvironment）">3.7. 准备环境（prepareEnvironment）</h3><ol>
+<li>根据Web应用类型创建对应的Spring环境<code>Environment</code> ；</li>
+<li>配置环境，将应用参数<code>ApplicationArguments</code>设置到Spring环境中；</li>
+<li>调用应用运行监听器的<code>environmentPrepared</code>方法；</li>
+<li>非自定义的Spring环境需要使用<code>EnvironmentConverter</code>进行环境转换。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
+			DefaultBootstrapContext bootstrapContext, ApplicationArguments applicationArguments) &#123;
+    &#x2F;&#x2F; Create and configure the environment
+    &#x2F;&#x2F; 根据 Web 应用类型创建对应的环境（工厂模式）
+    ConfigurableEnvironment environment &#x3D; getOrCreateEnvironment();
+    &#x2F;&#x2F; 配置环境
+    configureEnvironment(environment, applicationArguments.getSourceArgs());
+    ConfigurationPropertySources.attach(environment);
+    &#x2F;&#x2F; 调用应用运行监听器的 environmentPrepared 方法
+    listeners.environmentPrepared(bootstrapContext, environment);
+    DefaultPropertiesPropertySource.moveToEnd(environment);
+    Assert.state(!environment.containsProperty(&quot;spring.main.environment-prefix&quot;),
+            &quot;Environment prefix cannot be set via properties.&quot;);
+    bindToSpringApplication(environment);
+    &#x2F;&#x2F; 非自定义的 Spring 环境需要进行环境转换
+    if (!this.isCustomEnvironment) &#123;
+        EnvironmentConverter environmentConverter &#x3D; new EnvironmentConverter(getClassLoader());
+        environment &#x3D; environmentConverter.convertEnvironmentIfNecessary(environment, deduceEnvironmentClass());
+    &#125;
+    ConfigurationPropertySources.attach(environment);
+    return environment;
+&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>SpringApplication#prepareEnvironment</code>。</li>
+<li><code>SpringApplication#getOrCreateEnvironment</code>。</li>
+<li><code>SpringApplication#configureEnvironment</code>。</li>
+<li><code>SpringApplicationRunListeners#environmentPrepared</code>。</li>
+</ul>
+</blockquote>
+<h3 id="打印Banner（printBanner）">3.8. 打印Banner（printBanner）</h3><p>根据<code>Banner</code>的<code>Mode</code>打印Banner，有以下几种类型：</p>
+<ul>
+<li><code>OFF</code>：不打印Banner。</li>
+<li><code>LOG</code>：打印Banner到日志中。</li>
+<li><code>CONSOLE</code>：打印Banner到控制台上，该类型为默认Banner输出方式。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private Banner printBanner(ConfigurableEnvironment environment) &#123;
+    &#x2F;&#x2F; 不打印 Banner
+    if (this.bannerMode &#x3D;&#x3D; Banner.Mode.OFF) &#123;
+        return null;
+    &#125;
+    ResourceLoader resourceLoader &#x3D; (this.resourceLoader !&#x3D; null) ? this.resourceLoader
+            : new DefaultResourceLoader(null);
+    SpringApplicationBannerPrinter bannerPrinter &#x3D; new SpringApplicationBannerPrinter(resourceLoader, this.banner);
+    &#x2F;&#x2F; 打印 Banner 到日志中
+    if (this.bannerMode &#x3D;&#x3D; Mode.LOG) &#123;
+        return bannerPrinter.print(environment, this.mainApplicationClass, logger);
+    &#125;
+    &#x2F;&#x2F; 打印 Banner 到控制台上
+    return bannerPrinter.print(environment, this.mainApplicationClass, System.out);
+&#125;
+</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#printBanner</code>。</p>
+</blockquote>
+<h3 id="创建应用上下文（createApplicationContext）">3.9. 创建应用上下文（createApplicationContext）</h3><p>根据Web应用类型创建对应的应用上下文<code>ConfigurableApplicationContext</code>，由<code>DefaultApplicationContextFactory</code>进行分发：</p>
+<ul>
+<li><code>WebApplicationType#SERVLET</code>对应<code>ServletWebServerApplicationContextFactory</code>。</li>
+<li><code>WebApplicationType#REACTIVE</code>对应<code>ReactiveWebServerApplicationContextFactory</code>。</li>
+</ul>
+<a href="/assert/puml/00fd806ffc916b8aad27e09f90a3b355c087eb196117f2e841d48c7dc242c631.svg" class="gallery-item"><img src="/assert/puml/00fd806ffc916b8aad27e09f90a3b355c087eb196117f2e841d48c7dc242c631.svg"></a>
+
+
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">protected ConfigurableApplicationContext createApplicationContext() &#123;
+    &#x2F;&#x2F; 根据 Web 应用类型创建应用上下文（工厂模式）
+    return this.applicationContextFactory.create(this.webApplicationType);
+&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>SpringApplication#createApplicationContext</code>。</li>
+<li><code>DefaultApplicationContextFactory#create</code>。</li>
+<li><code>DefaultApplicationContextFactory#createEnvironment</code>。</li>
+<li><code>DefaultApplicationContextFactory#getFromSpringFactories</code>。</li>
+</ul>
+</blockquote>
+<h3 id="准备应用上下文（prepareContext）">3.10. 准备应用上下文（prepareContext）</h3><ol>
+<li>将Spring环境<code>Environment</code>设置到应用上下文中；</li>
+<li>对应用上下文进行后置处理；</li>
+<li>执行应用上下文初始化器<code>ApplicationContextInitializer</code>的初始化方法；</li>
+<li>调用应用运行监听器的<code>contextPrepared</code>方法；</li>
+<li>关闭引导上下文<code>DefaultBootstrapContext</code>；</li>
+<li>设置Bean工厂<code>BeanFactory</code>；<ol>
+<li>注册单例的Bean<code>ApplicationArguments</code>和<code>Banner</code>；</li>
+<li>设置是否允许循环依赖<code>allowCircularReferences</code>和是否允许Bean定义覆盖<code>allowBeanDefinitionOverriding</code>；</li>
+<li>添加Bean工厂后置处理器<code>LazyInitializationBeanFactoryPostProcessor</code>和<code>PropertySourceOrderingBeanFactoryPostProcessor</code>。</li>
+</ol>
+</li>
+<li>从资源类中加载Bean定义；</li>
+<li>调用应用运行监听器的<code>contextLoaded</code>方法。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void prepareContext(DefaultBootstrapContext bootstrapContext, ConfigurableApplicationContext context,
+			ConfigurableEnvironment environment, SpringApplicationRunListeners listeners,
+			ApplicationArguments applicationArguments, Banner printedBanner) &#123;
+		&#x2F;&#x2F; 将 Spring 环境设置到应用上下文中
+		context.setEnvironment(environment);
+        &#x2F;&#x2F; 对应用上下文进行后置处理
+		postProcessApplicationContext(context);
+		addAotGeneratedInitializerIfNecessary(this.initializers);
+		&#x2F;&#x2F; 执行应用上下文初始化器的初始化方法
+		applyInitializers(context);
+		&#x2F;&#x2F; 调用应用运行监听器的 contextPrepared 方法
+		listeners.contextPrepared(context);
+		&#x2F;&#x2F; 关闭引导上下文
+		bootstrapContext.close(context);
+		if (this.logStartupInfo) &#123;
+			logStartupInfo(context.getParent() &#x3D;&#x3D; null);
+			logStartupProfileInfo(context);
+		&#125;
+		&#x2F;&#x2F; Add boot specific singleton beans
+		&#x2F;&#x2F; 设置 Bean 工厂
+		ConfigurableListableBeanFactory beanFactory &#x3D; context.getBeanFactory();
+		&#x2F;&#x2F; 注册单例的 Bean
+		beanFactory.registerSingleton(&quot;springApplicationArguments&quot;, applicationArguments);
+		if (printedBanner !&#x3D; null) &#123;
+			beanFactory.registerSingleton(&quot;springBootBanner&quot;, printedBanner);
+		&#125;
+		if (beanFactory instanceof AbstractAutowireCapableBeanFactory autowireCapableBeanFactory) &#123;
+			&#x2F;&#x2F; 设置是否允许循环依赖
+			autowireCapableBeanFactory.setAllowCircularReferences(this.allowCircularReferences);
+			if (beanFactory instanceof DefaultListableBeanFactory listableBeanFactory) &#123;
+				&#x2F;&#x2F; 设置是否允许 Bean 定义覆盖
+				listableBeanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
+			&#125;
+		&#125;
+		if (this.lazyInitialization) &#123;
+			&#x2F;&#x2F; 添加 Bean 工厂后置处理器
+			context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
+		&#125;
+		if (this.keepAlive) &#123;
+			context.addApplicationListener(new KeepAlive());
+		&#125;
+		context.addBeanFactoryPostProcessor(new PropertySourceOrderingBeanFactoryPostProcessor(context));
+		if (!AotDetector.useGeneratedArtifacts()) &#123;
+			&#x2F;&#x2F; Load the sources
+			&#x2F;&#x2F; 从初始资源类中加载 Bean 定义
+			Set&lt;Object&gt; sources &#x3D; getAllSources();
+			Assert.notEmpty(sources, &quot;Sources must not be empty&quot;);
+			load(context, sources.toArray(new Object[0]));
+		&#125;
+		&#x2F;&#x2F; 调用应用运行监听器的 contextLoaded 方法
+		listeners.contextLoaded(context);
+	&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：</p>
+<ul>
+<li><code>SpringApplication#prepareContext</code>。</li>
+<li><code>SpringApplication#postProcessApplicationContext</code>。</li>
+<li><code>SpringApplication#applyInitializers</code>。</li>
+<li><code>SpringApplication#load</code>。</li>
+</ul>
+</blockquote>
+<h3 id="刷新应用上下文（refreshContext）">3.11. 刷新应用上下文（refreshContext）</h3><p>刷新应用上下文<code>ConfigurableApplicationContext</code>。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void refreshContext(ConfigurableApplicationContext context) &#123;
+    if (this.registerShutdownHook) &#123;
+        shutdownHook.registerApplicationContext(context);
+    &#125;
+    refresh(context);
+&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#refreshContext</code>。</p>
+</blockquote>
+<h3 id="调用应用运行监听器的started方法">3.12. 调用应用运行监听器的started方法</h3><p>调用应用运行监听器<code>SpringApplicationRunListeners</code>的<code>started</code>方法。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 调用应用运行监听器的 started 方法
+listeners.started(context, startup.timeTakenToStarted());</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplicationRunListeners#started</code>。</p>
+</blockquote>
+<h3 id="回调Runner（callRunners）">3.13. 回调Runner（callRunners）</h3><p>将应用上下文中的<code>Runner</code>列表排序后进行回调，有以下两种<code>Runner</code>：</p>
+<ul>
+<li><code>ApplicationRunner</code>接受<code>ApplicationArguments</code>作为入参。</li>
+<li><code>CommandLineRunner</code>接受<code>args</code>作为入参。</li>
+</ul>
+<a href="/assert/puml/f8a74a20213fb022e96e62968c6a4e106b873cbcee270355ae5c13cbe0b7a09a.svg" class="gallery-item"><img src="/assert/puml/f8a74a20213fb022e96e62968c6a4e106b873cbcee270355ae5c13cbe0b7a09a.svg"></a>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void callRunners(ApplicationContext context, ApplicationArguments args) &#123;
+		context.getBeanProvider(Runner.class).orderedStream().forEach((runner) -&gt; &#123;
+			if (runner instanceof ApplicationRunner applicationRunner) &#123;
+				callRunner(applicationRunner, args);
+			&#125;
+			if (runner instanceof CommandLineRunner commandLineRunner) &#123;
+				callRunner(commandLineRunner, args);
+			&#125;
+		&#125;);
+&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#callRunners</code>。</p>
+</blockquote>
+<h3 id="调用应用运行监听器的ready方法">3.14. 调用应用运行监听器的ready方法</h3><p>调用应用运行监听器<code>SpringApplicationRunListeners</code>的<code>ready</code>方法。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">&#x2F;&#x2F; 调用应用运行监听器的 ready 方法
+listeners.ready(context, startup.ready());</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplicationRunListeners#ready</code>。</p>
+</blockquote>
+<h3 id="处理运行失败（handleRunFailure）">3.15. 处理运行失败（handleRunFailure）</h3><ol>
+<li>处理退出码；</li>
+<li>调用应用运行监听器<code>SpringApplicationRunListeners</code>的<code>failed</code>方法；</li>
+<li>报告失败信息。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">private void handleRunFailure(ConfigurableApplicationContext context, Throwable exception,
+			SpringApplicationRunListeners listeners) &#123;
+    try &#123;
+        try &#123;
+            &#x2F;&#x2F; 处理退出码
+            handleExitCode(context, exception);
+            if (listeners !&#x3D; null) &#123;
+                &#x2F;&#x2F; 调用应用运行监听器的 failed 方法
+                listeners.failed(context, exception);
+            &#125;
+        &#125;
+        finally &#123;
+            &#x2F;&#x2F; 报告失败信息
+            reportFailure(getExceptionReporters(context), exception);
+            if (context !&#x3D; null) &#123;
+                context.close();
+                shutdownHook.deregisterFailedApplicationContext(context);
+            &#125;
+        &#125;
+    &#125;
+    catch (Exception ex) &#123;
+        logger.warn(&quot;Unable to close ApplicationContext&quot;, ex);
+    &#125;
+    ReflectionUtils.rethrowRuntimeException(exception);
+&#125;</code></pre>
+
+<blockquote>
+<p>对应源码所在位置：<code>SpringApplication#handleRunFailure</code>。</p>
+</blockquote>
+</div><script src></script><script>if (typeof lightGallery !== 'undefined') {
+        var options = {
+            selector: '.gallery-item'
+        };
+        lightGallery(document.getElementsByClassName('.article-gallery')[0], options);
+        }</script>
+</div>
+  <hr/>
+  <div class="article-footer">
+    <a href="/post/2443049666/">上一篇：SQL语句如何优化及案例分析？</a>
+    <a href="/post/1380088667/">下一篇：@Transactional是如何生效的？</a>
+  </div>
+  <div class="toc-pin">
+  <h4>目录</h4>
+  <hr>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">1. 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E5%BA%94%E7%94%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E7%9A%84%EF%BC%9F"><span class="toc-text">2. Spring应用是如何创建的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-text">2.1. 设置资源加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%88%9D%E5%A7%8B%E8%B5%84%E6%BA%90%E7%B1%BB"><span class="toc-text">2.2. 设置初始资源类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E6%B5%8BWeb%E5%BA%94%E7%94%A8%E7%B1%BB%E5%9E%8B%EF%BC%88deduceFromClasspath%EF%BC%89"><span class="toc-text">2.3. 推测Web应用类型（deduceFromClasspath）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%BC%95%E5%AF%BC%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8"><span class="toc-text">2.4. 设置引导上下文初始化器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8%EF%BC%88setInitializers%EF%BC%89"><span class="toc-text">2.5. 设置应用上下文初始化器（setInitializers）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%BA%94%E7%94%A8%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%88setListeners%EF%BC%89"><span class="toc-text">2.6. 设置应用监听器（setListeners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E6%B5%8B%E5%90%AF%E5%8A%A8%E7%B1%BB%EF%BC%88deduceMainApplicationClass%EF%BC%89"><span class="toc-text">2.7. 推测启动类（deduceMainApplicationClass）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E5%BA%94%E7%94%A8%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C%E7%9A%84%EF%BC%9F"><span class="toc-text">3. Spring应用是如何运行的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4"><span class="toc-text">3.1. 记录启动时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BC%95%E5%AF%BC%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88createBootstrapContext%EF%BC%89"><span class="toc-text">3.2. 创建引导上下文（createBootstrapContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEheadless%E6%A8%A1%E5%BC%8F%EF%BC%88configureHeadlessProperty%EF%BC%89"><span class="toc-text">3.3. 设置headless模式（configureHeadlessProperty）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96Spring%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%EF%BC%88getRunListeners%EF%BC%89"><span class="toc-text">3.4. 获取Spring应用运行监听器（getRunListeners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%E7%9A%84starting%E6%96%B9%E6%B3%95"><span class="toc-text">3.5. 调用应用运行监听器的starting方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-text">3.6. 创建应用参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83%EF%BC%88prepareEnvironment%EF%BC%89"><span class="toc-text">3.7. 准备环境（prepareEnvironment）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%93%E5%8D%B0Banner%EF%BC%88printBanner%EF%BC%89"><span class="toc-text">3.8. 打印Banner（printBanner）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88createApplicationContext%EF%BC%89"><span class="toc-text">3.9. 创建应用上下文（createApplicationContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88prepareContext%EF%BC%89"><span class="toc-text">3.10. 准备应用上下文（prepareContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B7%E6%96%B0%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88refreshContext%EF%BC%89"><span class="toc-text">3.11. 刷新应用上下文（refreshContext）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%E7%9A%84started%E6%96%B9%E6%B3%95"><span class="toc-text">3.12. 调用应用运行监听器的started方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E8%B0%83Runner%EF%BC%88callRunners%EF%BC%89"><span class="toc-text">3.13. 回调Runner（callRunners）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E7%9B%91%E5%90%AC%E5%99%A8%E7%9A%84ready%E6%96%B9%E6%B3%95"><span class="toc-text">3.14. 调用应用运行监听器的ready方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E5%A4%B1%E8%B4%A5%EF%BC%88handleRunFailure%EF%BC%89"><span class="toc-text">3.15. 处理运行失败（handleRunFailure）</span></a></li></ol></li></ol>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var navLinks = document.querySelectorAll('.toc-pin a');
+      if (!navLinks) {
+        return
+      }
+      var sectionIds = []
+      navLinks.forEach(function(link) {
+        sectionIds.push(decodeURIComponent(link.hash).substring(1))
+      });
+      window.addEventListener('scroll', function() {
+        var currentPosition = window.scrollY || window.pageYOffset;
+        sectionIds.forEach(function(id) {
+          var section = document.querySelector('#' + id);
+          var navLink = document.querySelector('.toc-pin a[href="#' + encodeURIComponent(id) + '"]');
+          if (section && currentPosition >= (section.offsetTop - 60)) {
+            navLinks.forEach(function(link) {
+              link.classList.remove('highlight');
+            });
+            navLink.classList.add('highlight');
+            if (navLinks[0] === navLink) {
+              document.querySelector('.toc-pin h4').scrollIntoView();
+            } else {
+              navLink.scrollIntoView()
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>
+  <img class="article-to-toc" title="打开目录" onclick="openOrCloseTocPin()" src="/img/maximize.svg"/>
+  <script>
+    function showToc(show) {
+      localStorage.setItem('tocPinState', show ? '1' : '0')
+      var tocPin = document.querySelectorAll('.toc-pin')[0];
+      tocPin.style.display = show ? '' : 'none'
+      var mainPost = document.querySelectorAll('.main-post')[0];
+      mainPost.style.marginLeft = show ? '' : 'auto'
+      mainPost.style.width = show ? '' : '70%'
+      var articleToTocButton = document.querySelectorAll('.article-to-toc')[0];
+      articleToTocButton.src = show ? '/img/maximize.svg' : '/img/minimize.svg'
+      articleToTocButton.title = show ? '关闭目录' : '打开目录'
+    }
+    function openOrCloseTocPin() {
+      const show = localStorage.getItem('tocPinState') === '0'
+      showToc(show)
+    }
+    showToc(localStorage.getItem('tocPinState') != '0')
+  </script>
+</main>
+    <footer>
+  <div class="footer-info">
+  <a>© 2024 徐梦旗</a> 
+  | <a target="_blank" rel="noopener" href="https://github.com/mizoreyo/hexo-theme-insnow">Theme Insnow</a>
+  | <a href="/console">控制台</a>
+  | <a href="http://beian.miit.gov.cn/"; target=_blank>浙ICP备2021010658号-1</a>
+  | <img src="/img/ghs.png" style="width:12px;margin: 0 0.4rem 0 0.4rem;"/><a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011802002272">浙公网安备 33011802002272号</a>
+  | <a class="footer-i" href="" title="@remeio"><i class="iconfont icon-wechat"></i></a>
+  <a class="footer-i" target="_blank" rel="noopener" href="https://github.com/remeio"><i class="iconfont icon-github-fill"></i></a>
+  <a class="footer-i" href="mailto:2663479778@qq.com"><i class="iconfont icon-mail"></i></a>
+</div>
+</footer>
+  </div>
+<script src="/js/markmap.js"></script></body>
+</html>

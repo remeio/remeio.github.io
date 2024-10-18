@@ -1,0 +1,119 @@
+h1 {
+  font-size: 2.6rem;
+}
+h2 {
+  font-size: 2.4rem;
+}
+h3 {
+  font-size: 1.8rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1rem;
+}
+h6 {
+  font-size: 0.6rem;
+}
+p {
+  font-size: 1.5rem !important;
+  line-height: 2.5rem;
+  margin: 1rem 0;
+}
+ul p {
+  margin: 0;
+}
+ol p {
+  margin: 0;
+}
+blockquote p {
+  margin: 0.8rem 0rem;
+}
+del,
+u {
+  transition: text-decoration 0.5s;
+}
+hr {
+  height: 1px;
+  background-color: var(--borderColor);
+  margin: 1rem 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+code {
+  font-family: var(--global-font-family);
+  color: var(--fontColor);
+  transition: color 0.5s;
+}
+blockquote {
+  background-color: var(--bgColor2);
+  padding-inline-start: 1rem;
+  padding-inline-end: 1rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  border-left: 3px solid var(--fontColor);
+  margin: 0.5rem 0;
+  transition-property: background-color, color, border-color;
+  transition-duration: 0.5s;
+  border-radius: var(--borderRadius);
+}
+code {
+  background-color: var(--accentBgColor);
+  font-size: 1.4rem;
+  line-height: 1.4rem;
+  transition-property: background-color, color;
+  transition-duration: 0.5s;
+  margin: 0rem 0.4rem;
+  padding: 0rem 0.6rem;
+  border-radius: var(--borderRadius);
+}
+a {
+  color: var(--spColor);
+  text-decoration: none;
+  transition: color 0.5s;
+}
+pre {
+  margin: 1.5rem 0 !important;
+  transition-property: background-color, color;
+  transition-duration: 0.5s;
+  border-radius: var(--borderRadius);
+}
+pre code {
+  font-family: var(--global-code-font-family);
+  padding: 0;
+}
+table {
+  table-layout: fixed;
+  font-size: 1.4rem;
+  font-family: var(--global-font-family);
+  transition-property: background-color, color;
+  transition-duration: 0.5s;
+  border-radius: 10px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+thead {
+  color: var(--fontColor);
+  transition-property: background-color, color;
+  transition-duration: 0.5s;
+}
+tbody {
+  color: var(--fontColor);
+  transition-property: background-color, color;
+  transition-duration: 0.5s;
+}
+th,
+td {
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--fontColor);
+  position: relative;
+  transition-property: border-color;
+  transition-duration: 0.5s;
+}
