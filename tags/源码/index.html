@@ -172,6 +172,16 @@
           ThreadPoolExecutor线程池是如何实现的？
         </a>
       </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年05月27日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
       <div class="archive-tags">
         
           <a href="/categories/并发编程" class="archive-tags-category">并发编程</a>
@@ -187,22 +197,10 @@
 
 java
 List&lt;Task&gt; tasks = IntStream.range(1, 100)
-                .mapToObj(Task::new)
-                .collect(Collectors.toList());...
+                .mapToObj(Task::n...
       </div>
-      <div class="archive-readmore"><a href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年05月27日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -210,6 +208,16 @@ List&lt;Task&gt; tasks = IntStream.range(1, 100)
         <a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">
           AbstractQueuedSynchronizer和ReentrantLock是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年05月18日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -228,23 +236,10 @@ java
 private final ReentrantLock lock = new ReentrantLock();
 
 public void m() {
-    lock.lock();
-    try {
-        // ... method b...
+...
       </div>
-      <div class="archive-readmore"><a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年05月18日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -252,6 +247,16 @@ public void m() {
         <a href="/post/2003253435/" title="CAS和原子类是如何实现的？">
           CAS和原子类是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年05月15日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -275,24 +280,10 @@ public void m() {
 如下代码，UnsafeCount类是一个累加器：
 
 java
-public class UnsafeCount {
-    private int value = 0;
-
-    public void in...
+public class UnsafeCoun...
       </div>
-      <div class="archive-readmore"><a href="/post/2003253435/" title="CAS和原子类是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年05月15日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/2003253435/" title="CAS和原子类是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -300,6 +291,16 @@ public class UnsafeCount {
         <a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">
           synchronized内置锁是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年04月22日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -314,22 +315,10 @@ public class UnsafeCount {
       <div class="archive-intro">
         当共享资源被多个线程同时访问时，可能会产生不符合预期的并发问题。为了保证共享资源在某一时刻只能被一个线程访问到，则需要对资源进行加锁，为此Java提供了一种易用的内置锁synchronized[^1]。锁的添加和释放过程如下：
 
- 在访问共享资源前，线程需要获取锁。如果获取锁成功，则访问共享资源；如果获取锁失败，则阻塞该线程，等待其他线程释放锁之后重新尝试获取锁。
- 在访问共享资源后，持有锁...
+ 在访问共享资源前，线程需要获取锁。如果获取锁成功，则访问共享资...
       </div>
-      <div class="archive-readmore"><a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年04月22日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -337,6 +326,16 @@ public class UnsafeCount {
         <a href="/post/1380088667/" title="@Transactional是如何生效的？">
           @Transactional是如何生效的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年04月10日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -351,22 +350,10 @@ public class UnsafeCount {
 
 java
 @Transactional(rollbackFor = Exception.class)
-public void pay() {
-	jdbcTemplate.execute(&#34;update balanc...
+public...
       </div>
-      <div class="archive-readmore"><a href="/post/1380088667/" title="@Transactional是如何生效的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年04月10日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/1380088667/" title="@Transactional是如何生效的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -374,6 +361,16 @@ public void pay() {
         <a href="/post/797218127/" title="Spring应用是如何启动的？">
           Spring应用是如何启动的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月30日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -389,22 +386,10 @@ public void pay() {
 java
 @SpringBootApplication
 public class DemoApplication {
-    public static void main(String[] args) {
-      SpringApplication.run(DemoApplicatio...
+    public static void main(String[] ...
       </div>
-      <div class="archive-readmore"><a href="/post/797218127/" title="Spring应用是如何启动的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年03月30日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/797218127/" title="Spring应用是如何启动的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -412,6 +397,16 @@ public class DemoApplication {
         <a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">
           Spring Boot是如何实现自动配置的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年12月06日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -425,21 +420,10 @@ public class DemoApplication {
         什么是自动配置？
 
 当我们需要集成某些功能时，只需要依赖Spring Boot或第三方提供的Starter即可，自动配置机制会将相关的配置注册到容器中，开箱即用，降低了开发人员的使用成本。通过@EnableAutoConfiguration注解可以开启自动配置。
-以Spring Boot应用集成Redis为例，首先在pom文件中依赖springbootstarterdataredis，然后在...
+以Spring Boot应用集...
       </div>
-      <div class="archive-readmore"><a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年12月06日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/993662572/" title="Spring Boot是如何实现自动配置的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -447,6 +431,16 @@ public class DemoApplication {
         <a href="/post/2269236659/" title="在典型业务场景下如何运用设计模式提高代码可读性和扩展性？">
           在典型业务场景下如何运用设计模式提高代码可读性和扩展性？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年11月16日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -467,24 +461,10 @@ public double getA(double a, double b) {
 }
 
 
-然后我们再来看一段代码，并推测其实现了什么业务？
-
-java
-public double getSurfaceAreaOfCyli...
+然后我们再来看一段代码，并推测...
       </div>
-      <div class="archive-readmore"><a href="/post/2269236659/" title="在典型业务场景下如何运用设计模式提高代码可读性和扩展性？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年11月16日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/2269236659/" title="在典型业务场景下如何运用设计模式提高代码可读性和扩展性？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -492,6 +472,16 @@ public double getSurfaceAreaOfCyli...
         <a href="/post/1808606146/" title="Spring MVC是如何分发HTTP请求的？">
           Spring MVC是如何分发HTTP请求的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年11月11日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -508,22 +498,10 @@ java
 @SpringBootApplication
 @RestController
 public class DemoApplication {
-    public static void main(String[] args) {
-      SpringApplication.run(De...
+    public static void ma...
       </div>
-      <div class="archive-readmore"><a href="/post/1808606146/" title="Spring MVC是如何分发HTTP请求的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年11月11日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/1808606146/" title="Spring MVC是如何分发HTTP请求的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -531,6 +509,16 @@ public class DemoApplication {
         <a href="/post/2304171767/" title="Java集合框架中Queue接口有哪些实现？">
           Java集合框架中Queue接口有哪些实现？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年10月24日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -552,23 +540,10 @@ class LinkedList&lt;E&gt;
 class ArrayDeque&lt;E&gt;
 class PriorityQueue&lt;E&gt;
 
-Deque u|&gt; Queue
-LinkedList .u.|&gt; Deque
-ArrayDeque .u.|&gt; Deq...
+Deque u|&gt;...
       </div>
-      <div class="archive-readmore"><a href="/post/2304171767/" title="Java集合框架中Queue接口有哪些实现？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年10月24日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/2304171767/" title="Java集合框架中Queue接口有哪些实现？">阅读全文 »</a></div>
     </div>
-    <hr>
     
   
     <div class="archive-paginator">

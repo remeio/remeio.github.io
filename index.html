@@ -172,6 +172,16 @@
           Bean在Spring中是如何完成依赖注入的？
         </a>
       </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年07月25日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
       <div class="archive-tags">
         
           <a href="/categories/SpringFramework" class="archive-tags-category">SpringFramework</a>
@@ -183,21 +193,10 @@
       <div class="archive-intro">
         什么是依赖注入？
 
-宽泛地讲，依赖注入（Dependency Inject，DI）是控制反转（Inversion of Control，IoC）的一种实现方式，本质上就是将依赖的创建和管理委派给IoC容器，使用者只需要声明要注入的依赖便可完成依赖的获取。在日常开发中，最常使用的Spring注解是@Component和@Autowired（或@Resource），前者将Bean注册到Sprin...
+宽泛地讲，依赖注入（Dependency Inject，DI）是控制反转（Inversion of Control，IoC）的一种实现方式，本质上就是将依赖的创建和管理委派给IoC容器，使用者只需要声明要注入的依赖便可完成依赖的获取。在日常开发中，最常使用的Spring注解...
       </div>
-      <div class="archive-readmore"><a href="/post/2756090231/" title="Bean在Spring中是如何完成依赖注入的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年07月25日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/2756090231/" title="Bean在Spring中是如何完成依赖注入的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -207,6 +206,16 @@
         <a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">
           synchronized内置锁是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年04月22日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -221,22 +230,10 @@
       <div class="archive-intro">
         当共享资源被多个线程同时访问时，可能会产生不符合预期的并发问题。为了保证共享资源在某一时刻只能被一个线程访问到，则需要对资源进行加锁，为此Java提供了一种易用的内置锁synchronized[^1]。锁的添加和释放过程如下：
 
- 在访问共享资源前，线程需要获取锁。如果获取锁成功，则访问共享资源；如果获取锁失败，则阻塞该线程，等待其他线程释放锁之后重新尝试获取锁。
- 在访问共享资源后，持有锁...
+ 在访问共享资源前，线程需要获取锁。如果获取锁成功，则访问共享资...
       </div>
-      <div class="archive-readmore"><a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年04月22日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/1848011465/" title="synchronized内置锁是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -246,6 +243,16 @@
         <a href="/post/3230764913/" title="InnoDB存储引擎的索引是如何实现的？">
           InnoDB存储引擎的索引是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年01月19日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -264,25 +271,58 @@
 
 索引[^1]（Index）是一种数据结构，用来加快查询的速度。如果表中的记录较少时，不创建索引也能满足查询的需求，但如果表中的记录较多时，如果不建立索引查询的速度会很慢。索引本质上是一种空间换时间的策略。
 
-&gt; 可以通过show index from &lt;table_name&gt;命令可以查看指定表中建立的索引。
-
- 什么是索引组织表？
-
-索引组织表（Index O...
+&gt; 可以通过show index from &lt;tabl...
       </div>
-      <div class="archive-readmore"><a href="/post/3230764913/" title="InnoDB存储引擎的索引是如何实现的？">查看全文</a></div>
+      <div class="archive-readmore"><a href="/post/3230764913/" title="InnoDB存储引擎的索引是如何实现的？">阅读全文 »</a></div>
+    </div>
+    
+    <div class="archive-item">
+      <div class="archive-title">
+        
+        <a href="/post/3760372011/" title="一种可视化业务链路跟踪的解决方案">
+          一种可视化业务链路跟踪的解决方案
+        </a>
+      </div>
       <div class="archive-extra">
         <img src="/img/date.svg" class="archive-extra-date-icon"/>
         <div class="archive-extra-date">
-          2024年01月19日
+          2024年10月01日
         </div>
         <img src="/img/author.svg" class="archive-extra-author-icon"/>
         <div class="archive-extra-author">
           徐梦旗
         </div>
       </div>
+      <div class="archive-tags">
+        
+          <a href="/categories/开发工具" class="archive-tags-category">开发工具</a>
+        
+        
+      </div>
+      <div class="archive-intro">
+        设计目标
+
+
+ 解决方案
+
+ 链路定义
+
+
+ 链路染色
+
+ 链路上报
+
+ 链路可视化
+
+
+ 非功能性需求
+
+ 存储
+
+ 性能
+      </div>
+      <div class="archive-readmore"><a href="/post/3760372011/" title="一种可视化业务链路跟踪的解决方案">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -290,6 +330,16 @@
         <a href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">
           ThreadPoolExecutor线程池是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年05月27日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -306,22 +356,10 @@
 
 java
 List&lt;Task&gt; tasks = IntStream.range(1, 100)
-                .mapToObj(Task::new)
-                .collect(Collectors.toList());...
+                .mapToObj(Task::n...
       </div>
-      <div class="archive-readmore"><a href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年05月27日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/800792967/" title="ThreadPoolExecutor线程池是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -329,6 +367,16 @@ List&lt;Task&gt; tasks = IntStream.range(1, 100)
         <a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">
           AbstractQueuedSynchronizer和ReentrantLock是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年05月18日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -347,23 +395,10 @@ java
 private final ReentrantLock lock = new ReentrantLock();
 
 public void m() {
-    lock.lock();
-    try {
-        // ... method b...
+...
       </div>
-      <div class="archive-readmore"><a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年05月18日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/281905677/" title="AbstractQueuedSynchronizer和ReentrantLock是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -371,6 +406,16 @@ public void m() {
         <a href="/post/2003253435/" title="CAS和原子类是如何实现的？">
           CAS和原子类是如何实现的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年05月15日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -394,24 +439,10 @@ public void m() {
 如下代码，UnsafeCount类是一个累加器：
 
 java
-public class UnsafeCount {
-    private int value = 0;
-
-    public void in...
+public class UnsafeCoun...
       </div>
-      <div class="archive-readmore"><a href="/post/2003253435/" title="CAS和原子类是如何实现的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年05月15日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/2003253435/" title="CAS和原子类是如何实现的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -419,6 +450,16 @@ public class UnsafeCount {
         <a href="/post/1380088667/" title="@Transactional是如何生效的？">
           @Transactional是如何生效的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年04月10日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -433,22 +474,10 @@ public class UnsafeCount {
 
 java
 @Transactional(rollbackFor = Exception.class)
-public void pay() {
-	jdbcTemplate.execute(&#34;update balanc...
+public...
       </div>
-      <div class="archive-readmore"><a href="/post/1380088667/" title="@Transactional是如何生效的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年04月10日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/1380088667/" title="@Transactional是如何生效的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -456,6 +485,16 @@ public void pay() {
         <a href="/post/797218127/" title="Spring应用是如何启动的？">
           Spring应用是如何启动的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月30日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -471,22 +510,10 @@ public void pay() {
 java
 @SpringBootApplication
 public class DemoApplication {
-    public static void main(String[] args) {
-      SpringApplication.run(DemoApplicatio...
+    public static void main(String[] ...
       </div>
-      <div class="archive-readmore"><a href="/post/797218127/" title="Spring应用是如何启动的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年03月30日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/797218127/" title="Spring应用是如何启动的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -494,6 +521,16 @@ public class DemoApplication {
         <a href="/post/2443049666/" title="SQL语句如何优化及案例分析？">
           SQL语句如何优化及案例分析？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月19日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -513,21 +550,10 @@ public class DemoApplication {
 
  如何定位并优化慢的SQL语句？
 
-1. 保持良好的习惯，在每编写完一条SQL语句后都分析下该语句的执行计划，以评估该语句的查询速度，排查潜在的...
+1. 保...
       </div>
-      <div class="archive-readmore"><a href="/post/2443049666/" title="SQL语句如何优化及案例分析？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年03月19日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/2443049666/" title="SQL语句如何优化及案例分析？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -535,6 +561,16 @@ public class DemoApplication {
         <a href="/post/4092758909/" title="MySQL数据库如何调优？">
           MySQL数据库如何调优？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年03月08日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -554,25 +590,10 @@ public class DemoApplication {
 数据库调优是为了提高数据库的性能、降低接口的响应时间等。体现在以下几个指标：
  响应时间（Response Time，RT）
  每秒事务处理量（Transaction Per Second，TPS）
- 每秒查询处理量（Query Per Second，QPS）
-
- 如何进行数据库压力测试？
-
-可以使用JMeter工具进行数据库压力测试。下图是使用主键...
+ 每秒查询处理量（Query Per Second，...
       </div>
-      <div class="archive-readmore"><a href="/post/4092758909/" title="MySQL数据库如何调优？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年03月08日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/4092758909/" title="MySQL数据库如何调优？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -580,6 +601,16 @@ public class DemoApplication {
         <a href="/post/104890545/" title="MySQL数据库中有哪些锁？">
           MySQL数据库中有哪些锁？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2024年01月22日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -602,24 +633,10 @@ public class DemoApplication {
 
 按照锁的功能来划分：
  读锁（Read Locks），也叫共享锁[^1]（Shared Locks，S锁）。
- 写锁（Write Locks），也叫排他锁[^1]（Exclusive Locks，X锁）。
-
-按照锁的粒度来划分：
- 全局锁（G...
+ 写锁（Write Locks）...
       </div>
-      <div class="archive-readmore"><a href="/post/104890545/" title="MySQL数据库中有哪些锁？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2024年01月22日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/104890545/" title="MySQL数据库中有哪些锁？">阅读全文 »</a></div>
     </div>
-    <hr>
     
   
     <div class="archive-paginator">

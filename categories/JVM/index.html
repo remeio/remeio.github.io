@@ -172,6 +172,16 @@
           虚拟机如何调优及案例分析？
         </a>
       </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年09月23日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
+      </div>
       <div class="archive-tags">
         
           <a href="/categories/JVM" class="archive-tags-category">JVM</a>
@@ -192,23 +202,10 @@
 
  调优的过程是怎样的？
 
-1. 监控虚拟机的行为，如堆的内存占用、GC次数、GC耗时等；
-2. 确定目标，如降低内存占用、减小响应延迟等；
-3. 制定方案，如调整虚拟机参...
+1. 监控虚拟机的行为，如堆的内存占用、GC...
       </div>
-      <div class="archive-readmore"><a href="/post/3554163017/" title="虚拟机如何调优及案例分析？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年09月23日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/3554163017/" title="虚拟机如何调优及案例分析？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -216,6 +213,16 @@
         <a href="/post/1840753212/" title="什么是垃圾回收及有哪些垃圾收集器？">
           什么是垃圾回收及有哪些垃圾收集器？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年09月12日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -237,22 +244,10 @@
 由于内存空间是有限的，需要垃圾回收来释放内存空间，以保证程序的正常运行。
 
  如何找到垃圾？
- 引用计数法：当对象被引用时，其引用计数器加一；当去除对象的引用时，引用计数器减一。当引用计数器的值为零时，代表该对象是垃圾对象。引用计数法不能解决循环依赖的问题。
- 可达性分析：当对象不能被...
+ 引用计数法：当对象被引用时，其引用计数器加一；当去除对象的引用时，引用计数器减一。当引用计...
       </div>
-      <div class="archive-readmore"><a href="/post/1840753212/" title="什么是垃圾回收及有哪些垃圾收集器？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年09月12日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/1840753212/" title="什么是垃圾回收及有哪些垃圾收集器？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -260,6 +255,16 @@
         <a href="/post/3287649796/" title="对象是如何创建的及是如何分配内存的？">
           对象是如何创建的及是如何分配内存的？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年09月09日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -278,26 +283,10 @@
 2. 若该对象对应的类从未被加载过，则进行类的加载；
 3. 在堆中（或栈上分配）为对象分配内存空间；
 4. 初始化对象的内存空间为零值；
-5. 为对象设置必要的信息，如类的元数据，对象的哈希码，GC分代年龄等；
-6. 执行对象的构造器方法&lt;init&gt;。
-
-plantuml
-title 对象的创建
-(*)...
+5. 为对象设置必要的信息，如类的元数据，对象的哈希码，GC分代年...
       </div>
-      <div class="archive-readmore"><a href="/post/3287649796/" title="对象是如何创建的及是如何分配内存的？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年09月09日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/3287649796/" title="对象是如何创建的及是如何分配内存的？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -305,6 +294,16 @@ title 对象的创建
         <a href="/post/948158994/" title="运行时数据区有哪些部分组成？">
           运行时数据区有哪些部分组成？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年09月01日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -323,23 +322,10 @@ title 对象的创建
 
  堆内存是如何划分的？
 
-堆内存被划分为新生代和老年代两部分，新生代又被划分为一个Eden区和两个大小相同的Survior区。将堆内存划分为新生代和老年代主要是为了提高垃圾收集的效率，基于以下两个假说：
- 弱分代假说：大部分对象都是朝生夕灭的。
- 强分代假说：熬过越多次垃圾收集的对象越...
+堆内存被划分为新生代和老年代两部分，新生代又被划分为一个Eden区和两个大小相同的Survior区。将堆内存划分为新生代和老年代主要是为了提高垃圾收集的效率，基...
       </div>
-      <div class="archive-readmore"><a href="/post/948158994/" title="运行时数据区有哪些部分组成？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年09月01日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/948158994/" title="运行时数据区有哪些部分组成？">阅读全文 »</a></div>
     </div>
-    <hr>
     
     <div class="archive-item">
       <div class="archive-title">
@@ -347,6 +333,16 @@ title 对象的创建
         <a href="/post/556202715/" title="如何自定义类加载器及如何打破双亲委派模型？">
           如何自定义类加载器及如何打破双亲委派模型？
         </a>
+      </div>
+      <div class="archive-extra">
+        <img src="/img/date.svg" class="archive-extra-date-icon"/>
+        <div class="archive-extra-date">
+          2023年07月31日
+        </div>
+        <img src="/img/author.svg" class="archive-extra-author-icon"/>
+        <div class="archive-extra-author">
+          徐梦旗
+        </div>
       </div>
       <div class="archive-tags">
         
@@ -368,22 +364,10 @@ title 对象的创建
  类加载有哪些步骤？
 
 类加载有以下几个步骤：
-1. 通过全限定类名获取到类的class二进制字节流，即加载[^1]（Loading）；
-2. 验证class二进...
+1. 通过全限...
       </div>
-      <div class="archive-readmore"><a href="/post/556202715/" title="如何自定义类加载器及如何打破双亲委派模型？">查看全文</a></div>
-      <div class="archive-extra">
-        <img src="/img/date.svg" class="archive-extra-date-icon"/>
-        <div class="archive-extra-date">
-          2023年07月31日
-        </div>
-        <img src="/img/author.svg" class="archive-extra-author-icon"/>
-        <div class="archive-extra-author">
-          徐梦旗
-        </div>
-      </div>
+      <div class="archive-readmore"><a href="/post/556202715/" title="如何自定义类加载器及如何打破双亲委派模型？">阅读全文 »</a></div>
     </div>
-    <hr>
     
   
 </div>
