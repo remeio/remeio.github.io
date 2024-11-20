@@ -125,6 +125,7 @@ blockquote {
 }
 code {
   background-color: var(--accentBgColor);
+  font-family: var(--global-code-font-family);
   font-size: 1.4rem;
   line-height: 1.4rem;
   transition-property: background-color, color;
