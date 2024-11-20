@@ -71,7 +71,7 @@ code {
   transition-property: background-color, color;
   transition-duration: 0.5s;
   margin: 0rem 0.4rem;
-  padding: 0rem 0.6rem;
+  padding: 0.1rem 0.6rem;
   border-radius: var(--borderRadius);
 }
 a {
@@ -95,7 +95,7 @@ table {
   font-family: var(--global-font-family);
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  border-radius: 10px;
+  border-radius: var(--borderRadius);
   border-spacing: 0;
   border-collapse: collapse;
 }

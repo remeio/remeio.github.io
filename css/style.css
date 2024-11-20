@@ -8,18 +8,18 @@
   --accentBgColor: rgba(255,255,255,0.2);
 }
 .light {
-  --defaultBgColor: #fcfcfc;
+  --defaultBgColor: #fff;
   --fontColor: #333;
-  --bgColor: #fcfcfc;
+  --bgColor: #fff;
   --bgColor2: #f6f8fa;
-  --spColor: #499ce9;
+  --spColor: #ff7f0e;
   --borderColor: #ebebeb;
   --accentBgColor: #ebedf0;
 }
 html {
-  --borderRadius: 6px;
-  --global-font-family: 'Fira Mono', 'Noto Sans SC';
-  --global-code-font-family: 'Fira Mono', 'Noto Sans SC';
+  --borderRadius: 4px;
+  --global-font-family: 'Consolas', 'Noto Sans SC';
+  --global-code-font-family: 'Consolas', 'Noto Sans SC';
 /* --box-shadow: 0 1px 4px -2px rgba(0, 0, 0, .13), 0 2px 8px 0 rgba(0, 0, 0, .08), 0 8px 16px 4px rgba(0, 0, 0, .04) */
   -webkit-text-size-adjust: none;
   font-size: 60%;
@@ -130,7 +130,7 @@ code {
   transition-property: background-color, color;
   transition-duration: 0.5s;
   margin: 0rem 0.4rem;
-  padding: 0rem 0.6rem;
+  padding: 0.1rem 0.6rem;
   border-radius: var(--borderRadius);
 }
 a {
@@ -154,7 +154,7 @@ table {
   font-family: var(--global-font-family);
   transition-property: background-color, color;
   transition-duration: 0.5s;
-  border-radius: 10px;
+  border-radius: var(--borderRadius);
   border-spacing: 0;
   border-collapse: collapse;
 }
@@ -382,7 +382,7 @@ footer {
   list-style: none;
   font-family: var(--global-font-family);
   font-size: 1.5rem;
-  font-weight: 500;
+  font-weight: 300;
   color: var(--fontColor);
 }
 .archive-item {
@@ -398,7 +398,7 @@ footer {
   align-items: center;
 }
 .archive-title a {
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 600;
   color: var(--fontColor);
   transition: color 0.5s;
@@ -424,11 +424,8 @@ footer {
   background-color: var(--accentBgColor);
   color: var(--fontColor);
   line-height: 2rem;
-  padding: 0.1rem 0.6rem;
-  border-radius: 4px;
-}
-.archive-tags-category {
-  color: var(--spColor) !important;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--borderRadius);
 }
 .archive-intro {
   margin-top: 2rem;
@@ -436,8 +433,8 @@ footer {
 }
 .archive-readmore {
   margin-top: 2rem;
-  margin-bottom: 6rem;
-  font-weight: 600;
+  margin-bottom: 8rem;
+  font-weight: 500;
 }
 .archive-readmore a {
   color: var(--spColor);
@@ -477,7 +474,7 @@ footer {
   text-align: justify;
 }
 .archive-paginator .page-number {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem;
   text-decoration: none;
   color: var(--fontColor);
 }
@@ -485,7 +482,7 @@ footer {
   text-decoration: underline;
 }
 .archive-paginator .extend {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem;
   text-decoration: none;
   color: var(--fontColor);
 }
@@ -530,12 +527,12 @@ footer {
 }
 .article-tags a {
   margin-right: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   border: 1px solid var(--fontColor);
   color: var(--fontColor);
-  line-height: 2rem;
+  line-height: 1.8rem;
   padding: 0.4rem 1rem;
-  border-radius: 2rem;
+  border-radius: 999px;
 }
 .article-footer {
   font-size: 1.5rem;
