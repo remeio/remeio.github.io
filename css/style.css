@@ -18,7 +18,7 @@
 }
 html {
   --borderRadius: 4px;
-  --global-font-family: 'Consolas', 'Noto Sans SC';
+  --global-font-family: 'Open Sans', 'Noto Sans SC';
   --global-code-font-family: 'Consolas', 'Noto Sans SC';
 /* --box-shadow: 0 1px 4px -2px rgba(0, 0, 0, .13), 0 2px 8px 0 rgba(0, 0, 0, .08), 0 8px 16px 4px rgba(0, 0, 0, .04) */
   -webkit-text-size-adjust: none;
@@ -399,7 +399,7 @@ footer {
 }
 .archive-title a {
   font-size: 2.4rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--fontColor);
   transition: color 0.5s;
   text-decoration: none;
@@ -660,7 +660,7 @@ footer {
 }
 .toc-pin .highlight .toc-text {
   color: var(--spColor);
-  font-weight: 800;
+  font-weight: 500;
 }
 .toc-container {
   top: 0;
