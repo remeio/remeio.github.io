@@ -21,6 +21,7 @@
   .main-about,
   .main-console,
   .main-post {
+    width: 100% !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
   }
